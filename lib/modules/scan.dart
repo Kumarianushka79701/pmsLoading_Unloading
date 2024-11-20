@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:project/modules/providers/local_database_provider.dart';
+import 'package:project/modules/providers/scan_activity_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:project/model/parcel.dart';
 import 'package:project/model/scan_state.dart';
@@ -25,13 +27,13 @@ class ScanScreen extends StatelessWidget {
               ),
             ),
           ),
-          // Container(
-          //   height: buttonContainerHeight,
-          //   constraints: BoxConstraints(
-          //     maxHeight: maxButtonContainerHeight,
-          //   ),
-          //   child: _buildButtonContainer(context),
-          // ),
+          Container(
+            height: buttonContainerHeight,
+            constraints: BoxConstraints(
+              maxHeight: maxButtonContainerHeight,
+            ),
+            child: _buildButtonContainer(context),
+          ),
         ],
       ),
     );
@@ -48,7 +50,8 @@ class ScanScreen extends StatelessWidget {
       'Total Weight': data.totalWeight,
       'Commodity Type Code': data.commodityTypeCode,
       'Booking Date': data.bookingDate,
-      'Chargeable Weight for Current Package': data.chargeableWeightForCurrentPackage,
+      'Chargeable Weight for Current Package':
+          data.chargeableWeightForCurrentPackage,
       'Total Chargeable Weight': data.totalChargeableWeight,
       'Packaging Description Code': data.packagingDescriptionCode,
       'Train Scale Code': data.trainScaleCode,
@@ -85,9 +88,9 @@ class ScanScreen extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context) {
-    final scanState = context.watch<ScanState>();
+    final scanState = context.watch<ScanActivityProvider>();
     final status = scanState.status;
-    final data = scanState.data;
+    final data = scanState.status;
 
     switch (status) {
       case DataStatus.initial:
@@ -98,12 +101,16 @@ class ScanScreen extends StatelessWidget {
         if (data == null) {
           return const Text('No data available.');
         }
-        return SingleChildScrollView(
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.8,
-            child: buildDataTable(data),
-          ),
-        );
+        LocalDatabaseProvider localDatabaseProvider =
+            Provider.of<LocalDatabaseProvider>(context, listen: false);
+        return SingleChildScrollView(child: ListView.builder(
+          itemBuilder: (context, index) {
+            return SizedBox(
+              width: MediaQuery.of(context).size.width * 0.8,
+              child: buildDataTable(localDatabaseProvider.parcels[index]),
+            );
+          },
+        ));
       case DataStatus.error:
         return const Text('Error');
       default:
@@ -111,17 +118,17 @@ class ScanScreen extends StatelessWidget {
     }
   }
 
-  // Widget _buildButtonContainer(BuildContext context) {
-  //   final scanState = context.watch<ScanState>();
-  //   final status = scanState.status;
+  Widget _buildButtonContainer(BuildContext context) {
+    final scanState = context.watch<ScanActivityProvider>();
+    final status = scanState.status;
 
-  //   return _buildButtons(
-  //     context,
-  //     status,
-  //     () => context.read<ScanState>().scanQR(),
-  //     () => context.read<ScanState>().addParcelDataToTable(),
-  //   );
-  // }
+    return _buildButtons(
+      context,
+      status,
+      () => context.read<ScanActivityProvider>().scanQR,
+      () => context.read<ScanActivityProvider>().addParcelDataToTable,
+    );
+  }
 
   Widget _buildButtons(
     BuildContext context,

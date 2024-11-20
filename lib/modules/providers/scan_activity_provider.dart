@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project/model/scan_state.dart';
 
 class ScanActivityProvider extends ChangeNotifier {
   // Example state
@@ -24,4 +25,4 @@ class ScanActivityProvider extends ChangeNotifier {
   
 }
 
-enum DataStatus { initial, loading, success, error }
+// enum DataStatus { initial, loading, success, error }

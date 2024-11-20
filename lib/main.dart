@@ -10,14 +10,8 @@ import 'package:project/modules/tabScreen/views/tabs.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(MyApp());
-}
+  runApp(MultiProvider(providers: [
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => HomeProvider()),
         ChangeNotifierProvider(create: (_) => ScanActivityProvider()),
@@ -25,18 +19,20 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => TabsProvider()),
         ChangeNotifierProvider(create: (_) => ParcelProvider()),
         
+  ],
+  child: MyApp()));
+}
 
-        
-// Provide AuthProvider
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: const TabsScreen(),
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
       ),
+      home: const TabsScreen(),
     );
   }
 }
