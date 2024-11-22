@@ -1,41 +1,71 @@
 import 'package:flutter/material.dart';
-import 'package:project/modules/providers/local_database_provider.dart';
-import 'package:project/modules/providers/scan_activity_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:project/model/parcel.dart';
 import 'package:project/model/scan_state.dart';
+import 'package:project/modules/providers/scan_activity_provider.dart';
+import 'package:provider/provider.dart';
 
 class ScanScreen extends StatelessWidget {
-  const ScanScreen({super.key});
+  const ScanScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    Size screenSize = MediaQuery.of(context).size;
-    double screenHeight = screenSize.height;
-    double buttonContainerHeight = screenHeight * 0.12;
-    double maxButtonContainerHeight = 70;
-
     return Scaffold(
-      body: Column(
-        children: [
-          // Content of QR Code
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Center(
-                child: _buildContent(context),
-              ),
-            ),
-          ),
-          Container(
-            height: buttonContainerHeight,
-            constraints: BoxConstraints(
-              maxHeight: maxButtonContainerHeight,
-            ),
-            child: _buildButtonContainer(context),
-          ),
-        ],
+      appBar: AppBar(title: const Text('QR Code Scanner')),
+      body: Consumer<ScanActivityProvider>(
+        builder: (context, provider, child) {
+          switch (provider.status) {
+            case DataStatus.initial:
+              return _buildMobileScanner(context, provider);
+            case DataStatus.loading:
+              return const Center(child: CircularProgressIndicator());
+            case DataStatus.success:
+              if (provider.scannedData == null) {
+                return const Center(child: Text('No data found.'));
+              }
+              return _buildScannedData(context, provider.scannedData!);
+            case DataStatus.error:
+              return const Center(child: Text('Error occurred while scanning.'));
+            default:
+              return const Center(child: Text('Unknown state.'));
+          }
+        },
       ),
+    );
+  }
+
+  Widget _buildMobileScanner(BuildContext context, ScanActivityProvider provider) {
+    return MobileScanner(
+    onDetect: (BarcodeCapture barcodeCapture) {
+      // Extract barcodes from BarcodeCapture
+      final barcodes = barcodeCapture.barcodes;
+
+      if (barcodes.isNotEmpty) {
+        // Get the first scanned barcode's value
+        final barcode = barcodes.first;
+        if (barcode.rawValue != null) {
+          provider.processScannedData(barcode.rawValue!); // Pass scanned data to the provider
+        } else {
+          provider.setErrorState("No valid QR code detected.");
+        }
+      } else {
+        provider.setErrorState("No barcodes detected.");
+      }
+    },
+  );
+  }
+
+  Widget _buildScannedData(BuildContext context, ParcelData data) {
+    return Column(
+      children: [
+        Expanded(child: buildDataTable(data)),
+        ElevatedButton(
+          onPressed: () {
+            context.read<ScanActivityProvider>().resetScanner();
+          },
+          child: const Text('Scan Again'),
+        ),
+      ],
     );
   }
 
@@ -63,154 +93,21 @@ class ScanScreen extends StatelessWidget {
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: DataTable(
-        columnSpacing: 20.0,
-        headingTextStyle: const TextStyle(color: Colors.white),
-        headingRowColor: MaterialStateColor.resolveWith(
-          (states) => const Color.fromARGB(255, 11, 6, 48),
-        ),
-        dataRowColor: MaterialStateColor.resolveWith(
-          (states) => Colors.white,
-        ),
         columns: const [
           DataColumn(label: Text('Property')),
           DataColumn(label: Text('Value')),
         ],
-        rows: dataMap.entries.map(
-          (entry) {
-            return DataRow(cells: [
-              DataCell(Text(entry.key)),
-              DataCell(Text(entry.value ?? 'N/A')),
-            ]);
-          },
-        ).toList(),
+        rows: dataMap.entries
+            .map(
+              (entry) => DataRow(
+                cells: [
+                  DataCell(Text(entry.key)),
+                  DataCell(Text(entry.value ?? 'N/A')),
+                ],
+              ),
+            )
+            .toList(),
       ),
-    );
-  }
-
-  Widget _buildContent(BuildContext context) {
-    final scanState = context.watch<ScanActivityProvider>();
-    final status = scanState.status;
-    final data = scanState.status;
-
-    switch (status) {
-      case DataStatus.initial:
-        return const Text('Initial');
-      case DataStatus.loading:
-        return const Text('Loading');
-      case DataStatus.success:
-        if (data == null) {
-          return const Text('No data available.');
-        }
-        LocalDatabaseProvider localDatabaseProvider =
-            Provider.of<LocalDatabaseProvider>(context, listen: false);
-        return SingleChildScrollView(child: ListView.builder(
-          itemBuilder: (context, index) {
-            return SizedBox(
-              width: MediaQuery.of(context).size.width * 0.8,
-              child: buildDataTable(localDatabaseProvider.parcels[index]),
-            );
-          },
-        ));
-      case DataStatus.error:
-        return const Text('Error');
-      default:
-        return const SizedBox();
-    }
-  }
-
-  Widget _buildButtonContainer(BuildContext context) {
-    final scanState = context.watch<ScanActivityProvider>();
-    final status = scanState.status;
-
-    return _buildButtons(
-      context,
-      status,
-      () => context.read<ScanActivityProvider>().scanQR,
-      () => context.read<ScanActivityProvider>().addParcelDataToTable,
-    );
-  }
-
-  Widget _buildButtons(
-    BuildContext context,
-    DataStatus status,
-    VoidCallback scanQr,
-    VoidCallback addParcelDataToTable,
-  ) {
-    switch (status) {
-      case DataStatus.initial:
-      case DataStatus.loading:
-      case DataStatus.error:
-        return buttonWidget(context, scanQr);
-      case DataStatus.success:
-        return buttonsWidget(context, scanQr, addParcelDataToTable);
-      default:
-        return const SizedBox();
-    }
-  }
-
-  Widget buttonWidget(BuildContext context, VoidCallback scanQR) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        TextButton(
-          onPressed: scanQR,
-          style: TextButton.styleFrom(
-            backgroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-          ),
-          child: Text(
-            'Scan Start',
-            style: TextStyle(color: Theme.of(context).colorScheme.primaryFixed),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget buttonsWidget(
-    BuildContext context,
-    VoidCallback scanQR,
-    VoidCallback addParcelDataToTable,
-  ) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        TextButton(
-          onPressed: scanQR,
-          style: TextButton.styleFrom(
-            backgroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            elevation: 6.0,
-            shadowColor: Theme.of(context).colorScheme.inversePrimary,
-          ),
-          child: Text(
-            'Scan Start',
-            style: TextStyle(color: Theme.of(context).colorScheme.primaryFixed),
-          ),
-        ),
-        const SizedBox(width: 20),
-        TextButton(
-          onPressed: addParcelDataToTable,
-          style: TextButton.styleFrom(
-            backgroundColor: const Color.fromARGB(255, 219, 43, 31),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            elevation: 6.0,
-          ),
-          child: const Text(
-            'Add to table',
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-      ],
     );
   }
 }

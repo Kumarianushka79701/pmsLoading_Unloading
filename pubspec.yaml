@@ -1,45 +1,39 @@
 name: project
 description: "A new Flutter project."
 
-publish_to: 'none' 
+publish_to: 'none'
 
 version: 1.0.0+1
 
 environment:
   sdk: ^3.5.3
 
-
 dependencies:
   flutter:
     sdk: flutter
   qr_flutter: ^4.0.0
+  mobile_scanner: ^6.0.2
+  # qr_code_scanner: ^1.0.1 
   intl: ^0.19.0
   google_fonts: ^6.2.1
   sqflite: ^2.3.3
   provider: ^6.1.2
-  http: 
+  http: # Specify a version if required
   shared_preferences: ^2.3.2
   # flutter_barcode_scanner: ^2.0.0
   path: ^1.9.0
-
-
-
-
   cupertino_icons: ^1.0.8
+  js: ^0.7.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   flutter_launcher_icons: "^0.14.1"
-
-
-
   flutter_lints: ^4.0.0
+dependency_overrides:
+  vm_service: ^14.3.1 
 
 flutter:
-
-
   uses-material-design: true
   assets:
     - assets/images/
