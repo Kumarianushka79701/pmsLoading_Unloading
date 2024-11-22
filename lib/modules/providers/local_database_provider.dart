@@ -1,34 +1,64 @@
-import 'package:flutter/foundation.dart'; // For ChangeNotifier
+import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
 import 'package:project/model/parcel.dart';
-import 'package:project/services/local_database.dart';
 
-class LocalDatabaseProvider extends ChangeNotifier {
-  final DatabaseService _databaseService = DatabaseService.instance;
+class LocalDatabaseProvider with ChangeNotifier {
+  Database? _database;
 
-  List<ParcelData> _parcels = [];
-  List<ParcelData> get parcels => _parcels;
-
-  Future<void> addParcelData(ParcelData parcelData) async {
-    await _databaseService.addParcel(parcelData);
-    _parcels.add(parcelData);
-    notifyListeners();
-    print('Parcel added. Total parcels: ${_parcels.length}');
+  // Open database
+  Future<void> initDatabase() async {
+    final dbPath = await getDatabasesPath();
+    _database = await openDatabase(
+      join(dbPath, 'parcel_data.db'),
+      onCreate: (db, version) {
+        return db.execute(
+          '''
+          CREATE TABLE parcels(
+            id INTEGER PRIMARY KEY,
+            prrNumber TEXT,
+            weightOfConsignment TEXT,
+            totalPackages TEXT,
+            currentPackageNumber TEXT,
+            destinationStationCode TEXT,
+            sourceStationCode TEXT,
+            totalWeight TEXT,
+            commodityTypeCode TEXT,
+            bookingDate TEXT,
+            chargeableWeightForCurrentPackage TEXT,
+            totalChargeableWeight TEXT,
+            packagingDescriptionCode TEXT,
+            trainScaleCode TEXT,
+            rajdhaniFlag TEXT,
+            estimatedUnloadingTime TEXT,
+            transhipmentStation TEXT
+          )
+          ''',
+        );
+      },
+      version: 1,
+    );
   }
 
-  Future<void> fetchAllParcels() async {
-    _parcels = await _databaseService.getAllParcels();
-    notifyListeners();
-    print('Fetched all parcels. Total parcels: ${_parcels.length}');
-  }
+  List<ParcelData> _parcelDataList = [];
 
-  List<ParcelData> getParcelData() {
-    return _parcels;
+  // Method to insert parcel data into the list
+  void insertParcelData(ParcelData data) {
+    _parcelDataList.add(data);
+    notifyListeners();  // Notify listeners to refresh the UI
   }
+void deleteParcelData(ParcelData data) {
+  _parcelDataList.remove(data);
+  notifyListeners();  // Notifies listeners to refresh the UI after deletion
+}
 
-  Future<void> clearDatabase() async {
-    await _databaseService.clearDatabase();
-    _parcels = [];
-    notifyListeners();
-    print('Database cleared. State updated.');
+  // Get all parcel data
+  Future<List<ParcelData>> getParcelData() async {
+    final db = await _database!;
+    final List<Map<String, dynamic>> maps = await db.query('parcels');
+
+    return List.generate(maps.length, (i) {
+      return ParcelData.fromMap(maps[i]);
+    });
   }
 }

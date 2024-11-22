@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:project/model/parcel.dart';
 import 'package:project/model/scan_state.dart';
+import 'package:project/modules/providers/local_database_provider.dart';
 import 'package:project/modules/providers/scan_activity_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -36,34 +37,53 @@ class ScanScreen extends StatelessWidget {
 
   Widget _buildMobileScanner(BuildContext context, ScanActivityProvider provider) {
     return MobileScanner(
-    onDetect: (BarcodeCapture barcodeCapture) {
-      // Extract barcodes from BarcodeCapture
-      final barcodes = barcodeCapture.barcodes;
+      onDetect: (BarcodeCapture barcodeCapture) {
+        final barcodes = barcodeCapture.barcodes;
 
-      if (barcodes.isNotEmpty) {
-        // Get the first scanned barcode's value
-        final barcode = barcodes.first;
-        if (barcode.rawValue != null) {
-          provider.processScannedData(barcode.rawValue!); // Pass scanned data to the provider
+        if (barcodes.isNotEmpty) {
+          final barcode = barcodes.first;
+          if (barcode.rawValue != null) {
+            provider.processScannedData(barcode.rawValue!);
+            // Save the scanned data to the local database
+            final parcelData = provider.scannedData;
+            if (parcelData != null) {
+              context.read<LocalDatabaseProvider>().insertParcelData(parcelData);
+            }
+          } else {
+            provider.setErrorState("No valid QR code detected.");
+          }
         } else {
-          provider.setErrorState("No valid QR code detected.");
+          provider.setErrorState("No barcodes detected.");
         }
-      } else {
-        provider.setErrorState("No barcodes detected.");
-      }
-    },
-  );
+      },
+    );
   }
 
   Widget _buildScannedData(BuildContext context, ParcelData data) {
     return Column(
       children: [
         Expanded(child: buildDataTable(data)),
-        ElevatedButton(
-          onPressed: () {
-            context.read<ScanActivityProvider>().resetScanner();
-          },
-          child: const Text('Scan Again'),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                context.read<ScanActivityProvider>().resetScanner();
+              },
+              child: const Text('Scan Again'),
+            ),
+            const SizedBox(width: 16), // Space between buttons
+            ElevatedButton(
+              onPressed: () {
+                // Save the scanned data to the local database
+                context.read<LocalDatabaseProvider>().insertParcelData(data);
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text('Parcel data saved successfully!'),
+                ));
+              },
+              child: const Text('Save Data'),
+            ),
+          ],
         ),
       ],
     );
@@ -80,8 +100,7 @@ class ScanScreen extends StatelessWidget {
       'Total Weight': data.totalWeight,
       'Commodity Type Code': data.commodityTypeCode,
       'Booking Date': data.bookingDate,
-      'Chargeable Weight for Current Package':
-          data.chargeableWeightForCurrentPackage,
+      'Chargeable Weight for Current Package': data.chargeableWeightForCurrentPackage,
       'Total Chargeable Weight': data.totalChargeableWeight,
       'Packaging Description Code': data.packagingDescriptionCode,
       'Train Scale Code': data.trainScaleCode,
@@ -98,14 +117,12 @@ class ScanScreen extends StatelessWidget {
           DataColumn(label: Text('Value')),
         ],
         rows: dataMap.entries
-            .map(
-              (entry) => DataRow(
-                cells: [
-                  DataCell(Text(entry.key)),
-                  DataCell(Text(entry.value ?? 'N/A')),
-                ],
-              ),
-            )
+            .map((entry) => DataRow(
+                  cells: [
+                    DataCell(Text(entry.key)),
+                    DataCell(Text(entry.value ?? 'N/A')),
+                  ],
+                ))
             .toList(),
       ),
     );
