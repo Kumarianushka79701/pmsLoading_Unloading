@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project/modules/lodingScreen/loading_screen/loading.dart';
+import 'package:project/modules/table.dart';
 import 'package:project/utils/app_icons.dart';
 import 'package:project/utils/color_extensions.dart';
 
@@ -229,6 +230,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           GestureDetector(
                             onTap: () {
+                              
+                              Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (context) => TableScreen(),
+  ),
+);
                               // Action for Reports
                             },
                             child: ClipRRect(

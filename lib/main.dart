@@ -9,18 +9,27 @@ import 'package:project/modules/tabScreen/prvider/tabs_provider.dart';
 import 'package:project/modules/tabScreen/views/tabs.dart';
 import 'package:provider/provider.dart';
 
-void main() {
-  runApp(MultiProvider(providers: [
+void main() async {
+  // Ensure all Flutter bindings are initialized before calling async methods.
+  WidgetsFlutterBinding.ensureInitialized();
 
+  // Initialize the LocalDatabaseProvider
+  final localDatabaseProvider = LocalDatabaseProvider();
+  await localDatabaseProvider.init(); // Ensure database is initialized before running the app
+
+  runApp(
+    MultiProvider(
+      providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => HomeProvider()),
         ChangeNotifierProvider(create: (_) => ScanActivityProvider()),
-        ChangeNotifierProvider(create: (_) => LocalDatabaseProvider()),
+        ChangeNotifierProvider(create: (_) => localDatabaseProvider), // Use the initialized provider
         ChangeNotifierProvider(create: (_) => TabsProvider()),
         ChangeNotifierProvider(create: (_) => ParcelProvider()),
-        
-  ],
-  child: MyApp()));
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

@@ -98,4 +98,30 @@ class ParcelData {
         estimatedUnloadingTime: json['estimatedUnloadingTime'],
         transhipmentStation: json['transhipmentStation'],
       );
+
+  factory ParcelData.fromJson(Map<String, dynamic> json) {
+    return ParcelData(
+      weightOfConsignment: json['weightOfConsignment'],
+      prrNumber: json['prrNumber'],
+      totalPackages: json['totalPackages'],
+      currentPackageNumber: json['currentPackageNumber'],
+      destinationStationCode: json['destinationStationCode'],
+      sourceStationCode: json['sourceStationCode'],
+      totalWeight: json['totalWeight'],
+      commodityTypeCode: json['commodityTypeCode'],
+      bookingDate: json['bookingDate'],
+      chargeableWeightForCurrentPackage:
+          json['chargeableWeightForCurrentPackage'],
+      totalChargeableWeight: json['totalChargeableWeight'],
+      packagingDescriptionCode: json['packagingDescriptionCode'],
+      trainScaleCode: json['trainScaleCode'],
+      rajdhaniFlag: json['rajdhaniFlag'],
+      estimatedUnloadingTime: json['estimatedUnloadingTime'],
+      transhipmentStation: json['transhipmentStation'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return toMap();
+  }
 }
