@@ -4,7 +4,6 @@ import 'package:project/modules/home/provider/homeProvider.dart';
 import 'package:project/modules/providers/local_database_provider.dart';
 import 'package:project/modules/providers/parcel_provider.dart';
 import 'package:project/modules/providers/scan_activity_provider.dart';
-import 'package:project/modules/splash.dart';
 import 'package:project/modules/tabScreen/prvider/tabs_provider.dart';
 import 'package:project/modules/tabScreen/views/tabs.dart';
 import 'package:provider/provider.dart';

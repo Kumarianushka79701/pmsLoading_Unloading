@@ -73,16 +73,29 @@ class ScanScreen extends StatelessWidget {
               child: const Text('Scan Again'),
             ),
             const SizedBox(width: 16), // Space between buttons
-            ElevatedButton(
-              onPressed: () {
-                // Save the scanned data to the local database
-                context.read<LocalDatabaseProvider>().insertParcelData(data);
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text('Parcel data saved successfully!'),
-                ));
-              },
-              child: const Text('Save Data'),
-            ),
+           ElevatedButton(
+  onPressed: () async {
+    final localDbProvider = context.read<LocalDatabaseProvider>();
+
+    // Check if the PRR number already exists
+    final  bool? isDuplicate = await localDbProvider.isParcelDuplicate(data.prrNumber);
+
+    if (isDuplicate==true) {
+      // Show a message if it's a duplicate
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Duplicate parcel data. Cannot save!')),
+      );
+    } else {
+      // Save the data if it's not a duplicate
+      await localDbProvider.insertParcelData(data);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Parcel data saved successfully!')),
+      );
+    }
+  },
+  child: const Text('Save Data'),
+),
+
           ],
         ),
       ],

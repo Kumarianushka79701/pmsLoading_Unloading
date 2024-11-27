@@ -1,83 +1,81 @@
 import 'package:flutter/material.dart';
+import 'package:project/utils/app_icons.dart';
+import 'package:project/utils/color_extensions.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          const SizedBox(
-            height: 300,
-            child: DrawerHeader(
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 0, 102, 255), // Background color
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircleAvatar(
-                    radius: 80,
-                    backgroundImage:
-                        AssetImage('assets/pms-logo.png'), // Path to your logo
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    'Menu',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
+    return Drawer( 
+  child: ListView(
+    padding: EdgeInsets.zero,
+    children: <Widget>[
+      DrawerHeader(
+        decoration: BoxDecoration(
+          color: AppColors.primary,
+        ),
+        child: Column(
+          children: [
+            Text(
+              'Menu',
+              style: TextStyle(
+                color: AppColors.white,
+                fontSize: 24,
               ),
             ),
-          ),
-          ListTile(
-            leading: Icon(Icons.home),
-            title: Text('Home'),
-            onTap: () {
-              Navigator.pop(context);
-              // Navigate to Home
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.qr_code_scanner),
-            title: Text('Scan QR Code'),
-            onTap: () {
-              Navigator.pop(context);
-              // Navigate to Scan QR Code screen
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.history),
-            title: Text('History'),
-            onTap: () {
-              Navigator.pop(context);
-              // Navigate to History screen
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.settings),
-            title: Text('Settings'),
-            onTap: () {
-              Navigator.pop(context);
-              // Navigate to Settings screen
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.logout),
-            title: Text('Logout'),
-            onTap: () {
-              Navigator.pop(context);
-              // Handle logout
-            },
-          ),
-        ],
+
+             Image.asset(
+                AppIcons.logopms,
+                height: 70,
+              ),
+          ],
+
+        ),
       ),
-    );
-  }
+      ListTile(
+        leading: Icon(Icons.home),  
+        title: Text('Home'),
+        onTap: () {
+        },
+      ),
+      ListTile(
+        leading: Icon(Icons.report),  // Add the report icon here
+        title: Text('Mis Report'),
+        onTap: () {
+        },
+      ),
+      ListTile(
+        leading: Icon(Icons.check_circle),  // Add the RR status icon here
+        title: Text('RR Status'),
+        onTap: () {
+        },
+      ),
+      ListTile(
+        leading: Icon(Icons.print),  // Add the print barcode icon here
+        title: Text('Print barcode'),
+        onTap: () {
+        },
+      ),
+      ListTile(
+        leading: Icon(Icons.delete),  // Add the delete icon here
+        title: Text('Delete old data'),
+        onTap: () {
+        },
+      ),
+      ListTile(
+        leading: Icon(Icons.refresh),  // Add the reload icon here
+        title: Text('Reload Masters'),
+        onTap: () {
+        },
+      ),
+      ListTile(
+        leading: Icon(Icons.exit_to_app),  // Add the logout icon here
+        title: Text('Logout'),
+        onTap: () {
+        },
+      ),
+    ],
+  ),
+);}
 }

@@ -16,41 +16,57 @@ class LocalDatabaseProvider with ChangeNotifier {
   List<ParcelData> get parcelDataList => _parcelDataList;
 
   // Initialize the database and load data
-  Future<void> init() async {
-    if (_database != null) return; // Avoid reinitialization
 
-    final dbPath = await getDatabasesPath();
-    _database = await openDatabase(
-      join(dbPath, 'parcel_database.db'),
-      onCreate: (db, version) {
-        return db.execute(
-          '''CREATE TABLE parcels(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            prrNumber TEXT,
-            weightOfConsignment TEXT,
-            totalPackages TEXT,
-            currentPackageNumber TEXT,
-            destinationStationCode TEXT,
-            sourceStationCode TEXT,
-            totalWeight TEXT,
-            commodityTypeCode TEXT,
-            bookingDate TEXT,
-            chargeableWeightForCurrentPackage TEXT,
-            totalChargeableWeight TEXT,
-            packagingDescriptionCode TEXT,
-            trainScaleCode TEXT,
-            rajdhaniFlag TEXT,
-            estimatedUnloadingTime TEXT,
-            transhipmentStation TEXT
-          )''',
-        );
-      },
-      version: 1,
-    );
+  
+ Future<Database?> init() async {
+  if (_database != null) return _database; // Return existing database instance
 
-    // Load initial data after initializing the database
-    await loadParcelData();
-  }
+  final dbPath = await getDatabasesPath();
+  final dbFilePath = join(dbPath, 'parcel_database.db');
+
+  _database = await openDatabase(
+    dbFilePath,
+    version: 1,
+    onCreate: (db, version) async {
+      // Create the parcels table on database creation
+      await db.execute('''
+        CREATE TABLE parcels (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          prrNumber TEXT NOT NULL UNIQUE,
+          weightOfConsignment TEXT,
+          totalPackages TEXT,
+          currentPackageNumber TEXT,
+          destinationStationCode TEXT,
+          sourceStationCode TEXT,
+          totalWeight TEXT,
+          commodityTypeCode TEXT,
+          bookingDate TEXT,
+          chargeableWeightForCurrentPackage TEXT,
+          totalChargeableWeight TEXT,
+          packagingDescriptionCode TEXT,
+          trainScaleCode TEXT,
+          rajdhaniFlag TEXT,
+          estimatedUnloadingTime TEXT,
+          transhipmentStation TEXT
+        )
+      ''');
+    },
+    onUpgrade: (db, oldVersion, newVersion) async {
+      // Handle database upgrades if needed in future
+      if (oldVersion < newVersion) {
+        // Example: Add new columns or tables here
+      }
+    },
+  );
+
+  // Verify table creation or check table structure
+  // await _checkTableExists();
+
+  // Load initial data after initializing the database
+  await loadParcelData();
+
+  return _database; // Return the database instance
+}
 
   // Load parcel data from the database
   Future<void> loadParcelData() async {
@@ -62,6 +78,18 @@ class LocalDatabaseProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+Future<bool?> isParcelDuplicate(String? prrNumber) async {
+  if (prrNumber == null || prrNumber.isEmpty) return false;
+
+  final db = await init();
+  final result = await db?.query(
+    'parcels',
+    where: 'prrNumber = ?',
+    whereArgs: [prrNumber],
+  );
+
+  return result?.isNotEmpty;
+}
 
   // Insert parcel data into the database
   Future<void> insertParcelData(ParcelData parcelData) async {
@@ -72,10 +100,10 @@ class LocalDatabaseProvider with ChangeNotifier {
     await db.insert(
       'parcels',
       parcelData.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    conflictAlgorithm: ConflictAlgorithm.replace,
+  );
     await loadParcelData(); // Reload data after insert
-  }
+}
 
   // Query parcel data from the database
   Future<List<ParcelData>> getParcelData() async {

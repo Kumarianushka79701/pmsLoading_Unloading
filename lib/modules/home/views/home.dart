@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project/app_drawer.dart';
 import 'package:project/modules/lodingScreen/loading_screen/loading.dart';
 import 'package:project/modules/table.dart';
 import 'package:project/utils/app_icons.dart';
@@ -40,75 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
         centerTitle: true,
       ),
       drawer: Drawer( 
-  child: ListView(
-    padding: EdgeInsets.zero,
-    children: <Widget>[
-      DrawerHeader(
-        decoration: BoxDecoration(
-          color: AppColors.primary,
-        ),
-        child: Text(
-          'Menu',
-          style: TextStyle(
-            color: AppColors.white,
-            fontSize: 24,
-          ),
-        ),
-      ),
-      ListTile(
-        leading: Icon(Icons.home),  
-        // Add the home icon here
-        title: Text('Home'),
-        onTap: () {
-
-          // Handle navigation
-        },
-      ),
-      ListTile(
-        leading: Icon(Icons.report),  // Add the report icon here
-        title: Text('Mis Report'),
-        onTap: () {
-          // Handle navigation
-        },
-      ),
-      ListTile(
-        leading: Icon(Icons.check_circle),  // Add the RR status icon here
-        title: Text('RR Status'),
-        onTap: () {
-          // Handle navigation
-        },
-      ),
-      ListTile(
-        leading: Icon(Icons.print),  // Add the print barcode icon here
-        title: Text('Print barcode'),
-        onTap: () {
-          // Handle navigation
-        },
-      ),
-      ListTile(
-        leading: Icon(Icons.delete),  // Add the delete icon here
-        title: Text('Delete old data'),
-        onTap: () {
-          // Handle navigation
-        },
-      ),
-      ListTile(
-        leading: Icon(Icons.refresh),  // Add the reload icon here
-        title: Text('Reload Masters'),
-        onTap: () {
-          // Handle navigation
-        },
-      ),
-      ListTile(
-        leading: Icon(Icons.exit_to_app),  // Add the logout icon here
-        title: Text('Logout'),
-        onTap: () {
-          // Handle navigation
-        },
-      ),
-    ],
-  ),
-),
+  child:AppDrawer()),
  body: Stack(
         children: [
           // Background Image with Opacity

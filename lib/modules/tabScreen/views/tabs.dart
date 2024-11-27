@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:project/app_drawer.dart';
 import 'package:project/modules/form.dart';
 import 'package:project/modules/home/views/home.dart';
 import 'package:project/modules/scan.dart';
 import 'package:project/modules/tabScreen/prvider/tabs_provider.dart';
 import 'package:project/modules/table.dart';
 import 'package:project/utils/color_extensions.dart';
-import 'package:project/widgets/app_drawer.dart';
 import 'package:provider/provider.dart';
 
 /// TabsProvider to manage the selected tab index

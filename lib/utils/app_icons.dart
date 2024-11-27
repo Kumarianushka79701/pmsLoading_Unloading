@@ -14,6 +14,8 @@ class AppIcons {
   static String unloading = "${baseImagePath}unloading.jpg";
   static String loading = "${baseImagePath}loading.jpg";
   static String prr = "${baseImagePath}prr.jpg";
+  static String logopms = "${baseImagePath}logopms.jpg";
+  
 
   
 

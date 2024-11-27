@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:project/model/parcel.dart';
 import 'package:project/modules/providers/local_database_provider.dart';
@@ -39,6 +38,16 @@ class _TableScreenState extends State<TableScreen> {
           ),
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(_showAllData ? Icons.visibility_off : Icons.visibility),
+            onPressed: () {
+              setState(() {
+                _showAllData = !_showAllData; // Toggle the data display
+              });
+            },
+          ),
+        ],
       ),
       body: Consumer<LocalDatabaseProvider>(
         builder: (context, provider, child) {
@@ -93,41 +102,41 @@ class _TableScreenState extends State<TableScreen> {
                       ),
                       columns: const [
                         DataColumn(label: Text('PRR Number')),
-                          DataColumn(label: Text('Weight of Consignment')),
+                        DataColumn(label: Text('Weight of Consignment')),
                         DataColumn(label: Text('Total Packages')),
-                          DataColumn(label: Text('Current Package Number')),
+                        DataColumn(label: Text('Current Package Number')),
                         DataColumn(label: Text('Destination Station Code')),
-                          DataColumn(label: Text('Source Station Code')),
-                          DataColumn(label: Text('Total Weight')),
-                          DataColumn(label: Text('Commodity Type Code')),
+                        DataColumn(label: Text('Source Station Code')),
+                        DataColumn(label: Text('Total Weight')),
+                        DataColumn(label: Text('Commodity Type Code')),
                         DataColumn(label: Text('Booking Date')),
-                          DataColumn(label: Text('Chargeable Weight for Current Package')),
-                          DataColumn(label: Text('Total Chargeable Weight')),
-                          DataColumn(label: Text('Packaging Description Code')),
-                          DataColumn(label: Text('Train Scale Code')),
-                          DataColumn(label: Text('Rajdhani Flag')),
-                          DataColumn(label: Text('Estimated Unloading Time')),
-                          DataColumn(label: Text('Transshipment Station')),
-                          DataColumn(label: Text('Actions')), // New column for delete button
+                        DataColumn(label: Text('Chargeable Weight for Current Package')),
+                        DataColumn(label: Text('Total Chargeable Weight')),
+                        DataColumn(label: Text('Packaging Description Code')),
+                        DataColumn(label: Text('Train Scale Code')),
+                        DataColumn(label: Text('Rajdhani Flag')),
+                        DataColumn(label: Text('Estimated Unloading Time')),
+                        DataColumn(label: Text('Transshipment Station')),
+                        DataColumn(label: Text('Actions')), // New column for delete button
                       ],
                       rows: tableData.map((data) {
                         return DataRow(cells: [
                           DataCell(Text(data.prrNumber ?? 'N/A')),
                           DataCell(Text(data.weightOfConsignment ?? 'N/A')),
                           DataCell(Text(data.totalPackages ?? 'N/A')),
-                            DataCell(Text(data.currentPackageNumber ?? 'N/A')),
+                          DataCell(Text(data.currentPackageNumber ?? 'N/A')),
                           DataCell(Text(data.destinationStationCode ?? 'N/A')),
-                            DataCell(Text(data.sourceStationCode ?? 'N/A')),
-                            DataCell(Text(data.totalWeight ?? 'N/A')),
-                            DataCell(Text(data.commodityTypeCode ?? 'N/A')),
+                          DataCell(Text(data.sourceStationCode ?? 'N/A')),
+                          DataCell(Text(data.totalWeight ?? 'N/A')),
+                          DataCell(Text(data.commodityTypeCode ?? 'N/A')),
                           DataCell(Text(data.bookingDate ?? 'N/A')),
-                            DataCell(Text(data.chargeableWeightForCurrentPackage ?? 'N/A')),
-                            DataCell(Text(data.totalChargeableWeight ?? 'N/A')),
-                            DataCell(Text(data.packagingDescriptionCode ?? 'N/A')),
-                            DataCell(Text(data.trainScaleCode ?? 'N/A')),
-                            DataCell(Text(data.rajdhaniFlag ?? 'N/A')),
-                            DataCell(Text(data.estimatedUnloadingTime ?? 'N/A')),
-                            DataCell(Text(data.transhipmentStation ?? 'N/A')),
+                          DataCell(Text(data.chargeableWeightForCurrentPackage ?? 'N/A')),
+                          DataCell(Text(data.totalChargeableWeight ?? 'N/A')),
+                          DataCell(Text(data.packagingDescriptionCode ?? 'N/A')),
+                          DataCell(Text(data.trainScaleCode ?? 'N/A')),
+                          DataCell(Text(data.rajdhaniFlag ?? 'N/A')),
+                          DataCell(Text(data.estimatedUnloadingTime ?? 'N/A')),
+                          DataCell(Text(data.transhipmentStation ?? 'N/A')),
                           DataCell(IconButton(
                             icon: const Icon(Icons.delete, color: Colors.red),
                             onPressed: () {
@@ -151,16 +160,16 @@ class _TableScreenState extends State<TableScreen> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
+  floatingActionButton: FloatingActionButton(
         onPressed: () {
           // Insert dummy data
           final dummyData = ParcelData(
             prrNumber: 'PRR12345',
-            weightOfConsignment: '200kg',
-            totalPackages: '5',
-            destinationStationCode: 'DST001',
-            bookingDate: DateTime.now().toString(),
-          );
+      weightOfConsignment: '200kg',
+      totalPackages: '5',
+      destinationStationCode: 'DST001',
+      bookingDate: DateTime.now().toString(),
+    );
           context.read<LocalDatabaseProvider>().insertParcelData(dummyData);
 
           context.read<LocalDatabaseProvider>().notifyListeners();
@@ -171,9 +180,9 @@ class _TableScreenState extends State<TableScreen> {
 
 
 
-        },
-        child: const Icon(Icons.add),
-      ),
+  },
+  child: const Icon(Icons.add),
+),
     );
   }
 }
