@@ -4,10 +4,6 @@ import 'package:project/modules/providers/local_database_provider.dart';
 import 'package:project/utils/color_extensions.dart';
 import 'package:provider/provider.dart';
 
-
-
-
-
 class TableScreen extends StatefulWidget {
   const TableScreen({super.key});
 
@@ -23,36 +19,45 @@ class _TableScreenState extends State<TableScreen> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: () {
-            Scaffold.of(context).openDrawer();
-          },
-        ),
+        // leading: IconButton(
+        //   icon: const Icon(Icons.menu),
+        //   onPressed: () {
+        //     // Scaffold.of(context).openDrawer();
+        //   },
+        // ),
         title: Text(
           'Database',
           style: TextStyle(
-            color: AppColors.white,
+            color: AppColors.black,
             fontWeight: FontWeight.bold,
             fontSize: 22,
           ),
         ),
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: Icon(_showAllData ? Icons.visibility_off : Icons.visibility),
-            onPressed: () {
+          InkWell(
+            onTap: () {
               setState(() {
                 _showAllData = !_showAllData; // Toggle the data display
               });
             },
-          ),
+            child: Text(_showAllData ? "View less" : "View All"),
+          )
+          // IconButton(
+          //   icon: Icon(_showAllData ? Icons.visibility_off : Icons.visibility),
+          //   onPressed: () {
+          //     setState(() {
+          //       _showAllData = !_showAllData; // Toggle the data display
+          //     });
+          //   },
+          // ),
         ],
       ),
       body: Consumer<LocalDatabaseProvider>(
         builder: (context, provider, child) {
           return FutureBuilder<List<ParcelData>>(
-            future: provider.getParcelData(), // Fetch the data from the provider
+            future:
+                provider.getParcelData(), // Fetch the data from the provider
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
@@ -110,14 +115,18 @@ class _TableScreenState extends State<TableScreen> {
                         DataColumn(label: Text('Total Weight')),
                         DataColumn(label: Text('Commodity Type Code')),
                         DataColumn(label: Text('Booking Date')),
-                        DataColumn(label: Text('Chargeable Weight for Current Package')),
+                        DataColumn(
+                            label:
+                                Text('Chargeable Weight for Current Package')),
                         DataColumn(label: Text('Total Chargeable Weight')),
                         DataColumn(label: Text('Packaging Description Code')),
                         DataColumn(label: Text('Train Scale Code')),
                         DataColumn(label: Text('Rajdhani Flag')),
                         DataColumn(label: Text('Estimated Unloading Time')),
                         DataColumn(label: Text('Transshipment Station')),
-                        DataColumn(label: Text('Actions')), // New column for delete button
+                        DataColumn(
+                            label: Text(
+                                'Actions')), // New column for delete button
                       ],
                       rows: tableData.map((data) {
                         return DataRow(cells: [
@@ -130,9 +139,11 @@ class _TableScreenState extends State<TableScreen> {
                           DataCell(Text(data.totalWeight ?? 'N/A')),
                           DataCell(Text(data.commodityTypeCode ?? 'N/A')),
                           DataCell(Text(data.bookingDate ?? 'N/A')),
-                          DataCell(Text(data.chargeableWeightForCurrentPackage ?? 'N/A')),
+                          DataCell(Text(
+                              data.chargeableWeightForCurrentPackage ?? 'N/A')),
                           DataCell(Text(data.totalChargeableWeight ?? 'N/A')),
-                          DataCell(Text(data.packagingDescriptionCode ?? 'N/A')),
+                          DataCell(
+                              Text(data.packagingDescriptionCode ?? 'N/A')),
                           DataCell(Text(data.trainScaleCode ?? 'N/A')),
                           DataCell(Text(data.rajdhaniFlag ?? 'N/A')),
                           DataCell(Text(data.estimatedUnloadingTime ?? 'N/A')),
@@ -160,29 +171,22 @@ class _TableScreenState extends State<TableScreen> {
           );
         },
       ),
-  floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
         onPressed: () {
           // Insert dummy data
           final dummyData = ParcelData(
             prrNumber: 'PRR12345',
-      weightOfConsignment: '200kg',
-      totalPackages: '5',
-      destinationStationCode: 'DST001',
-      bookingDate: DateTime.now().toString(),
-    );
+            weightOfConsignment: '200kg',
+            totalPackages: '5',
+            destinationStationCode: 'DST001',
+            bookingDate: DateTime.now().toString(),
+          );
           context.read<LocalDatabaseProvider>().insertParcelData(dummyData);
 
           context.read<LocalDatabaseProvider>().notifyListeners();
-
-
-
-
-
-
-
-  },
-  child: const Icon(Icons.add),
-),
+        },
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }

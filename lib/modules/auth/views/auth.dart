@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project/modules/auth/provider/auth_provider.dart';
+import 'package:project/utils/app_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:project/modules/tabScreen/views/tabs.dart';
 import 'package:project/utils/color_extensions.dart';
@@ -34,20 +35,25 @@ class AuthScreen extends StatelessWidget {
                       ),
                     ),
                   Text(
-                    'Login here',
+                    'Login Here',
                     style: Theme.of(context).textTheme.headlineLarge!.copyWith(
                       color: AppColors.primary,
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Text(
-                    'Welcome back you\'ve \nbeen missed',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: AppColors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w900,
-                    ),
+                  // Text(
+                  //   'Welcome back you\'ve \nbeen missed',
+                  //   textAlign: TextAlign.center,
+                  //   style: TextStyle(
+                  //     color: AppColors.black,
+                  //     fontSize: 18,
+                  //     fontWeight: FontWeight.w900,
+                  //   ),
+                  // ),
+
+                  Image.asset(
+                    AppIcons.logopms,
+                    fit: BoxFit.cover,
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
@@ -119,7 +125,7 @@ class AuthScreen extends StatelessWidget {
                             ),
                             onPressed: () {
                               // Call the login method from the AuthProvider
-                              authProvider.login('userId', 'password', 'stationCode');
+                              authProvider.login('AT', 'AT', 'NDLS');
                               if (authProvider.isAuthenticated) {
                                 Navigator.pushReplacement(
                                   context,

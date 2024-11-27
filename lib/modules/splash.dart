@@ -52,7 +52,7 @@ class _SplashScreenState extends State<SplashScreen>
                 duration: const Duration(milliseconds: 1000),
                 builder: (BuildContext context, double value, Widget? child) {
                   return Image.asset(
-                    AppIcons.logo,
+                    AppIcons.logopms,
                     fit: BoxFit.cover,
                     width: value,
                   );

@@ -104,11 +104,11 @@ class _LoadigScreenState extends State<LoadigScreen> {
         title: Text('Loading Summary',),
         backgroundColor: Colors.green[700],
         actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child:
-                Image.asset(AppIcons.pmsLogoTwo), // Replace with your logo asset
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child:
+          //       Image.asset(AppIcons.logopms), // Replace with your logo asset
+          // ),
         ],
       ),
       body: Stack(
