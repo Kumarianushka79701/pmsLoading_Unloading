@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:project/modules/auth/views/auth.dart';
+import 'package:project/modules/databseReport/views/table.dart';
 import 'package:project/modules/home/views/home.dart';
 import 'package:project/modules/lodingScreen/loading_screen/loading.dart';
 import 'package:project/routes/app_routes.dart';
-
 
 Route<dynamic> generateRoutes(RouteSettings settings) {
   switch (settings.name) {
@@ -12,7 +12,9 @@ Route<dynamic> generateRoutes(RouteSettings settings) {
     case Routes.LOGIN:
       return MaterialPageRoute(builder: (_) => const AuthScreen());
     case Routes.LOADING_SCREEN:
-      return MaterialPageRoute(builder: (_) =>  LoadigScreen());
+      return MaterialPageRoute(builder: (_) => LoadigScreen());
+    case Routes.DATABSE_TABLE_SCREEN:
+      return MaterialPageRoute(builder: (_) => const TableScreen());
     default:
       return MaterialPageRoute(
         builder: (_) => Scaffold(

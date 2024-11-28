@@ -53,7 +53,7 @@ class AppDrawer extends StatelessWidget {
         leading: Icon(Icons.check_circle),  // Add the RR status icon here
         title: Text('RR Status'),
         onTap: () {
-                    Navigator.pushNamed(context, Routes.HOME);
+                    Navigator.pushNamed(context, Routes.DATABSE_TABLE_SCREEN);
 
         },
       ),
