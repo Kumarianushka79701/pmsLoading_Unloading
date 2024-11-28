@@ -8,6 +8,12 @@ class AuthProvider with ChangeNotifier {
   bool _isLoading = false;
   String? _errorMessage;
 
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  // final TextEditingController nameController = TextEditingController();
+  // final TextEditingController phoneController = TextEditingController();
+  final TextEditingController stationCodeController = TextEditingController();
+  final TextEditingController userIDController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   bool get isAuthenticated => _isAuthenticated;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;

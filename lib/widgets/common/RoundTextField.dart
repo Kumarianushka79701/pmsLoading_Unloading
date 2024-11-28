@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:project/utils/color_extensions.dart';
+import 'package:project/utils/colors.dart';
 
 class RoundTextField extends StatelessWidget {
   final String hintText;
+  final String? labelText;
   final TextEditingController? controller;
   final TextInputType? keyboardType;
   final bool? obscureText;
-  final Widget? right;
+  final Widget? suffixIcon;
+  final Widget? prefixIcon;
   final FormFieldValidator<String>? validator;
   final FormFieldSetter<String>? onSaved;
   final bool isUpperCase;
@@ -15,10 +18,12 @@ class RoundTextField extends StatelessWidget {
   const RoundTextField({
     super.key,
     required this.hintText,
+    this.labelText,
     this.controller,
     this.keyboardType,
     this.obscureText,
-    this.right,
+    this.suffixIcon,
+    this.prefixIcon,
     this.validator,
     this.onSaved,
     this.isUpperCase = false,
@@ -28,9 +33,8 @@ class RoundTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 80,
-      // margin: const EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(25),
       ),
       child: TextFormField(
         controller: controller,
@@ -54,10 +58,10 @@ class RoundTextField extends StatelessWidget {
           ),
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(
-              color: AppColors.primary,
-              width: 2.0,
+              color: ParcelColors.catalinaBlue,
+              width: 1.0,
             ),
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(20),
             gapPadding: 0,
           ),
           errorBorder: OutlineInputBorder(
@@ -65,23 +69,26 @@ class RoundTextField extends StatelessWidget {
               color: Colors.red[600]!,
               width: 2.0,
             ),
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(25),
           ),
           focusedErrorBorder: OutlineInputBorder(
             borderSide: BorderSide(
               color: Colors.red[600]!,
               width: 2.0,
             ),
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(20),
           ),
           errorStyle: TextStyle(color: Colors.red[600]),
-          floatingLabelBehavior: FloatingLabelBehavior.never,
+          floatingLabelBehavior: FloatingLabelBehavior.auto, // Label floats above when focused
           hintText: hintText,
-          suffixIcon: right,
+          labelText: labelText, // Add label text
+          prefixIcon: prefixIcon, // Add prefix icon
+          suffixIcon: suffixIcon, // Add suffix icon
           hintStyle: TextStyle(
-              color: AppColors.secondaryText,
-              fontSize: 16,
-              fontWeight: FontWeight.w100),
+            color: AppColors.secondaryText,
+            fontSize: 16,
+            fontWeight: FontWeight.w300,
+          ),
         ),
         inputFormatters: isUpperCase
             ? [UpperCaseTextFormatter()] // Apply uppercase formatting if true
