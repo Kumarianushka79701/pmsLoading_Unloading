@@ -7,6 +7,9 @@ import 'collapsible_form.dart'; // Import your collapsible form here
 
 
 class LoadigScreen extends StatefulWidget {
+  const LoadigScreen({super.key});
+
+  
   @override
   _LoadigScreenState createState() => _LoadigScreenState();
 }

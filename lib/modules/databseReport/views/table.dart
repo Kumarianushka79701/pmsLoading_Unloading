@@ -3,6 +3,7 @@ import 'package:project/model/parcel.dart';
 import 'package:project/modules/providers/local_database_provider.dart';
 import 'package:project/utils/color_extensions.dart';
 import 'package:project/utils/colors.dart';
+import 'package:project/widgets/common_app_bar.dart';
 import 'package:project/widgets/text_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -19,42 +20,11 @@ class _TableScreenState extends State<TableScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        // leading: IconButton(
-        //   icon: const Icon(Icons.menu),
-        //   onPressed: () {
-        //     // Scaffold.of(context).openDrawer();
-        //   },
-        // ),
-        title: Text(
-          'Database',
-          style: TextStyle(
-            color: AppColors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
-          ),
-        ),
-        centerTitle: true,
-        actions: [
-          // InkWell(
-          //   onTap: () {
-          //     setState(() {
-          //       _showAllData = !_showAllData; // Toggle the data display
-          //     });
-          //   },
-          //   child: Text(_showAllData ? "View less" : "View All"),
-          // )
-          // // IconButton(
-          // //   icon: Icon(_showAllData ? Icons.visibility_off : Icons.visibility),
-          // //   onPressed: () {
-          // //     setState(() {
-          // //       _showAllData = !_showAllData; // Toggle the data display
-          // //     });
-          // //   },
-          // // ),
-        ],
-      ),
+      appBar: getAppBar(context, title: getTableAppBarTitle(context), onTap: () {
+        Navigator.pop(context);
+      }),
+      
+      
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -222,6 +192,16 @@ class _TableScreenState extends State<TableScreen> {
     );
   }
 }
+
+Widget getTableAppBarTitle(BuildContext context) {
+  
+    return const TextWidget(
+      label: "Table",
+      textColor: ParcelColors.white,
+      fontSize: 18,
+      fontWeight: FontWeight.w700,
+    );
+  }
 
 
 

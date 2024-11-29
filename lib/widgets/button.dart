@@ -4,7 +4,7 @@ import 'package:project/utils/colors.dart';
 
 import 'text_widget.dart';
 
-class AButton extends StatelessWidget {
+class ParcelButton extends StatelessWidget {
   final String label;
   final double fontSize;
   final double borderRadius;
@@ -19,7 +19,7 @@ class AButton extends StatelessWidget {
   final EdgeInsets padding;
   final EdgeInsets margin;
 
-  const AButton(
+  const ParcelButton(
       {Key? key,
       this.label = '',
       this.fontSize = 15,
