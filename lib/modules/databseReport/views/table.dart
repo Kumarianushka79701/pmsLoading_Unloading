@@ -20,21 +20,19 @@ class _TableScreenState extends State<TableScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: getAppBar(context, title: getTableAppBarTitle(context), onTap: () {
+      appBar:
+          getAppBar(context, title: getTableAppBarTitle(context), onTap: () {
         Navigator.pop(context);
       }),
-      
-      
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           Consumer<LocalDatabaseProvider>(
             builder: (context, provider, child) {
               return FutureBuilder<List<ParcelData>>(
-                future:
-                    provider.getParcelData(), // Fetch the data from the provider
+                future: provider
+                    .getParcelData(), // Fetch the data from the provider
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
@@ -44,27 +42,27 @@ class _TableScreenState extends State<TableScreen> {
                     return const Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        
                         children: [
-                          
-                          Text('No data found', style: TextStyle(fontSize: 20.0)),
+                          Text('No data found',
+                              style: TextStyle(fontSize: 20.0)),
                           Text(
                             'Please add some data to see it here',
-                            style: TextStyle(fontSize: 15.0, color: Colors.grey),
+                            style:
+                                TextStyle(fontSize: 15.0, color: Colors.grey),
                           ),
                         ],
                       ),
                     );
                   } else {
                     List<ParcelData> tableData = snapshot.data!;
-          
+
                     if (!_showAllData) {
                       tableData = [tableData.last]; // Show only the latest data
                     } else {
-                      tableData.sort((a, b) =>
-                          b.bookingDate!.compareTo(a.bookingDate!)); // Sort by date
+                      tableData.sort((a, b) => b.bookingDate!
+                          .compareTo(a.bookingDate!)); // Sort by date
                     }
-          
+
                     return Container(
                       padding: const EdgeInsets.all(15.0),
                       child: SingleChildScrollView(
@@ -95,10 +93,11 @@ class _TableScreenState extends State<TableScreen> {
                             DataColumn(label: Text('Commodity Type Code')),
                             DataColumn(label: Text('Booking Date')),
                             DataColumn(
-                                label:
-                                    Text('Chargeable Weight for Current Package')),
+                                label: Text(
+                                    'Chargeable Weight for Current Package')),
                             DataColumn(label: Text('Total Chargeable Weight')),
-                            DataColumn(label: Text('Packaging Description Code')),
+                            DataColumn(
+                                label: Text('Packaging Description Code')),
                             DataColumn(label: Text('Train Scale Code')),
                             DataColumn(label: Text('Rajdhani Flag')),
                             DataColumn(label: Text('Estimated Unloading Time')),
@@ -112,23 +111,29 @@ class _TableScreenState extends State<TableScreen> {
                               DataCell(Text(data.prrNumber ?? 'N/A')),
                               DataCell(Text(data.weightOfConsignment ?? 'N/A')),
                               DataCell(Text(data.totalPackages ?? 'N/A')),
-                              DataCell(Text(data.currentPackageNumber ?? 'N/A')),
-                              DataCell(Text(data.destinationStationCode ?? 'N/A')),
+                              DataCell(
+                                  Text(data.currentPackageNumber ?? 'N/A')),
+                              DataCell(
+                                  Text(data.destinationStationCode ?? 'N/A')),
                               DataCell(Text(data.sourceStationCode ?? 'N/A')),
                               DataCell(Text(data.totalWeight ?? 'N/A')),
                               DataCell(Text(data.commodityTypeCode ?? 'N/A')),
                               DataCell(Text(data.bookingDate ?? 'N/A')),
                               DataCell(Text(
-                                  data.chargeableWeightForCurrentPackage ?? 'N/A')),
-                              DataCell(Text(data.totalChargeableWeight ?? 'N/A')),
+                                  data.chargeableWeightForCurrentPackage ??
+                                      'N/A')),
+                              DataCell(
+                                  Text(data.totalChargeableWeight ?? 'N/A')),
                               DataCell(
                                   Text(data.packagingDescriptionCode ?? 'N/A')),
                               DataCell(Text(data.trainScaleCode ?? 'N/A')),
                               DataCell(Text(data.rajdhaniFlag ?? 'N/A')),
-                              DataCell(Text(data.estimatedUnloadingTime ?? 'N/A')),
+                              DataCell(
+                                  Text(data.estimatedUnloadingTime ?? 'N/A')),
                               DataCell(Text(data.transhipmentStation ?? 'N/A')),
                               DataCell(IconButton(
-                                icon: const Icon(Icons.delete, color: Colors.red),
+                                icon:
+                                    const Icon(Icons.delete, color: Colors.red),
                                 onPressed: () {
                                   provider.deleteParcelData(data);
                                   ScaffoldMessenger.of(context).showSnackBar(
@@ -150,29 +155,32 @@ class _TableScreenState extends State<TableScreen> {
               );
             },
           ),
-
-          
-            InkWell(
+          InkWell(
             onTap: () {
               setState(() {
                 _showAllData = !_showAllData; // Toggle the data display
               });
             },
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: Row(
                 children: [
-                  TextWidget(label:_showAllData ? "View less" : "View All",textColor: ParcelColors.catalinaBlue,fontSize: 20,fontWeight: FontWeight.w700,),
-              const Icon(Icons.arrow_forward,color: ParcelColors.catalinaBlue,),
+                  TextWidget(
+                    label: _showAllData ? "View less" : "View All",
+                    textColor: ParcelColors.catalinaBlue,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  const Icon(
+                    Icons.arrow_forward,
+                    color: ParcelColors.catalinaBlue,
+                  ),
                 ],
               ),
             ),
           ),
-     
         ],
       ),
-
-
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // Insert dummy data
@@ -194,14 +202,13 @@ class _TableScreenState extends State<TableScreen> {
 }
 
 Widget getTableAppBarTitle(BuildContext context) {
-  
-    return const TextWidget(
-      label: "Table",
-      textColor: ParcelColors.white,
-      fontSize: 18,
-      fontWeight: FontWeight.w700,
-    );
-  }
+  return const TextWidget(
+    label: "Table",
+    textColor: ParcelColors.white,
+    fontSize: 18,
+    fontWeight: FontWeight.w700,
+  );
+}
 
 
 
