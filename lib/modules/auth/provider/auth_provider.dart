@@ -18,6 +18,52 @@ class AuthProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
+
+Future<void> signUp(String userId, String password, String stationCode) async {
+  _isLoading = true;
+  _errorMessage = null;
+  notifyListeners();
+
+  Uri url = Uri.parse(
+      'https://parcel.indianrail.gov.in/PMSRestServices/services/PMSStatus/registerUser/');
+
+  Map<String, String> body = {
+    'userid': userId,
+    'password': password,
+    'stncode': stationCode,
+    'strapptype': 'Test',
+  };
+
+  try {
+    final response = await http.post(
+      url,
+      headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8'},
+      body: jsonEncode(body),
+    );
+
+    print('SignUp Response status: ${response.statusCode}');
+    print('SignUp Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+
+      if (responseData == true) {
+        _isAuthenticated = true;
+        await _saveCredentials(userId, password, stationCode);
+      } else {
+        _errorMessage = 'Sign-up failed: Invalid details';
+      }
+    } else {
+      _errorMessage = 'Failed to sign up';
+    }
+  } catch (error) {
+    _errorMessage = 'Error: $error';
+  } finally {
+    _isLoading = false;
+    notifyListeners();
+  }
+}
+
   // Method to authenticate the user
   void authenticate() {
     _isAuthenticated = true;
