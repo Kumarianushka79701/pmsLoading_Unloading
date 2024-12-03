@@ -1,6 +1,3 @@
-
-
-
 import 'package:flutter/material.dart';
 import 'package:project/modules/auth/provider/auth_provider.dart';
 import 'package:project/modules/tabScreen/views/tabs.dart';
@@ -26,7 +23,8 @@ class SignUpScreen extends StatelessWidget {
             children: [
               RoundTextField(
                 hintText: 'User ID',
-                prefixIcon: Icon(Icons.person, color: ParcelColors.catalinaBlue),
+                prefixIcon:
+                    Icon(Icons.person, color: ParcelColors.catalinaBlue),
                 isUpperCase: true,
                 controller: authProvider.userIDController,
                 validator: (value) {
@@ -55,7 +53,8 @@ class SignUpScreen extends StatelessWidget {
               const SizedBox(height: 10),
               RoundTextField(
                 hintText: 'Station Code',
-                prefixIcon: Icon(Icons.location_on, color: ParcelColors.catalinaBlue),
+                prefixIcon:
+                    Icon(Icons.location_on, color: ParcelColors.catalinaBlue),
                 isUpperCase: true,
                 controller: authProvider.stationCodeController,
                 validator: (value) {
@@ -79,18 +78,25 @@ class SignUpScreen extends StatelessWidget {
                 onPressed: () {
                   if (authProvider.formKey.currentState?.validate() ?? false) {
                     final userId = authProvider.userIDController.text.trim();
-                    final password = authProvider.passwordController.text.trim();
-                    final stationCode = authProvider.stationCodeController.text.trim();
+                    final password =
+                        authProvider.passwordController.text.trim();
+                    final stationCode =
+                        authProvider.stationCodeController.text.trim();
 
-                    authProvider.signUp(userId, password, stationCode).then((_) {
+                    authProvider
+                        .signUp(userId, password, stationCode)
+                        .then((_) {
                       if (authProvider.isAuthenticated) {
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => const TabsScreen()),
+                          MaterialPageRoute(
+                              builder: (context) => const TabsScreen()),
                         );
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(authProvider.errorMessage ?? 'Unknown error')),
+                          SnackBar(
+                              content: Text(authProvider.errorMessage ??
+                                  'Unknown error')),
                         );
                       }
                     });
