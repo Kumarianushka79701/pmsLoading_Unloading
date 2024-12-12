@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:project/modules/lodingScreen/loading_screen/collapsible_view.dart';
 import 'package:project/modules/lodingScreen/loading_screen/scan_data.dart';
 import 'package:project/utils/app_icons.dart';
-import 'collapsible_form.dart'; // Import your collapsible form here
-
-
+import 'package:project/utils/colors.dart';
+import 'package:project/widgets/button.dart';
+import 'package:project/widgets/common_app_bar%20copy.dart';
+import 'package:project/widgets/custom_button.dart';
+import 'package:project/widgets/text_widget.dart';
+import '../provider/collapsible_form.dart'; // Import your collapsible form here
 
 class LoadigScreen extends StatefulWidget {
   const LoadigScreen({super.key});
 
-  
   @override
   _LoadigScreenState createState() => _LoadigScreenState();
 }
@@ -66,82 +69,85 @@ class _LoadigScreenState extends State<LoadigScreen> {
     }
   }
 
-  // Method to validate and submit the form
-  void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      // if (_showGuidance && !_isCollapsibleFormValid) {
-      //   // Show validation error for the collapsible form
-      //   ScaffoldMessenger.of(context).showSnackBar(
-      //     SnackBar(content: Text('Please complete the collapsible form')),
-      //   );
-      //   return;
-      // }
-
-      _formKey.currentState!.save();
-
-      // Combine the main form data and collapsible form data
-      Map<String, dynamic> formData = {
-        'scheduledDepDate': _scheduledDepDate,
-        'vehicleType': _vehicleType,
-        'trainNo': _trainNo,
-        'actualLoadDate': _actualLoadDate,
-        ..._collapsibleFormData // Merging collapsible form data
-      };
-
-      // Print the combined form data (this can be used for saving to a database, API call, etc.)
-      print(formData);
-
-      // Navigate to ScanDataScreen after successful form submission
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => ScanDataScreen()),
+void _submitForm() {
+  if (_formKey.currentState!.validate()) {
+    if (_showGuidance && !_isCollapsibleFormValid) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please complete the collapsible form')),
       );
+      return;
     }
+
+    _formKey.currentState!.save();
+
+    Map<String, dynamic> formData = {
+      'scheduledDepDate': _scheduledDepDate ?? "Not provided",
+      'vehicleType': _vehicleType ?? "Not selected",
+      'trainNo': _trainNo ?? "Not entered",
+      'actualLoadDate': _actualLoadDate ?? "Not provided",
+      ..._collapsibleFormData
+    };
+
+    print(formData);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Form submitted successfully!')),
+    );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) =>  ScanDataScreen()),
+    );
   }
+}
 
   @override
   Widget build(BuildContext context) {
-    final size =MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Loading Summary',),
-        backgroundColor: Colors.green[700],
-        actions: [
-          // Padding(
-          //   padding: const EdgeInsets.all(8.0),
-          //   child:
-          //       Image.asset(AppIcons.logopms), // Replace with your logo asset
-          // ),
-        ],
-      ),
-      body: Stack(
-        children: [
-           Positioned.fill(
-          child: Opacity(
-            opacity: 0.1, // Adjust opacity here
-            child: Image.asset(
-              AppIcons.pmsLogoTwo, // Ensure this path is correct
-              fit: BoxFit.cover,
+      appBar: getAppBar(context,
+          title: getLoadingSummaryAppBarTitle(context),
+          actions: [
+            Align(
+              alignment: Alignment.topLeft,
+              child: IconButton(
+                icon: const Icon(Icons.menu),
+                color: ParcelColors.white,
+                onPressed: () {
+                  Scaffold.of(context).openDrawer();
+                },
+              ),
             ),
-          ),
-        ),
-        SizedBox(height:size.height*0.5 ,),
-         Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Container(
-            height:size.height*0.5,
-            color: Colors.white,
-            padding: EdgeInsets.all(8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          ],
+          onTap: () {}),
+      body: SingleChildScrollView(
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: Opacity(
+                opacity: 0.1, // Adjust opacity here
+                child: Image.asset(
+                  AppIcons.pmsLogoTwo,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: size.height * 0.5,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Scheduled Departure
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'Scheduled Dep.',
-                        style: TextStyle(fontSize: 18),
+                      const TextWidget(
+                        label: "Scheduled Dep.",
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        textColor: ParcelColors.black,
                       ),
                       TextButton(
                         onPressed: () => _selectDate(context, true),
@@ -149,10 +155,9 @@ class _LoadigScreenState extends State<LoadigScreen> {
                       ),
                     ],
                   ),
-                       
-                  // Vehicle Type Dropdown
+
                   DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Vehicle Type',
                       border: OutlineInputBorder(),
                     ),
@@ -170,11 +175,11 @@ class _LoadigScreenState extends State<LoadigScreen> {
                     validator: (value) =>
                         value == null ? 'Please select a vehicle type' : null,
                   ),
-                  SizedBox(height: 5),
-                       
+                  const SizedBox(height: 5),
+
                   // Train No Input
                   TextFormField(
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Train No.',
                       border: OutlineInputBorder(),
                     ),
@@ -183,11 +188,16 @@ class _LoadigScreenState extends State<LoadigScreen> {
                     validator: (value) =>
                         value!.isEmpty ? 'Please enter a train number' : null,
                   ),
-                  SizedBox(height: 10),
-                       
+                  const SizedBox(height: 10),
+
                   // Show Guidance Toggle
                   SwitchListTile(
-                    title: Text('Show Guidance '),
+                    title: TextWidget(
+                      label: "Show Guidance",
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    // title: const Text('Show Guidance '),
                     value: _showGuidance,
                     onChanged: (value) {
                       setState(() {
@@ -195,7 +205,7 @@ class _LoadigScreenState extends State<LoadigScreen> {
                       });
                     },
                   ),
-                       
+
                   // Collapsible Form when Toggle is ON
                   if (_showGuidance)
                     CollapsibleForm(
@@ -210,68 +220,66 @@ class _LoadigScreenState extends State<LoadigScreen> {
                         });
                       },
                     ),
-                       
+
                   // Actual Load Date
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'Actual Load Date',
-                        style: TextStyle(fontSize: 18),
+                      const TextWidget(
+                        label: 'Actual Load Date',
+                        textColor: ParcelColors.catalinaBlue,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
                       ),
                       TextButton(
                         onPressed: () => _selectDate(context, false),
-                        child: Text(formatDate(_actualLoadDate)),
+                        child: TextWidget(
+                          label: formatDate(_actualLoadDate),
+                          fontWeight: FontWeight.w400,
+                          textColor: ParcelColors.catalinaBlue,
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
-                       
-                  // Submit and Cancel Buttons
+                  const SizedBox(height: 10),
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      ElevatedButton(
-                        onPressed: _submitForm,
-                        child: const Row(
-                          children: [
-                            Icon(Icons.check),
-                            SizedBox(width: 5),
-                            Text('SUBMIT'),
-                          ],
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                        ),
-                      ),
-                      ElevatedButton(
+                      CustomButtonWidget(
+                        text: 'Submit',
                         onPressed: () {
-                          // Reset or Cancel functionality
+                          _submitForm;
+                        },
+                        suffixIcon: Icons.check,
+                        color: Colors.green,
+                      ),
+                      CustomButtonWidget(
+                        text: 'CANCEL',
+                        onPressed: () {
                           Navigator.pop(context);
                         },
-                        child: Row(
-                          children: [
-                            Icon(Icons.cancel),
-                            SizedBox(width: 5),
-                            Text('CANCEL'),
-                          ],
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                        ),
+                        suffixIcon: Icons.cancel,
+                        color: ParcelColors.redPigment,
                       ),
                     ],
                   ),
                 ],
-            
+              ),
             ),
-          ),
-                   ),
-             
-        
-            
-        ],
-          ),
+          ],
+        ),
+      ),
     );
   }
+}
+
+Widget getLoadingSummaryAppBarTitle(BuildContext context) {
+  return const TextWidget(
+    label: "Loading Summary",
+    textColor: ParcelColors.white,
+    fontSize: 18,
+    fontWeight: FontWeight.w700,
+  );
 }
