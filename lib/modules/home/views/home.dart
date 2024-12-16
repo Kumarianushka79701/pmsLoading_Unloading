@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:project/app_drawer.dart';
 import 'package:project/modules/lodingScreen/loading_screen/loading.dart';
 import 'package:project/modules/databseReport/views/table.dart';
+import 'package:project/modules/reports/views/report_view.dart';
 import 'package:project/utils/app_icons.dart';
 import 'package:project/utils/colors.dart';
 import 'package:project/widgets/common_app_bar%20copy.dart';
@@ -157,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => TableScreen(),
+                                  builder: (context) => ReportView(),
                                 ),
                               );
                               // Action for Reports

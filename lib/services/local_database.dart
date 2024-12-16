@@ -18,55 +18,127 @@ class DatabaseService {
   Future<Database> getDatabase() async {
     final databaseDirPath = await getDatabasesPath();
     final databasePath = join(databaseDirPath, "pms_db.db");
+
     final database = await openDatabase(
       databasePath,
-      version: 1,
+      version: 2, // Increment this version for new upgrades
       onCreate: _createDB,
+      onUpgrade: _onUpgrade,
     );
+
     return database;
   }
 
-  Future _createDB(Database db, int version) async {
+  Future<void> _createDB(Database db, int version) async {
+    print('Creating database schema...');
     await db.execute('''
-        CREATE TABLE parcels (
-            prrNumber TEXT PRIMARY KEY,
-            weightOfConsignment TEXT,
-            totalPackages TEXT,
-            currentPackageNumber TEXT,
-            destinationStationCode TEXT,
-            sourceStationCode TEXT,
-            totalWeight TEXT,
-            commodityTypeCode TEXT,
-            bookingDate TEXT,
-            chargeableWeightForCurrentPackage TEXT,
-            totalChargeableWeight TEXT,
-            packagingDescriptionCode TEXT,
-            trainScaleCode TEXT,
-            rajdhaniFlag TEXT,
-            estimatedUnloadingTime TEXT,
-            transhipmentStation TEXT
-        )
+      CREATE TABLE parcels (
+        prrNumber TEXT PRIMARY KEY,
+        weightOfConsignment TEXT,
+        totalPackages TEXT,
+        currentPackageNumber TEXT,
+        destinationStationCode TEXT,
+        sourceStationCode TEXT,
+        totalWeight TEXT,
+        commodityTypeCode TEXT,
+        bookingDate TEXT,
+        chargeableWeightForCurrentPackage TEXT,
+        totalChargeableWeight TEXT,
+        packagingDescriptionCode TEXT,
+        trainScaleCode TEXT,
+        rajdhaniFlag TEXT,
+        estimatedUnloadingTime TEXT,
+        transhipmentStation TEXT
+      );
     ''');
+
+    await db.execute('''
+      CREATE TABLE login_info (
+        userId TEXT PRIMARY KEY,
+        password TEXT,
+        stationCode TEXT
+      );
+    ''');
+    print('Database schema created.');
   }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    print('Upgrading database from version $oldVersion to $newVersion...');
+    if (oldVersion < 2) {
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS login_info (
+          userId TEXT PRIMARY KEY,
+          password TEXT,
+          stationCode TEXT
+        );
+      ''');
+      print('Table login_info added.');
+    }
+    // Future upgrade logic goes here
+  }
+
+  Future<void> verifyTables() async {
+    final db = await database;
+    final result = await db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'");
+    print('Tables in database: $result');
+  }
+
+  Future<List<Map<String, dynamic>>> getAllLoginInfo() async {
+    final db = await database;
+
+    try {
+      final result = await db.query('login_info');
+      print('Fetched login info: $result');
+      return result;
+    } catch (e) {
+      print('Error fetching login info: $e');
+      return [];
+    }
+  }
+
+Future<void> insertLoginInfo(String userId, String password, String stationCode) async {
+  final db = await database;
+  try {
+    await db.insert(
+      'login_info',
+      {
+        'userId': userId,
+        'password': password,
+        'stationCode': stationCode,
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    print('Login info inserted successfully');
+  } catch (e) {
+    print('Error inserting login info: $e');
+  }
+}
 
   Future<String> addParcel(ParcelData parcel) async {
     final db = await database;
     await db.insert('parcels', parcel.toMap());
-    print('Parcel added successfully $parcel');
+    print('Parcel added successfully: $parcel');
     return parcel.prrNumber!;
   }
 
   Future<List<ParcelData>> getAllParcels() async {
-    final db = await DatabaseService.instance.database;
+    final db = await database;
 
     final result = await db.query('parcels');
-    print('Parcels fetched successfully $result');
+    print('Parcels fetched successfully: $result');
     return result.map((json) => ParcelData.fromMap(json)).toList();
   }
 
   Future<void> clearDatabase() async {
     final db = await database;
     await db.delete('parcels');
-    print('All data clear from the database.');
+    print('All data cleared from the database.');
+  }
+
+  Future<void> deleteDatabase(String databasePath) async {
+    final databaseDirPath = await getDatabasesPath();
+    final databasePath = join(databaseDirPath, "pms_db.db");
+    await deleteDatabase(databasePath);
+    print("Database deleted for testing.");
   }
 }

@@ -164,15 +164,14 @@ class AuthScreen extends StatelessWidget {
 
                                         authProvider
                                             .login(
-                                              authProvider.userIDController.text
-                                                  .trim(),
-                                              authProvider.passwordController
-                                                  .text
-                                                  .trim(),
-                                              authProvider
-                                                  .stationCodeController.text
-                                                  .trim(),
-                                            )
+                                          authProvider.userIDController.text
+                                              .trim(),
+                                          authProvider.passwordController.text
+                                              .trim(),
+                                          authProvider
+                                              .stationCodeController.text
+                                              .trim(),
+                                        )
                                             .then((_) {
                                           if (authProvider.isAuthenticated) {
                                             Navigator.pushReplacement(
@@ -186,9 +185,9 @@ class AuthScreen extends StatelessWidget {
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(
                                               SnackBar(
-                                                content: Text(authProvider
-                                                        .errorMessage ??
-                                                    'Unknown error'),
+                                                content: Text(
+                                                    authProvider.errorMessage ??
+                                                        'Unknown error'),
                                               ),
                                             );
                                           }
@@ -205,10 +204,12 @@ class AuthScreen extends StatelessWidget {
                                         Routes.FORGOT_ACCOUNT_PAGE,
                                       );
                                     },
-                                    child: const Text('Go to Forgot Account Page'),
+                                    child:
+                                        const Text('Go to Forgot Account Page'),
                                   ),
                                   ElevatedButton(
                                     onPressed: () {
+                                      authProvider.passwordController.text.trim();
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
