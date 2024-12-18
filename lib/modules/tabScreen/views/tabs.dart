@@ -31,7 +31,8 @@ class TabsScreen extends StatelessWidget {
             body: _screens[tabsProvider.selectedIndex],
             bottomNavigationBar: Container(
               decoration: BoxDecoration(
-                boxShadow: [
+                boxShadow: 
+                [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
                     spreadRadius: 1,

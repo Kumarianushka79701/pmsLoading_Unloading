@@ -24,7 +24,7 @@ class SignUpScreen extends StatelessWidget {
               RoundTextField(
                 hintText: 'User ID',
                 prefixIcon:
-                    Icon(Icons.person, color: ParcelColors.catalinaBlue),
+                    const Icon(Icons.person, color: ParcelColors.catalinaBlue),
                 isUpperCase: true,
                 controller: authProvider.userIDController,
                 validator: (value) {
@@ -39,7 +39,7 @@ class SignUpScreen extends StatelessWidget {
               const SizedBox(height: 10),
               RoundTextField(
                 hintText: 'Password',
-                prefixIcon: Icon(Icons.lock, color: ParcelColors.catalinaBlue),
+                prefixIcon: const Icon(Icons.lock, color: ParcelColors.catalinaBlue),
                 isUpperCase: true,
                 obscureText: true,
                 controller: authProvider.passwordController,
@@ -54,7 +54,7 @@ class SignUpScreen extends StatelessWidget {
               RoundTextField(
                 hintText: 'Station Code',
                 prefixIcon:
-                    Icon(Icons.location_on, color: ParcelColors.catalinaBlue),
+                    const Icon(Icons.location_on, color: ParcelColors.catalinaBlue),
                 isUpperCase: true,
                 controller: authProvider.stationCodeController,
                 validator: (value) {

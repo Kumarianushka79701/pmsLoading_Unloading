@@ -2,63 +2,58 @@ import 'package:flutter/material.dart';
 import 'package:project/services/local_database.dart';
 
 class ReportView extends StatefulWidget {
-  const ReportView({super.key});
+  const ReportView({Key? key}) : super(key: key);
 
   @override
-  _ReportViewState createState() => _ReportViewState();
+  State<ReportView> createState() => _ReportViewState();
 }
 
 class _ReportViewState extends State<ReportView> {
-  late Future<List<Map<String, dynamic>>> loginInfoFuture;
+  Future<void> _saveLoginInfo() async {
+    await DatabaseService.instance.insertLoginInfo('AT', 'AT', 'NDLS');
+    setState(() {}); // Refresh FutureBuilder
+  }
+
+  Future<void> _debugTables() async {
+    await DatabaseService.instance.verifyTables();
+  }
 
   @override
   void initState() {
     super.initState();
-    loginInfoFuture = DatabaseService.instance.getAllLoginInfo();
-  }
-
-  Future<void> _saveLoginInfo() async {
-    await DatabaseService.instance.insertLoginInfo(
-      'user123',
-      'password123',
-      'ST123',
-    );
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Login info saved successfully!')),
-    );
-
-    // Refresh the FutureBuilder
-    setState(() {
-      loginInfoFuture = DatabaseService.instance.getAllLoginInfo();
-    });
+    _debugTables(); // Logs available tables
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Report View'),
-      ),
+      appBar: AppBar(title: const Text('Report View')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ElevatedButton(
-              onPressed: _saveLoginInfo,
+              onPressed: () async {
+                await _saveLoginInfo();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Login info saved successfully!')),
+                );
+              },
               child: const Text('Save Login Info'),
             ),
             const SizedBox(height: 20),
             Expanded(
               child: FutureBuilder<List<Map<String, dynamic>>>(
-                future: loginInfoFuture,
+                future: DatabaseService.instance.getAllLoginInfo(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(child: Text('No data available. Please add some using the "Save Login Info" button.'));
+                    return const Center(
+                      child: Text('No data available. Add data to see here.'),
+                    );
                   }
 
                   final data = snapshot.data!;
@@ -76,6 +71,7 @@ class _ReportViewState extends State<ReportView> {
                         rows: data.map((row) {
                           return DataRow(
                             cells: [
+                              
                               DataCell(Text(row['userId'] ?? '')),
                               DataCell(Text(row['password'] ?? '')),
                               DataCell(Text(row['stationCode'] ?? '')),

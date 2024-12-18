@@ -155,14 +155,14 @@ class AuthScreen extends StatelessWidget {
                                         strokeWidth: 2.0,
                                       ),
                                     ),
-                                    onPressed: () {
+                                    onPressed: () async {
                                       if (authProvider.formKey.currentState
                                               ?.validate() ??
                                           false) {
                                         authProvider.formKey.currentState
                                             ?.save();
 
-                                        authProvider
+                                        await authProvider
                                             .login(
                                           authProvider.userIDController.text
                                               .trim(),
@@ -172,8 +172,19 @@ class AuthScreen extends StatelessWidget {
                                               .stationCodeController.text
                                               .trim(),
                                         )
-                                            .then((_) {
+                                            .then((_) async {
                                           if (authProvider.isAuthenticated) {
+                                            // Save login data locally or in the database
+                                            await authProvider.saveLoginInfo(
+                                              authProvider.userIDController.text
+                                                  .trim(),
+                                              authProvider.passwordController
+                                                  .text
+                                                  .trim(),
+                                              authProvider
+                                                  .stationCodeController.text
+                                                  .trim(),
+                                            );
                                             Navigator.pushReplacement(
                                               context,
                                               MaterialPageRoute(

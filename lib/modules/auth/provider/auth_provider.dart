@@ -76,6 +76,15 @@ Future<void> signUp(String userId, String password, String stationCode) async {
     _isAuthenticated = false;
     notifyListeners();
   }
+Future<void> saveLoginInfo(String userId, String password, String stationCode) async {
+  // Logic to save data locally or in a database
+  // Example: SharedPreferences or SQLite
+  // Example using SharedPreferences:
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setString('userId', userId);
+  await prefs.setString('password', password);
+  await prefs.setString('stationCode', stationCode);
+}
 
   // Method for logging in
   Future<void> login(String userId, String password, String stationCode) async {

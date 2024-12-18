@@ -11,22 +11,20 @@ class DatabaseService {
   Future<Database> get database async {
     if (_db != null) return _db!;
 
-    _db = await getDatabase();
+    _db = await _initializeDatabase();
     return _db!;
   }
 
-  Future<Database> getDatabase() async {
+  Future<Database> _initializeDatabase() async {
     final databaseDirPath = await getDatabasesPath();
     final databasePath = join(databaseDirPath, "pms_db.db");
 
-    final database = await openDatabase(
+    return openDatabase(
       databasePath,
-      version: 2, // Increment this version for new upgrades
+      version: 3,
       onCreate: _createDB,
       onUpgrade: _onUpgrade,
     );
-
-    return database;
   }
 
   Future<void> _createDB(Database db, int version) async {
@@ -66,26 +64,25 @@ class DatabaseService {
     print('Upgrading database from version $oldVersion to $newVersion...');
     if (oldVersion < 2) {
       await db.execute('''
-        CREATE TABLE IF NOT EXISTS login_info (
-          userId TEXT PRIMARY KEY,
-          password TEXT,
-          stationCode TEXT
-        );
-      ''');
+      CREATE TABLE IF NOT EXISTS login_info (
+        userId TEXT PRIMARY KEY,
+        password TEXT,
+        stationCode TEXT
+      );
+    ''');
       print('Table login_info added.');
     }
-    // Future upgrade logic goes here
   }
 
   Future<void> verifyTables() async {
     final db = await database;
-    final result = await db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'");
+    final result =
+        await db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'");
     print('Tables in database: $result');
   }
 
   Future<List<Map<String, dynamic>>> getAllLoginInfo() async {
     final db = await database;
-
     try {
       final result = await db.query('login_info');
       print('Fetched login info: $result');
@@ -96,49 +93,67 @@ class DatabaseService {
     }
   }
 
-Future<void> insertLoginInfo(String userId, String password, String stationCode) async {
-  final db = await database;
-  try {
-    await db.insert(
-      'login_info',
-      {
-        'userId': userId,
-        'password': password,
-        'stationCode': stationCode,
-      },
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-    print('Login info inserted successfully');
-  } catch (e) {
-    print('Error inserting login info: $e');
+  Future<void> insertLoginInfo(
+      String userId, String password, String stationCode) async {
+    final db = await database;
+    try {
+      await db.insert(
+        'login_info',
+        {
+          'userId': userId,
+          'password': password,
+          'stationCode': stationCode,
+        },
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+      print('Login info inserted successfully');
+    } catch (e) {
+      print('Error inserting login info: $e');
+    }
   }
-}
 
   Future<String> addParcel(ParcelData parcel) async {
     final db = await database;
-    await db.insert('parcels', parcel.toMap());
-    print('Parcel added successfully: $parcel');
-    return parcel.prrNumber!;
+    try {
+      await db.insert('parcels', parcel.toMap());
+      print('Parcel added successfully: $parcel');
+      return parcel.prrNumber!;
+    } catch (e) {
+      print('Error adding parcel: $e');
+      return '';
+    }
   }
 
   Future<List<ParcelData>> getAllParcels() async {
     final db = await database;
-
-    final result = await db.query('parcels');
-    print('Parcels fetched successfully: $result');
-    return result.map((json) => ParcelData.fromMap(json)).toList();
+    try {
+      final result = await db.query('parcels');
+      print('Parcels fetched successfully: $result');
+      return result.map((json) => ParcelData.fromMap(json)).toList();
+    } catch (e) {
+      print('Error fetching parcels: $e');
+      return [];
+    }
   }
 
-  Future<void> clearDatabase() async {
+  Future<void> clearParcels() async {
     final db = await database;
-    await db.delete('parcels');
-    print('All data cleared from the database.');
+    try {
+      await db.delete('parcels');
+      print('All data cleared from the parcels table.');
+    } catch (e) {
+      print('Error clearing parcels table: $e');
+    }
   }
 
-  Future<void> deleteDatabase(String databasePath) async {
+  Future<void> deleteDatabaseFile() async {
     final databaseDirPath = await getDatabasesPath();
     final databasePath = join(databaseDirPath, "pms_db.db");
-    await deleteDatabase(databasePath);
-    print("Database deleted for testing.");
+    try {
+      await deleteDatabase(databasePath);
+      print("Database deleted successfully.");
+    } catch (e) {
+      print('Error deleting database: $e');
+    }
   }
 }
