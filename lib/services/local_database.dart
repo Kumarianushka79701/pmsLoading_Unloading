@@ -27,9 +27,41 @@ class DatabaseService {
     );
   }
 
-  Future<void> _createDB(Database db, int version) async {
-    print('Creating database schema...');
-    await db.execute('''
+Future<void> _createDB(Database db, int version) async {
+  print('Creating database schema...');
+  
+  // ACTUALLOAD Table
+  await db.execute('''
+    CREATE TABLE ACTUALLOAD (
+      trainNumber TEXT,
+      vehicleType TEXT,
+      guardDetails TEXT,
+      loadDetails TEXT,
+      PRIMARY KEY (trainNumber, vehicleType)
+    );
+  ''');
+
+  // userlogins Table
+  await db.execute('''
+    CREATE TABLE userlogins (
+      userId TEXT PRIMARY KEY,
+      password TEXT,
+      role TEXT
+    );
+  ''');
+
+  // scanData Table
+  await db.execute('''
+    CREATE TABLE scanData (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      itemDetails TEXT,
+      source TEXT,
+      destination TEXT,
+      scanTimestamp TEXT
+    );
+  ''');
+//for parcel
+await db.execute('''
       CREATE TABLE parcels (
         prrNumber TEXT PRIMARY KEY,
         weightOfConsignment TEXT,
@@ -49,20 +81,68 @@ class DatabaseService {
         transhipmentStation TEXT
       );
     ''');
+  // loading Table
+  await db.execute('''
+    CREATE TABLE loading (
+      loadingId TEXT PRIMARY KEY,
+      details TEXT,
+      createdBy TEXT,
+      createdDate TEXT
+    );
+  ''');
+// login_info Table
+  await db.execute('''
+    CREATE TABLE IF NOT EXISTS login_info (
+      userId TEXT PRIMARY KEY,
+      password TEXT,
+      stationCode TEXT
+    );
+  ''');
+  // loading_dtl Table
+  await db.execute('''
+    CREATE TABLE loading_dtl (
+      detailId INTEGER PRIMARY KEY AUTOINCREMENT,
+      loadingId TEXT,
+      itemDetails TEXT,
+      FOREIGN KEY (loadingId) REFERENCES loading (loadingId)
+    );
+  ''');
 
-    await db.execute('''
-      CREATE TABLE login_info (
-        userId TEXT PRIMARY KEY,
-        password TEXT,
-        stationCode TEXT
-      );
-    ''');
-    print('Database schema created.');
-  }
+  // addPrrPwb Table
+  await db.execute('''
+    CREATE TABLE addPrrPwb (
+      parcelId TEXT PRIMARY KEY,
+      details TEXT,
+      stationCode TEXT,
+      addedDate TEXT
+    );
+  ''');
+
+  // saveManualData Table
+  await db.execute('''
+    CREATE TABLE saveManualData (
+      dataId INTEGER PRIMARY KEY AUTOINCREMENT,
+      manualEntry TEXT,
+      enteredBy TEXT,
+      entryDate TEXT
+    );
+  ''');
+
+  // ACT_LOADTLS_FALLBACK Table
+  await db.execute('''
+    CREATE TABLE ACT_LOADTLS_FALLBACK (
+      fallbackId INTEGER PRIMARY KEY AUTOINCREMENT,
+      loadDetails TEXT,
+      createdDate TEXT
+    );
+  ''');
+
+  print('Database schema created.');
+}
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     print('Upgrading database from version $oldVersion to $newVersion...');
-    if (oldVersion < 2) {
+    if (oldVersion < 3) {
       await db.execute('''
       CREATE TABLE IF NOT EXISTS login_info (
         userId TEXT PRIMARY KEY,
@@ -80,6 +160,29 @@ class DatabaseService {
         await db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'");
     print('Tables in database: $result');
   }
+Future<List<Map<String, dynamic>>> getTableData(String tableName) async {
+  final db = await database;
+  try {
+    return await db.query(tableName);
+  } catch (e) {
+    print('Error fetching data from $tableName: $e');
+    return [];
+  }
+}
+Future<List<String>> getAllTableNames() async {
+  final db = await database;
+  try {
+    final tables = await db.rawQuery(
+      "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name != 'android_metadata'"
+    );
+    return tables.map((row) => row['name'].toString()).toList();
+  } catch (e) {
+    print('Error fetching table names: $e');
+    return [];
+  }
+}
+
+
 
   Future<List<Map<String, dynamic>>> getAllLoginInfo() async {
     final db = await database;
@@ -157,3 +260,4 @@ class DatabaseService {
     }
   }
 }
+
