@@ -18,17 +18,17 @@ void main() async {
   // Ensure all Flutter bindings are initialized before calling async methods.
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize the LocalDatabaseProvider
-  final localDatabaseProvider = LocalDatabaseProvider();
-  await localDatabaseProvider.init(); // Ensure database is initialized before running the app
-
+ // Ensure database is initialized before running the app
+  WidgetsFlutterBinding.ensureInitialized();
+  final databaseProvider = LocalDatabaseProvider();
+  await databaseProvider.initDatabase();
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => HomeProvider()),
         ChangeNotifierProvider(create: (_) => ScanActivityProvider()),
-        ChangeNotifierProvider(create: (_) => localDatabaseProvider), 
+        ChangeNotifierProvider(create: (_) => LocalDatabaseProvider()), 
         ChangeNotifierProvider(create: (_) => TabsProvider()),
         ChangeNotifierProvider(create: (_) => ParcelProvider()),
         ChangeNotifierProvider(create: (_) => ForgotAccountProvider()),
