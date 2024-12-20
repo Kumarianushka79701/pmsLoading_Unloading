@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project/modules/providers/local_database_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:project/modules/auth/provider/auth_provider.dart';
 import 'package:project/modules/auth/views/registration_view.dart';
@@ -8,6 +9,7 @@ import 'package:project/utils/app_icons.dart';
 import 'package:project/utils/colors.dart';
 import 'package:project/widgets/common/RoundButton.dart';
 import 'package:project/widgets/common/RoundTextField.dart';
+
 
 class AuthScreen extends StatelessWidget {
   const AuthScreen({super.key});
@@ -31,8 +33,8 @@ class AuthScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              Consumer<AuthProvider>(
-                builder: (context, authProvider, _) {
+              Consumer2<AuthProvider,LocalDatabaseProvider>(
+                builder: (context, authProvider,localDatabaseProvider, _) {
                   return SingleChildScrollView(
                     child: SizedBox(
                       height: size.height,
@@ -57,7 +59,7 @@ class AuthScreen extends StatelessWidget {
                                 .textTheme
                                 .headlineLarge!
                                 .copyWith(
-                                    color: ParcelColors.catalinaBlue,
+                                  color: ParcelColors.catalinaBlue,
                                     fontWeight: FontWeight.w700),
                           ),
                           const SizedBox(height: 10),
@@ -135,78 +137,48 @@ class AuthScreen extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 20),
                                   // Login Button
-                                  RoundButton(
-                                    title: Text(
-                                      authProvider.isLoading
-                                          ? 'Logging In...'
-                                          : 'Login',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    isLoading: authProvider.isLoading,
-                                    loadingIndicator: const SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 2.0,
-                                      ),
-                                    ),
-                                    onPressed: () async {
-                                      if (authProvider.formKey.currentState
-                                              ?.validate() ??
-                                          false) {
-                                        authProvider.formKey.currentState
-                                            ?.save();
+                                RoundButton(
+                                title: Text(
+                                  authProvider.isLoading ? 'Logging In...' : 'Login',
+                                  style: const TextStyle(color: Colors.white, fontSize: 20),
+                                ),
+                                isLoading: authProvider.isLoading,
+                                onPressed: () async {
+                                  if (authProvider.formKey.currentState?.validate() ?? false) {
+                                  authProvider.formKey.currentState?.save();
 
-                                        await authProvider
-                                            .login(
-                                          authProvider.userIDController.text
-                                              .trim(),
-                                          authProvider.passwordController.text
-                                              .trim(),
-                                          authProvider
-                                              .stationCodeController.text
-                                              .trim(),
-                                        )
-                                            .then((_) async {
-                                          if (authProvider.isAuthenticated) {
-                                            // Save login data locally or in the database
-                                            await authProvider.saveLoginInfo(
-                                              authProvider.userIDController.text
-                                                  .trim(),
-                                              authProvider.passwordController
-                                                  .text
-                                                  .trim(),
-                                              authProvider
-                                                  .stationCodeController.text
-                                                  .trim(),
-                                            );
-                                            Navigator.pushReplacement(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const TabsScreen(),
-                                              ),
-                                            );
-                                          } else {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              SnackBar(
-                                                content: Text(
-                                                    authProvider.errorMessage ??
-                                                        'Unknown error'),
-                                              ),
-                                            );
-                                          }
-                                        });
-                                      }
-                                    },
-                                  ),
-                                  const SizedBox(height: 20),
+                                  await authProvider.login(
+                                    authProvider.userIDController.text.trim(),
+                                    authProvider.passwordController.text.trim(),
+                                    authProvider.stationCodeController.text.trim(),
+                                  ).then((_) async {
+                                    if (authProvider.isAuthenticated) {
+                                    // Save login data to the database
+                                    await localDatabaseProvider.saveLoginInfo(
+                                      authProvider.userIDController.text.trim(),
+                                      authProvider.passwordController.text.trim(),
+                                      authProvider.stationCodeController.text.trim(),
+                                    );
+
+                                    // Call onLoginButtonClick function
+                                   localDatabaseProvider.onLoginButtonClick(
+                                     authProvider.userIDController.text.trim(),
+                                     authProvider.stationCodeController.text.trim(),
+                                   );
+
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => const TabsScreen()),
+                                    );
+                                    } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(authProvider.errorMessage ?? 'Unknown error')),
+                                    );
+                                    }
+                                  });
+                                  }
+                                },
+                              ),  const SizedBox(height: 20),
                                   // Navigation Buttons
                                   ElevatedButton(
                                     onPressed: () {

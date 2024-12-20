@@ -22,6 +22,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final databaseProvider = LocalDatabaseProvider();
   await databaseProvider.initDatabase();
+
+  // Print all table names
+  await databaseProvider.verifyTables();
+
+  // Print data from tables
+  await databaseProvider.printTableData('parcels');
+  await databaseProvider.printTableData('login_info');
   runApp(
     MultiProvider(
       providers: [
