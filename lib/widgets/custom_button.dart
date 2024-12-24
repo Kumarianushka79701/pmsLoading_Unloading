@@ -12,7 +12,7 @@ class CustomButtonWidget extends StatelessWidget {
   final double? iconSize;
 
   const CustomButtonWidget({
-    Key? key,
+    super.key,
     required this.text,
     required this.onPressed,
     this.prefixIcon,
@@ -22,7 +22,7 @@ class CustomButtonWidget extends StatelessWidget {
     this.borderRadius = 15.0,
     this.padding = const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
     this.iconSize = 24.0,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

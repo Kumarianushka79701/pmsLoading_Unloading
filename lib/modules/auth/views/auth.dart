@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project/modules/providers/local_database_provider.dart';
+import 'package:project/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 import 'package:project/modules/auth/provider/auth_provider.dart';
 import 'package:project/modules/auth/views/registration_view.dart';
@@ -180,29 +181,19 @@ class AuthScreen extends StatelessWidget {
                                 },
                               ),  const SizedBox(height: 20),
                                   // Navigation Buttons
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.pushNamed(
+                                  TextButton(onPressed: () { Navigator.pushNamed(
                                         context,
                                         Routes.FORGOT_ACCOUNT_PAGE,
-                                      );
-                                    },
-                                    child:
-                                        const Text('Go to Forgot Account Page'),
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      authProvider.passwordController.text.trim();
+                                      );  }, child: const Text( 'Forgot Account',style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500),))
+                                                                       ,
+                                  TextButton(onPressed: () { authProvider.passwordController.text.trim();
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) =>
                                               const SignUpScreen(),
                                         ),
-                                      );
-                                    },
-                                    child: const Text('Sign Up'),
-                                  ),
+                                      );  }, child: Text( 'Sign Up',style: const TextStyle(fontSize: 16,fontWeight: FontWeight.w500),)),
                                 ],
                               ),
                             ),

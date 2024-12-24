@@ -554,10 +554,25 @@ class LocalDatabaseProvider with ChangeNotifier {
         },
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-
-      final insertedData = await db.query('userlogins');
     } catch (e) {
       // Handle error
+    }
+  }
+
+  Future<void> onLoginButtonClick(String userId, String password) async {
+    await initDatabase();
+    bool isValidUser = validateUserCredentials(userId, password);
+
+    if (isValidUser) {
+      String stationCode =
+        "NDLS"; // Example, get this from your validation logic
+      try {
+      await insertLoginInfo(userId, password, stationCode);
+      } catch (e) {
+      // Handle error
+      }
+    } else {
+      // Handle invalid login
     }
   }
 
@@ -589,16 +604,5 @@ class LocalDatabaseProvider with ChangeNotifier {
     );
   }
 
-  Future<void> onLoginButtonClick(String userId, String password) async {
-    await initDatabase();
-    bool isValidUser = validateUserCredentials(userId, password);
-
-    if (isValidUser) {
-      String stationCode =
-          "ST001"; // Example, get this from your validation logic
-      await insertLoginInfo(userId, password, stationCode);
-    } else {
-      // Handle invalid login
-    }
-  }
+  
 }
