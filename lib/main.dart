@@ -18,7 +18,7 @@ void main() async {
   // Ensure all Flutter bindings are initialized before calling async methods.
   WidgetsFlutterBinding.ensureInitialized();
 
- // Ensure database is initialized before running the app
+  // Ensure database is initialized before running the app
   WidgetsFlutterBinding.ensureInitialized();
   final databaseProvider = LocalDatabaseProvider();
   await databaseProvider.initDatabase();
@@ -28,20 +28,37 @@ void main() async {
 
   // Print data from tables
   await databaseProvider.printTableData('parcels');
-  await databaseProvider.printTableData('login_info');
+  await databaseProvider.printTableData('ACTUALLOAD');
+  await databaseProvider.printTableData('userlogins');
+  await databaseProvider.printTableData('loading');
+  await databaseProvider.printTableData('loading_dtl');
+  await databaseProvider.printTableData('addPrrPwb');
+  await databaseProvider.printTableData('saveManualData');
+  await databaseProvider.printTableData('ACT_LOADTLS_FALLBACK');
+  await databaseProvider.printTableData('OFFLINE_SUMMARY_DTLS');
+  await databaseProvider.printTableData('M_STN');
+  await databaseProvider.printTableData('M_TRAIN');
+  await databaseProvider.printTableData('M_TRNDTLS');
+  await databaseProvider.printTableData('M_USERID');
+  await databaseProvider.printTableData('M_RLY');
+  await databaseProvider.printTableData('M_PLATFORM');
+  await databaseProvider.printTableData('M_WAGTYPE');
+  await databaseProvider.printTableData('M_PKG_DESC');
+  await databaseProvider.printTableData('M_PKGCONDN');
+  await databaseProvider.printTableData('M_WAGON');
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => HomeProvider()),
         ChangeNotifierProvider(create: (_) => ScanActivityProvider()),
-        ChangeNotifierProvider(create: (_) => LocalDatabaseProvider()), 
+        ChangeNotifierProvider(create: (_) => LocalDatabaseProvider()),
         ChangeNotifierProvider(create: (_) => TabsProvider()),
         ChangeNotifierProvider(create: (_) => ParcelProvider()),
         ChangeNotifierProvider(create: (_) => ForgotAccountProvider()),
         ChangeNotifierProvider(create: (_) => LoadingProvider()),
-        ChangeNotifierProvider(create: (_)=> CollapsibleFormProvider())
-        
+        ChangeNotifierProvider(create: (_) => CollapsibleFormProvider())
       ],
       child: MyApp(),
     ),
@@ -53,8 +70,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-       initialRoute: Routes.SPLASH,
-          onGenerateRoute: AppPages.generateRoutes,
+      initialRoute: Routes.SPLASH,
+      onGenerateRoute: AppPages.generateRoutes,
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
