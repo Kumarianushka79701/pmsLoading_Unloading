@@ -565,11 +565,11 @@ class LocalDatabaseProvider with ChangeNotifier {
 
     if (isValidUser) {
       String stationCode =
-        "NDLS"; // Example, get this from your validation logic
+          "NDLS"; // Example, get this from your validation logic
       try {
-      await insertLoginInfo(userId, password, stationCode);
+        await insertLoginInfo(userId, password, stationCode);
       } catch (e) {
-      // Handle error
+        // Handle error
       }
     } else {
       // Handle invalid login
@@ -589,20 +589,42 @@ class LocalDatabaseProvider with ChangeNotifier {
     return false;
   }
 
-  Future<void> saveLoginInfo(
-      String userId, String password, String stationCode) async {
-    final db = await database;
-    await db?.insert(
-      'userlogins',
-      {
-        'user_id': userId,
-        'password': password,
-        'station_code': stationCode,
-      },
-      conflictAlgorithm: ConflictAlgorithm
-          .replace, // to replace existing record with the same id
+  void onLoginSuccess(String userId, String password, String stationCode) {
+    final localDatabaseProvider = LocalDatabaseProvider();
+    localDatabaseProvider.saveLoginInfo(
+      userId: userId,
+      password: password,
+      stationCode: stationCode,
     );
   }
 
-  
+  // Save login info to userLogins table
+  Future<void> saveLoginInfo({
+    required String userId,
+    required String password,
+    required String stationCode,
+  }) async {
+    final db = await initDatabase();
+    if (db != null) {
+      try {
+        String hashedPassword = hashPassword(password);
+
+        await db.insert(
+          'userlogins',
+          {
+            'userId': userId,
+            'password': hashedPassword,
+            'stationCode': stationCode,
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+
+        debugPrint("Login info saved for userId: $userId");
+      } catch (e) {
+        debugPrint("Error saving login info: $e");
+      }
+    } else {
+      debugPrint("Database is not initialized.");
+    }
+  }
 }

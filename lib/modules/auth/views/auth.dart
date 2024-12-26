@@ -34,8 +34,8 @@ class AuthScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              Consumer2<AuthProvider,LocalDatabaseProvider>(
-                builder: (context, authProvider,localDatabaseProvider, _) {
+              Consumer2<AuthProvider, LocalDatabaseProvider>(
+                builder: (context, authProvider, localDatabaseProvider, _) {
                   return SingleChildScrollView(
                     child: SizedBox(
                       height: size.height,
@@ -60,7 +60,7 @@ class AuthScreen extends StatelessWidget {
                                 .textTheme
                                 .headlineLarge!
                                 .copyWith(
-                                  color: ParcelColors.catalinaBlue,
+                                    color: ParcelColors.catalinaBlue,
                                     fontWeight: FontWeight.w700),
                           ),
                           const SizedBox(height: 10),
@@ -138,62 +138,55 @@ class AuthScreen extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 20),
                                   // Login Button
-                                RoundButton(
-                                title: Text(
-                                  authProvider.isLoading ? 'Logging In...' : 'Login',
-                                  style: const TextStyle(color: Colors.white, fontSize: 20),
-                                ),
-                                isLoading: authProvider.isLoading,
-                                onPressed: () async {
-                                  if (authProvider.formKey.currentState?.validate() ?? false) {
-                                  authProvider.formKey.currentState?.save();
-
-                                  await authProvider.login(
-                                    authProvider.userIDController.text.trim(),
-                                    authProvider.passwordController.text.trim(),
-                                    authProvider.stationCodeController.text.trim(),
-                                  ).then((_) async {
-                                    if (authProvider.isAuthenticated) {
-                                    // Save login data to the database
-                                    await localDatabaseProvider.saveLoginInfo(
-                                      authProvider.userIDController.text.trim(),
-                                      authProvider.passwordController.text.trim(),
-                                      authProvider.stationCodeController.text.trim(),
-                                    );
-
-                                    // Call onLoginButtonClick function
-                                   localDatabaseProvider.onLoginButtonClick(
-                                     authProvider.userIDController.text.trim(),
-                                     authProvider.stationCodeController.text.trim(),
-                                   );
-
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => const TabsScreen()),
-                                    );
-                                    } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text(authProvider.errorMessage ?? 'Unknown error')),
-                                    );
-                                    }
-                                  });
-                                  }
-                                },
-                              ),  const SizedBox(height: 20),
+                                  RoundButton(
+                                    title: Text(
+                                      authProvider.isLoading
+                                          ? 'Logging In...'
+                                          : 'Login',
+                                      style: const TextStyle(
+                                          color: Colors.white, fontSize: 20),
+                                    ),
+                                    isLoading: authProvider.isLoading,
+                                    onPressed: authProvider.isLoading
+                                        ? () {}
+                                        : () => handleLogin(
+                                            context,
+                                            authProvider,
+                                            localDatabaseProvider),
+                                  ),
+                                  const SizedBox(height: 20),
                                   // Navigation Buttons
-                                  TextButton(onPressed: () { Navigator.pushNamed(
-                                        context,
-                                        Routes.FORGOT_ACCOUNT_PAGE,
-                                      );  }, child: const Text( 'Forgot Account',style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500),))
-                                                                       ,
-                                  TextButton(onPressed: () { authProvider.passwordController.text.trim();
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              const SignUpScreen(),
-                                        ),
-                                      );  }, child: Text( 'Sign Up',style: const TextStyle(fontSize: 16,fontWeight: FontWeight.w500),)),
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pushNamed(
+                                          context,
+                                          Routes.FORGOT_ACCOUNT_PAGE,
+                                        );
+                                      },
+                                      child: const Text(
+                                        'Forgot Account',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500),
+                                      )),
+                                  TextButton(
+                                      onPressed: () {
+                                        authProvider.passwordController.text
+                                            .trim();
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const SignUpScreen(),
+                                          ),
+                                        );
+                                      },
+                                      child: Text(
+                                        'Sign Up',
+                                        style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500),
+                                      )),
                                 ],
                               ),
                             ),
@@ -209,5 +202,30 @@ class AuthScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> handleLogin(BuildContext context, AuthProvider authProvider,
+      LocalDatabaseProvider localDatabaseProvider) async {
+    try {
+      // Call saveLoginInfo with named arguments
+      await localDatabaseProvider.saveLoginInfo(
+        userId: authProvider.userIDController.text,
+        password: authProvider.passwordController.text,
+        stationCode: authProvider.stationCodeController.text,
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                TabsScreen()), // Replace TabScreen with your target screen
+      );
+    } catch (e) {
+      debugPrint("Error during login: $e");
+    }
+  }
+
+  void showErrorMessage(BuildContext context, String message) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 }
