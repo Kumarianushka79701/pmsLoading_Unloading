@@ -22,7 +22,7 @@ class AppPages {
       case Routes.LOGIN:
         return MaterialPageRoute(
           settings: setting,
-          builder: (_) => const AuthScreen(),
+          builder: (_) =>  AuthScreen(),
         );
       case Routes.HOME:
         final arguments = setting.arguments as Map<String, dynamic>?; // Use nullable type
@@ -51,7 +51,7 @@ class AppPages {
       default:
         return MaterialPageRoute(
           settings: setting,
-          builder: (_) => const AuthScreen(),
+          builder: (_) =>  AuthScreen(),
         );
     }
   }

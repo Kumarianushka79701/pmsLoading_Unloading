@@ -13,7 +13,7 @@ import 'package:project/widgets/common/RoundTextField.dart';
 
 
 class AuthScreen extends StatelessWidget {
-  const AuthScreen({super.key});
+  AuthScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -138,22 +138,24 @@ class AuthScreen extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 20),
                                   // Login Button
-                                  RoundButton(
-                                    title: Text(
-                                      authProvider.isLoading
-                                          ? 'Logging In...'
-                                          : 'Login',
-                                      style: const TextStyle(
-                                          color: Colors.white, fontSize: 20),
-                                    ),
-                                    isLoading: authProvider.isLoading,
-                                    onPressed: authProvider.isLoading
-                                        ? () {}
-                                        : () => handleLogin(
-                                            context,
-                                            authProvider,
-                                            localDatabaseProvider),
+                                RoundButton(
+                                  title: Text(
+                                    authProvider.isLoading
+                                        ? 'Logging In...'
+                                        : 'Login',
+                                    style: const TextStyle(
+                                        color: Colors.white, fontSize: 20),
                                   ),
+                                  isLoading: authProvider.isLoading,
+                                  onPressed: authProvider.isLoading
+                                      ? () {}
+                                      : () {
+                                          handleLogin(
+                                              context,
+                                              authProvider,
+                                              localDatabaseProvider);
+                                        },
+                                ),
                                   const SizedBox(height: 20),
                                   // Navigation Buttons
                                   TextButton(
@@ -203,29 +205,90 @@ class AuthScreen extends StatelessWidget {
       ),
     );
   }
+// Add predefined credentials
+ String predefinedUserID = "AT";
+ String predefinedPassword = "AT";
+ String predefinedStationCode = "NDLS";
 
-  Future<void> handleLogin(BuildContext context, AuthProvider authProvider,
-      LocalDatabaseProvider localDatabaseProvider) async {
-    try {
-      // Call saveLoginInfo with named arguments
+Future<void> handleLogin(
+    BuildContext context, AuthProvider authProvider, LocalDatabaseProvider localDatabaseProvider) async {
+  try {
+    // Retrieve user input
+    String enteredUserID = authProvider.userIDController.text.trim();
+    String enteredPassword = authProvider.passwordController.text.trim();
+    String enteredStationCode = authProvider.stationCodeController.text.trim();
+
+    // Check if the entered credentials match the predefined credentials
+    if (enteredUserID == predefinedUserID &&
+        enteredPassword == predefinedPassword &&
+        enteredStationCode == predefinedStationCode) {
+      // Save login information locally
       await localDatabaseProvider.saveLoginInfo(
-        userId: authProvider.userIDController.text,
-        password: authProvider.passwordController.text,
-        stationCode: authProvider.stationCodeController.text,
+        userId: enteredUserID,
+        password: enteredPassword,
+        stationCode: enteredStationCode,
       );
+
+      // Navigate to the dashboard
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-            builder: (context) =>
-                TabsScreen()), // Replace TabScreen with your target screen
+        MaterialPageRoute(builder: (context) => TabsScreen()),
       );
-    } catch (e) {
-      debugPrint("Error during login: $e");
+    } else {
+      // Show error message for invalid credentials
+      showErrorMessage(context, "Invalid User ID, Password, or Station Code");
     }
+  } catch (e) {
+    // Handle errors
+    debugPrint("Error during login: $e");
+    showErrorMessage(context, "Login failed. Please try again.");
   }
+}
 
-  void showErrorMessage(BuildContext context, String message) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
-  }
+void showErrorMessage(BuildContext context, String message) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(message)),
+  );
+}
+
+// Future<void> handleLogin(
+//     BuildContext context, AuthProvider authProvider, LocalDatabaseProvider localDatabaseProvider) async {
+//   try {
+//     // Check if all inputs are valid
+//     if (authProvider.userIDController.text.isEmpty ||
+//         authProvider.passwordController.text.isEmpty ||
+//         authProvider.stationCodeController.text.isEmpty) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(content: Text("Please fill in all fields")),
+//       );
+//       return;
+//     }
+
+//     // Save login information locally
+//     await localDatabaseProvider.saveLoginInfo(
+//       userId: authProvider.userIDController.text,
+//       password: authProvider.passwordController.text,
+//       stationCode: authProvider.stationCodeController.text,
+//     );
+
+//     // Navigate to the target screen
+//     Navigator.pushReplacement(
+//       context,
+//       MaterialPageRoute(
+//         builder: (context) => TabsScreen(), // Replace TabsScreen with your target screen
+//       ),
+//     );
+//   } catch (e) {
+//     // Handle errors
+//     debugPrint("Error during login: $e");
+//     ScaffoldMessenger.of(context).showSnackBar(
+//       SnackBar(content: Text("Login failed. Please try again.")),
+//     );
+//   }
+// }
+
+//   void showErrorMessage(BuildContext context, String message) {
+//     ScaffoldMessenger.of(context)
+//         .showSnackBar(SnackBar(content: Text(message)));
+//   }
 }

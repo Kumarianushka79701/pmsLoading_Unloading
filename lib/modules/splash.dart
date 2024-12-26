@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project/modules/auth/views/auth.dart';
+import 'package:project/modules/auth/views/login_option_mode.dart';
 import 'package:project/utils/app_icons.dart';
 import 'package:project/utils/color_extensions.dart';
 
@@ -25,7 +26,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     Future.delayed(Duration(seconds: 3), () {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => AuthScreen()),
+        MaterialPageRoute(builder: (context) => LoginOptionPage()),
       );
     });
   }

@@ -137,4 +137,42 @@ Future<void> saveLoginInfo(String userId, String password, String stationCode) a
     final prefs = await SharedPreferences.getInstance();
     await prefs.setStringList('credentials_$userId', [userId, password, stationCode]);
   }
+  
+  Future<String> runMasterMethod() async {
+  try {
+    // Show loader (replace this with your loader logic)
+    // showLoader();
+
+    // Call the methods sequentially
+    await getWagonMaster();
+    await getUserMasterRest();
+    // await getPlatformMaster();
+    // await getWagTypeAL();
+    // await getRailwayAL();
+    // await getPkgCondnMaster();
+    // await getStationDetailRest();
+    // await getMPkgDesc();
+
+    // Return success after all methods are completed
+    return "success";
+  } catch (e) {
+    // Handle errors and return failure message
+    debugPrint("Error in runMasterMethod: $e");
+    return "failed: Error in service";
+  }
+}
+Future<void> getWagonMaster() async {
+  // Your API or logic here
+  await Future.delayed(Duration(seconds: 1)); // Simulating API call
+  debugPrint("getWagonMaster called");
+}
+
+Future<void> getUserMasterRest() async {
+  // Your API or logic here
+  await Future.delayed(Duration(seconds: 1)); // Simulating API call
+  debugPrint("getUserMasterRest called");
+}
+
+// Repeat similar methods for the other calls...
+
 }
