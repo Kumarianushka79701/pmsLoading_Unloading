@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:project/services/local_database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite/sqflite.dart';
 
 class AuthProvider with ChangeNotifier {
   bool _isAuthenticated = false;
@@ -19,6 +20,8 @@ class AuthProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
+  final String apiBaseUrl = "https://your-api-url.com"; // Replace with your API base URL
+  late Database db;
 
 Future<void> signUp(String userId, String password, String stationCode) async {
   _isLoading = true;
@@ -161,11 +164,46 @@ Future<void> saveLoginInfo(String userId, String password, String stationCode) a
     return "failed: Error in service";
   }
 }
-Future<void> getWagonMaster() async {
-  // Your API or logic here
-  await Future.delayed(Duration(seconds: 1)); // Simulating API call
-  debugPrint("getWagonMaster called");
-}
+ Future<List<dynamic>> getWagonMasterFromAPI(Map<String, dynamic> requestData) async {
+    final response = await http.post(
+      Uri.parse('$apiBaseUrl/getWagonMaster'),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(requestData),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception("Failed to fetch wagon master data");
+    }
+  }
+
+  // Clear and insert data into the database
+  Future<void> getWagonMaster() async {
+    try {
+      Map<String, dynamic> apptypeData = {"APPTYPE": "yourAppType"}; // Replace with actual data
+      Map<String, dynamic> apptypeDatadetail = {"DETAIL": apptypeData};
+
+      // Fetch data from API
+      List<dynamic> responseData = await getWagonMasterFromAPI(apptypeDatadetail);
+
+      // Clear existing table
+      await db.execute('DELETE FROM M_WAGON');
+
+      // Insert new data
+      for (var item in responseData) {
+        await db.insert('M_WAGON', {
+          "CODE": item['code'],
+          "WAGON_TYPE": item['wagon_type'],
+          "CODENAME": item['codename'],
+          "CAPACITY": item['capacity'],
+        });
+      }
+    } catch (e) {
+      throw Exception("Failed to process wagon master data: $e");
+    }
+  }
+
 
 Future<void> getUserMasterRest() async {
   // Your API or logic here
