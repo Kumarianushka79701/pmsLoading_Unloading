@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:project/services/local_database.dart';
+import 'package:http/http.dart' as http;
+import 'package:project/api/urls.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -11,92 +11,26 @@ class AuthProvider with ChangeNotifier {
   String? _errorMessage;
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  // final TextEditingController nameController = TextEditingController();
-  // final TextEditingController phoneController = TextEditingController();
   final TextEditingController stationCodeController = TextEditingController();
   final TextEditingController userIDController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
   bool get isAuthenticated => _isAuthenticated;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  final String apiBaseUrl = "https://your-api-url.com"; // Replace with your API base URL
   late Database db;
 
-Future<void> signUp(String userId, String password, String stationCode) async {
-  _isLoading = true;
-  _errorMessage = null;
-  notifyListeners();
-
-  Uri url = Uri.parse(
-      'https://parcel.indianrail.gov.in/PMSRestServices/services/PMSStatus/registerUser/');
-
-  Map<String, String> body = {
-    'userid': userId,
-    'password': password,
-    'stncode': stationCode,
-    'strapptype': 'Test',
-  };
-
-  try {
-    final response = await http.post(
-      url,
-      headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8'},
-      body: jsonEncode(body),
-    );
-
-    print('SignUp Response status: ${response.statusCode}');
-    print('SignUp Response body: ${response.body}');
-
-    if (response.statusCode == 200) {
-      final responseData = jsonDecode(response.body);
-
-      if (responseData == true) {
-        _isAuthenticated = true;
-        await _saveCredentials(userId, password, stationCode);
-      } else {
-        _errorMessage = 'Sign-up failed: Invalid details';
-      }
-    } else {
-      _errorMessage = 'Failed to sign up';
-    }
-  } catch (error) {
-    _errorMessage = 'Error: $error';
-  } finally {
-    _isLoading = false;
-    notifyListeners();
-  }
-}
-
-  // Method to authenticate the user
-  void authenticate() {
-    _isAuthenticated = true;
+  void setLoading(bool value) {
+    _isLoading = value;
     notifyListeners();
   }
 
-  // Method to log the user out
-  void logout() {
-    _isAuthenticated = false;
-    notifyListeners();
-  }
-Future<void> saveLoginInfo(String userId, String password, String stationCode) async {
-  // Logic to save data locally or in a database
-  // Example: SharedPreferences or SQLite
-  // Example using SharedPreferences:
-  final prefs = await SharedPreferences.getInstance();
-  await prefs.setString('userId', userId);
-  await prefs.setString('password', password);
-  await prefs.setString('stationCode', stationCode);
-}
-
-  // Method for logging in
-  Future<void> login(String userId, String password, String stationCode) async {
-    _isLoading = true;
+  Future<void> signUp(String userId, String password, String stationCode) async {
+    setLoading(true);
     _errorMessage = null;
-    notifyListeners();
 
-    Uri url = Uri.parse(
-        'https://parcel.indianrail.gov.in/PMSRestServices/services/PMSStatus/validateUser/');
+    Uri url = Uri.parse('${AppURLs.signUpURL}/registerUser/');
 
     Map<String, String> body = {
       'userid': userId,
@@ -108,109 +42,188 @@ Future<void> saveLoginInfo(String userId, String password, String stationCode) a
     try {
       final response = await http.post(
         url,
-        headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8'},
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: jsonEncode(body),
       );
 
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
-
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
-        print('Response data: $responseData');
 
         if (responseData == true) {
           _isAuthenticated = true;
           await _saveCredentials(userId, password, stationCode);
         } else {
-          _errorMessage = 'Invalid credentials';
+          _errorMessage = 'Sign-up failed: Invalid details.';
         }
       } else {
-        _errorMessage = 'Failed to login';
+        _errorMessage = 'Failed to sign up. Try again later.';
       }
     } catch (error) {
-      _errorMessage = 'Error: $error';
+      _errorMessage = 'Sign-up error: $error';
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      setLoading(false);
     }
   }
 
-  Future<void> _saveCredentials(String userId, String password, String stationCode) async {
+  Future<void> login(String userId, String password, String stationCode) async {
+    setLoading(true);
+    _errorMessage = null;
+
+    Uri url = Uri.parse('${AppURLs.loginURL}/validateUser/');
+
+    Map<String, String> body = {
+      'userid': userId,
+      'password': password,
+      'stncode': stationCode,
+      'strapptype': 'Test',
+    };
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+
+        if (responseData == true) {
+          _isAuthenticated = true;
+          await _saveCredentials(userId, password, stationCode);
+        } else {
+          _errorMessage = 'Invalid login credentials.';
+        }
+      } else {
+        _errorMessage = 'Failed to log in. Try again later.';
+      }
+    } catch (error) {
+      _errorMessage = 'Login error: $error';
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  Future<void> _saveCredentials(
+      String userId, String password, String stationCode) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setStringList('credentials_$userId', [userId, password, stationCode]);
   }
-  
-  Future<String> runMasterMethod() async {
-  try {
-    // Show loader (replace this with your loader logic)
-    // showLoader();
 
-    // Call the methods sequentially
-    await getWagonMaster();
-    await getUserMasterRest();
-    // await getPlatformMaster();
-    // await getWagTypeAL();
-    // await getRailwayAL();
-    // await getPkgCondnMaster();
-    // await getStationDetailRest();
-    // await getMPkgDesc();
-
-    // Return success after all methods are completed
-    return "success";
-  } catch (e) {
-    // Handle errors and return failure message
-    debugPrint("Error in runMasterMethod: $e");
-    return "failed: Error in service";
-  }
-}
- Future<List<dynamic>> getWagonMasterFromAPI(Map<String, dynamic> requestData) async {
+  Future<List<dynamic>> fetchWagonMasterData(Map<String, dynamic> requestData) async {
     final response = await http.post(
-      Uri.parse('$apiBaseUrl/getWagonMaster'),
-      headers: {"Content-Type": "application/json"},
+      Uri.parse('${AppURLs.wagonMasterUrl}'),
+      headers: {'Content-Type': 'application/json'},
       body: jsonEncode(requestData),
     );
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
-      throw Exception("Failed to fetch wagon master data");
+      throw Exception('Failed to fetch wagon master data.');
     }
   }
 
-  // Clear and insert data into the database
-  Future<void> getWagonMaster() async {
+  Future<void> processWagonMasterData() async {
     try {
-      Map<String, dynamic> apptypeData = {"APPTYPE": "yourAppType"}; // Replace with actual data
-      Map<String, dynamic> apptypeDatadetail = {"DETAIL": apptypeData};
+      Map<String, dynamic> requestData = {'APPTYPE': 'yourAppType'};
+      List<dynamic> responseData = await fetchWagonMasterData(requestData);
 
-      // Fetch data from API
-      List<dynamic> responseData = await getWagonMasterFromAPI(apptypeDatadetail);
-
-      // Clear existing table
       await db.execute('DELETE FROM M_WAGON');
-
-      // Insert new data
       for (var item in responseData) {
         await db.insert('M_WAGON', {
-          "CODE": item['code'],
-          "WAGON_TYPE": item['wagon_type'],
-          "CODENAME": item['codename'],
-          "CAPACITY": item['capacity'],
+          'CODE': item['code'],
+          'WAGON_TYPE': item['wagon_type'],
+          'CODENAME': item['codename'],
+          'CAPACITY': item['capacity'],
         });
       }
     } catch (e) {
-      throw Exception("Failed to process wagon master data: $e");
+      throw Exception('Failed to process wagon master data: $e');
     }
   }
 
+  Future<dynamic> fetchTrainDetails(Map<String, dynamic> credentials) async {
+    final response = await http.post(
+      Uri.parse('${AppURLs.trnDtlsUrl}'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(credentials),
+    );
 
-Future<void> getUserMasterRest() async {
-  // Your API or logic here
-  await Future.delayed(Duration(seconds: 1)); // Simulating API call
-  debugPrint("getUserMasterRest called");
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to fetch train details.');
+    }
+  }
+
+  Future<dynamic> fetchUserMaster(Map<String, dynamic> credentials) async {
+    final response = await http.post(
+      Uri.parse('${AppURLs.userMasterUrl}'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(credentials),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to fetch user master data.');
+    }
+  }
+  Future<String> runMasterMethod() async {
+    try {
+      // Show loader (replace this with your loader logic)
+      // showLoader();
+
+      // Call the methods sequentially
+      // await getWagonMaster();
+      await getUserMasterRest({"username": "AT", "password": "AT"},
+          "requiredString");
+      await fetchTrainDetails({"username": "AT", "password": "AT"});
+      // await getPlatformMaster();
+      // await getWagTypeAL();
+      // await getRailwayAL();
+      // await getPkgCondnMaster();
+      // await getStationDetailRest();
+      // await getMPkgDesc();
+
+      // Return success after all methods are completed
+      return "success";
+    } catch (e) {
+      // Handle errors and return failure message
+      debugPrint("Error in runMasterMethod: $e");
+      return "failed: Error in service";
+    }
+  }
+
+  Future<void> getUserMasterRest(Map<String, dynamic> credentials, String requiredString) async {
+    // Implement the method logic here
+    final response = await http.post(
+      Uri.parse('${AppURLs.userMasterUrl}'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(credentials),
+    );
+
+    if (response.statusCode == 200) {
+      // Process the response data
+      final responseData = jsonDecode(response.body);
+      // Perform any additional operations with responseData if needed
+    } else {
+      throw Exception('Failed to fetch user master data.');
+    }
+  }
+  Future<dynamic> makePostRequest(String url, Map<String, dynamic> body) async {
+  final headers = {'Content-Type': 'application/json'};
+  final response = await http.post(
+    Uri.parse(url),
+    headers: headers,
+    body: jsonEncode(body),
+  );
+  if (response.statusCode == 200) {
+    return jsonDecode(response.body);
+  } else {
+    throw Exception('Failed with status code: ${response.statusCode}');
+  }
 }
-
-// Repeat similar methods for the other calls...
 
 }

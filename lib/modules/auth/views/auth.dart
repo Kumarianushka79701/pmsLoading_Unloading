@@ -15,6 +15,7 @@ import 'package:project/widgets/common/RoundTextField.dart';
 class AuthScreen extends StatelessWidget {
   AuthScreen({super.key});
 
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -139,23 +140,42 @@ class AuthScreen extends StatelessWidget {
                                   const SizedBox(height: 20),
                                   // Login Button
                                 RoundButton(
-                                  title: Text(
-                                    authProvider.isLoading
-                                        ? 'Logging In...'
-                                        : 'Login',
-                                    style: const TextStyle(
-                                        color: Colors.white, fontSize: 20),
-                                  ),
-                                  isLoading: authProvider.isLoading,
-                                  onPressed: authProvider.isLoading
-                                      ? () {}
-                                      : () {
-                                          handleLogin(
-                                              context,
-                                              authProvider,
-                                              localDatabaseProvider);
-                                        },
-                                ),
+  title: Text(
+    authProvider.isLoading ? 'Logging In...' : 'Login',
+    style: const TextStyle(color: Colors.white, fontSize: 20),
+  ),
+  isLoading: authProvider.isLoading,
+  onPressed: authProvider.isLoading
+      ? () {}
+      : () async {
+          authProvider.setLoading(true); // Set loading state
+          try {
+            final result = await authProvider. runMasterMethod();
+            if (result == "success") {
+              // Handle successful execution
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Login successful!")),
+              );
+
+              // Navigate to another screen if required
+              Navigator.pushNamed(context, '/home'); // Replace with your route
+            } else {
+              // Handle failure
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Login failed: $result")),
+              );
+            }
+          } catch (e) {
+            // Handle unexpected errors
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Unexpected error: $e")),
+            );
+          } finally {
+            authProvider.setLoading(false); // Reset loading state
+          }
+        },
+),
+
                                   const SizedBox(height: 20),
                                   // Navigation Buttons
                                   TextButton(
