@@ -150,7 +150,7 @@ class AuthScreen extends StatelessWidget {
       : () async {
           authProvider.setLoading(true); // Set loading state
           try {
-            final result = await authProvider. runMasterMethod();
+            final result = await authProvider. runMasterMethod(context);
             if (result == "success") {
               // Handle successful execution
               ScaffoldMessenger.of(context).showSnackBar(

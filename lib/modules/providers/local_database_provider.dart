@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:project/api/urls.dart';
+import 'package:project/modules/auth/provider/auth_provider.dart';
+import 'package:project/modules/tabScreen/views/tabs.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:project/model/parcel.dart';
@@ -627,4 +630,15 @@ class LocalDatabaseProvider with ChangeNotifier {
       debugPrint("Database is not initialized.");
     }
   }
+ Future<void> insertUserLogin(Map<String, dynamic> data, dynamic instance) async {
+  final db = await instance.database;
+  print("Inserting data: $data");
+  try {
+    await db.insert('userlogins', data);
+    print("Data inserted successfully.");
+  } catch (e) {
+    print("Error inserting data: $e");
+  }
+}
+
 }
