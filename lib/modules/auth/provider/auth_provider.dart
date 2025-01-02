@@ -1,16 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:project/api/urls.dart';
-import 'package:project/modules/providers/local_database_provider.dart';
 import 'package:project/modules/tabScreen/views/tabs.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:intl/intl.dart';
-
 
 // Ensure that DatabaseHelper is defined and imported correctly
 class DatabaseHelper {
@@ -22,14 +17,11 @@ class DatabaseHelper {
   }
 }
 
-
-
 class AuthProvider with ChangeNotifier {
   bool _isAuthenticated = false;
   bool _isLoading = false;
   String? _errorMessage;
-    Database? database;
-
+  Database? database;
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController stationCodeController = TextEditingController();
@@ -40,13 +32,11 @@ class AuthProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  
+  late Database db;
 
-    late Database db;
-
-    Future<void> initializeDatabase() async {
-      db = await _initDatabase();
-    }
+  Future<void> initializeDatabase() async {
+    db = await _initDatabase();
+  }
 
   void setLoading(bool value) {
     _isLoading = value;
@@ -65,7 +55,8 @@ class AuthProvider with ChangeNotifier {
     );
   }
 
-  Future<void> signUp(String userId, String password, String stationCode) async {
+  Future<void> signUp(
+      String userId, String password, String stationCode) async {
     setLoading(true);
     _errorMessage = null;
 
@@ -146,10 +137,12 @@ class AuthProvider with ChangeNotifier {
   Future<void> _saveCredentials(
       String userId, String password, String stationCode) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList('credentials_$userId', [userId, password, stationCode]);
+    await prefs
+        .setStringList('credentials_$userId', [userId, password, stationCode]);
   }
 
-  Future<List<dynamic>> fetchWagonMasterData(Map<String, dynamic> requestData) async {
+  Future<List<dynamic>> fetchWagonMasterData(
+      Map<String, dynamic> requestData) async {
     final response = await http.post(
       Uri.parse('${AppURLs.wagonMasterUrl}'),
       headers: {'Content-Type': 'application/json'},
@@ -209,192 +202,203 @@ class AuthProvider with ChangeNotifier {
       throw Exception('Failed to fetch user master data.');
     }
   }
+
   Future<String> runMasterMethod(BuildContext context) async {
     try {
-      // Show loader (replace this with your loader logic)
-      // showLoader();
+      final Database db = await openDatabase(
+        'platform_master.db',
+        version: 1,
+        onCreate: (Database db, int version) async {
+          await db.execute(
+            'CREATE TABLE M_PLATFORM (CODE TEXT PRIMARY KEY, DETAIL TEXT)',
+          );
 
-      // Call the methods sequentially
-      String strapptype = 'Test'; // Define the variable
+          // Add any other tables required here
+        },
+      );
+      debugPrint("Database initialized.");
+
+      String strapptype = 'Test';
       await getWagonMaster(strapptype);
-      await  getUserMasterRest({"username": "AT", "password": "AT"}, "requiredString", context);
-      // await fetchTrainDetails({"username": "AT", "password": "AT"});
- try {
-    if (db == null) {
-      throw Exception('Database is not initialized.');
-    }
 
-    await getPlatformMaster(db, AppURLs.plateformMasterUrl, {
-      "APPTYPE": "Online",
-    });
-    print('Platform master data fetched successfully.');
-  } catch (e) {
-    print('Error in runMasterMethod: $e');
-  }      // await getWagTypeAL();
+      final apiUrl = AppURLs.plateformMasterUrl;
+      final appTypeDataDetail = {"APPTYPE": "Online"};
+      await getPlatformMaster(db, apiUrl, appTypeDataDetail);
+
+      await getUserMasterRest(
+        {"username": "AT", "password": "AT"},
+        "requiredString",
+        context,
+      );
+
+      // Uncomment additional calls as needed and ensure their dependencies are handled
+      // await fetchTrainDetails({"username": "AT", "password": "AT"});
+      // await getWagTypeAL();
       // await getRailwayAL();
       // await getPkgCondnMaster();
       // await getStationDetailRest();
       // await getMPkgDesc();
 
-      // Return success after all methods are completed
       return "success";
     } catch (e) {
       debugPrint("Error in runMasterMethod: $e");
       return "failed: Error in service";
     }
   }
- Future<void> getWagonMaster(String strapptype) async {
-  const String apiUrl =AppURLs. wagonMasterUrl; // Replace with the actual URL
 
-  final Map<String, dynamic> requestBody = {
-    "DETAIL": {"APPTYPE": strapptype}
-  };
+  Future<void> getWagonMaster(String strapptype) async {
+    const String apiUrl = AppURLs.wagonMasterUrl; // Replace with the actual URL
 
-  try {
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: jsonEncode(requestBody),
-    );
+    final Map<String, dynamic> requestBody = {
+      "DETAIL": {"APPTYPE": strapptype}
+    };
 
-    if (response.statusCode == 200) {
-
-      final List<dynamic> responseData = jsonDecode(response.body);
-      print('API Responsesssss: $responseData');
-
-      await database?.execute('DELETE FROM M_WAGON');
-
-      for (var wagon in responseData) {
-        await database?.insert(
-          'M_WAGON',
-          {
-            'CODE': wagon['code'],
-            'WAGON_TYPE': wagon['wagon_type'],
-            'CODENAME': wagon['codename'],
-            'CAPACITY': wagon['capacity'],
-          },
-          conflictAlgorithm: ConflictAlgorithm.replace,
-        );
-      }
-      print('Data successfully inserted into M_WAGON.');
-    } else {
-      throw Exception('Failed to fetch wagon master data. Status: ${response.statusCode}');
-    }
-  } catch (e) {
-    print('Error in getWagonMaster: $e');
-    throw Exception('Error in fetching wagon master data: $e');
-  }
-}
- Future<void> getUserMasterRest(
-    Map<String, dynamic> credentials, String requiredString, BuildContext context) async {
-  final url = Uri.parse(AppURLs.userMasterUrl);
-
-  try {
-    final response = await http.post(
-      url,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: jsonEncode({
-        "credentials": credentials,
-        "requiredString": requiredString,
-        "detail": {
-          "stncode": "_NDLS",
-          "strapptype": "Online",
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          "Content-Type": "application/json",
         },
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      final responseData = jsonDecode(response.body);
-      print('User Master Response: $responseData');
-
-      // Save response data to UserLogins table
-      final timestamp = DateTime.now().toIso8601String();
-      await DatabaseHelper.instance.insertUserLogin({
-        'username': credentials['username'] ?? 'Unknown',
-        'stncode': "_NDLS",
-        'strapptype': "Online",
-        'timestamp': timestamp,
-      });
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => TabsScreen()),
+        body: jsonEncode(requestBody),
       );
-    } else {
-      throw Exception(
-          'Failed to fetch user master data. Status Code: ${response.statusCode}');
-    }
-  } catch (e) {
-    print('Error in getUserMasterRest: $e');
-    throw Exception('Failed to fetch user master data: $e');
-  }
-}
 
+      if (response.statusCode == 200) {
+        final List<dynamic> responseData = jsonDecode(response.body);
+        print('API Responsesssss: $responseData');
 
-Future<void> getPlatformMaster(Database database, String apiUrl, Map<String, dynamic> appTypeDataDetail) async {
-  print('Starting getPlatformMaster...');
-  try {
-    print('API URL: $apiUrl');
+        await database?.execute('DELETE FROM M_WAGON');
 
-    final response = await http.post(
-      Uri.parse(AppURLs.plateformMasterUrl),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode({
-        "DETAIL": jsonEncode(appTypeDataDetail),
-      }),
-    );
-
-    // Debug response
-    print('Response status code: ${response.statusCode}');
-    print('Response body: ${response.body}');
-
-    if (response.statusCode == 200) {
-      // Parse response data
-      final List<dynamic>? responseData = jsonDecode(response.body) as List<dynamic>?;
-
-      if (responseData == null || responseData.isEmpty) {
-        print('Empty or invalid response data received.');
-        throw Exception('Invalid response format.');
+        for (var wagon in responseData) {
+          await database?.insert(
+            'M_WAGON',
+            {
+              'CODE': wagon['code'],
+              'WAGON_TYPE': wagon['wagon_type'],
+              'CODENAME': wagon['codename'],
+              'CAPACITY': wagon['capacity'],
+            },
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
+        }
+        print('Data successfully inserted into M_WAGON.');
+      } else {
+        throw Exception(
+            'Failed to fetch wagon master data. Status: ${response.statusCode}');
       }
+    } catch (e) {
+      print('Error in getWagonMaster: $e');
+      throw Exception('Error in fetching wagon master data: $e');
+    }
+  }
 
-      print('API Response of platform: $responseData');
+  Future<void> getUserMasterRest(Map<String, dynamic> credentials,
+      String requiredString, BuildContext context) async {
+    final url = Uri.parse(AppURLs.userMasterUrl);
 
-      // Clear the M_PLATFORM table
-      await database.execute('DELETE FROM M_PLATFORM');
-      print('M_PLATFORM table cleared.');
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode({
+          "credentials": credentials,
+          "requiredString": requiredString,
+          "detail": {
+            "stncode": "_NDLS",
+            "strapptype": "Online",
+          },
+        }),
+      );
 
-      // Insert data into the database
-      for (final platform in responseData) {
-        if (platform['code'] == null || platform['detail'] == null) {
-          print('Invalid platform data skipped: $platform');
-          continue;
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        print('User Master Response: $responseData');
+
+        // Save response data to UserLogins table
+        final timestamp = DateTime.now().toIso8601String();
+        await DatabaseHelper.instance.insertUserLogin({
+          'username': credentials['username'] ?? 'Unknown',
+          'stncode': "_NDLS",
+          'strapptype': "Online",
+          'timestamp': timestamp,
+        });
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => TabsScreen()),
+        );
+      } else {
+        throw Exception(
+            'Failed to fetch user master data. Status Code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error in getUserMasterRest: $e');
+      throw Exception('Failed to fetch user master data: $e');
+    }
+  }
+
+  Future<void> getPlatformMaster(Database database, String apiUrl,
+      Map<String, dynamic> appTypeDataDetail) async {
+    print('Starting getPlatformMaster...');
+    try {
+      print('API URL: $apiUrl');
+
+      final requestBody = {
+        "DETAIL": jsonEncode(appTypeDataDetail),
+      };
+
+      print('Request Body: $requestBody');
+
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(requestBody),
+      );
+
+      print('Response status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final List<dynamic>? responseData =
+            jsonDecode(response.body) as List<dynamic>?;
+
+        if (responseData == null || responseData.isEmpty) {
+          print('Empty or invalid response data received.');
+          throw Exception('Invalid response format.');
         }
 
-        await database.insert(
-          'M_PLATFORM',
-          {
-            'CODE': platform['code'],
-            'DETAIL': platform['detail'],
-          },
-          conflictAlgorithm: ConflictAlgorithm.replace,
+        print('API Response of platform: $responseData');
+
+        await database.execute('DELETE FROM M_PLATFORM');
+        print('M_PLATFORM table cleared.');
+
+        for (final platform in responseData) {
+          if (platform['code'] == null || platform['detail'] == null) {
+            print('Invalid platform data skipped: $platform');
+            continue;
+          }
+
+          await database.insert(
+            'M_PLATFORM',
+            {
+              'CODE': platform['code'],
+              'DETAIL': platform['detail'],
+            },
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
+        }
+        print('Data successfully inserted into M_PLATFORM.');
+      } else {
+        throw Exception(
+          'Failed to fetch platform master data. HTTP Status: ${response.statusCode}. Response body: ${response.body}',
         );
       }
-      print('Data successfully inserted into M_PLATFORM.');
-    } else {
-      throw Exception(
-        'Failed to fetch platform master data. HTTP Status: ${response.statusCode}. Response body: ${response.body}',
-      );
+    } catch (e) {
+      print('Error in getPlatformMaster: $e');
+      rethrow;
     }
-  } catch (e) {
-    print('Error in getPlatformMaster: $e');
-    rethrow; // Rethrow to allow upstream handling
   }
-}
-
 }
 //   Future<dynamic> makePostRequest(String url, Map<String, dynamic> body) async {
 //   final headers = {'Content-Type': 'application/json'};
