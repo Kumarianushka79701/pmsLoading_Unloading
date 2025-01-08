@@ -14,11 +14,20 @@ class WagonMaster {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['code'] = this.code;
-    data['capacity'] = this.capacity;
-    data['codename'] = this.codename;
-    data['wagon_type'] = this.wagonType;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['code'] = code;
+    data['capacity'] = capacity;
+    data['codename'] = codename;
+    data['wagon_type'] = wagonType;
     return data;
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'code': code,
+      'capacity': capacity,
+      'codename': codename,
+      'wagon_type': wagonType,
+    };
   }
 }

@@ -5,6 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:project/api/urls.dart';
+import 'package:project/model/WagonTypeAl_model.dart';
+import 'package:project/model/plateform_master_model.dart';
+import 'package:project/model/user_master_rest_model.dart';
+import 'package:project/model/wagon_master_model.dart';
 import 'package:project/modules/tabScreen/views/tabs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
@@ -205,7 +209,7 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<String> runMasterMethod(BuildContext context) async {
+Future<String> runMasterMethod(BuildContext context) async {
     try {
       final Database db = await openDatabase(
         'platform_master.db',
@@ -214,11 +218,8 @@ class AuthProvider with ChangeNotifier {
           await db.execute(
             'CREATE TABLE M_PLATFORM (CODE TEXT PRIMARY KEY, DETAIL TEXT)',
           );
-
-          // Add any other tables required here
         },
       );
-      debugPrint("Database initialized.");
 
       String strapptype = 'Test';
       await getWagonMaster(strapptype);
@@ -227,15 +228,15 @@ class AuthProvider with ChangeNotifier {
       final appTypeDataDetail = {"APPTYPE": "Online"};
       await getPlatformMaster(db, apiUrl, appTypeDataDetail);
 
-      await getUserMasterRest(
-        {"username": "AT", "password": "AT"},
-        "requiredString",
-        context,
-      );
+      // await getUserMasterRest(
+      //   {"username": "AT", "password": "AT"},
+      //   "requiredString",
+      //   context,
+      // );
 
       // Uncomment additional calls as needed and ensure their dependencies are handled
       // await fetchTrainDetails({"username": "AT", "password": "AT"});
-      await getWagTypeAL( {"username": "AT", "password": "AT"});
+      await getWagTypeAL({"username": "AT", "password": "AT"});
       // await getRailwayAL();
       // await getPkgCondnMaster();
       // await getStationDetailRest();
@@ -266,29 +267,27 @@ class AuthProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         final List<dynamic> responseData = jsonDecode(response.body);
-        print('API Responsesssss: $responseData');
+        print('getWagonMaster API Responsesssss: $responseData');
 
         await database?.execute('DELETE FROM M_WAGON');
 
         for (var wagon in responseData) {
           await database?.insert(
             'M_WAGON',
-            {
-              'CODE': wagon['code'],
-              'WAGON_TYPE': wagon['wagon_type'],
-              'CODENAME': wagon['codename'],
-              'CAPACITY': wagon['capacity'],
-            },
+            WagonMaster(
+              code: wagon['code'],
+              wagonType: wagon['wagon_type'],
+              codename: wagon['codename'],
+              capacity: wagon['capacity'],
+            ).toMap(),
             conflictAlgorithm: ConflictAlgorithm.replace,
           );
         }
-        print('Data successfully inserted into M_WAGON.');
       } else {
         throw Exception(
             'Failed to fetch wagon master data. Status: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error in getWagonMaster: $e');
       throw Exception('Error in fetching wagon master data: $e');
     }
   }
@@ -315,9 +314,9 @@ class AuthProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
-        print('User Master Response: $responseData');
+        print('getUserMasterRest Response: $responseData');
 
-        // Save response data to UserLogins table
+
         final timestamp = DateTime.now().toIso8601String();
         await DatabaseHelper.instance.insertUserLogin({
           'username': credentials['username'] ?? 'Unknown',
@@ -335,123 +334,125 @@ class AuthProvider with ChangeNotifier {
             'Failed to fetch user master data. Status Code: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error in getUserMasterRest: $e');
       throw Exception('Failed to fetch user master data: $e');
     }
   }
 
-Future<void> getPlatformMaster(Database database, String apiUrl,
-    Map<String, dynamic> appTypeDataDetail) async {
-  print('Starting getPlatformMaster...');
-  try {
-    print('API URL: $apiUrl');
+  Future<void> getPlatformMaster(Database database, String apiUrl,
+      Map<String, dynamic> appTypeDataDetail) async {
+    print('Starting getPlatformMaster...');
+    try {
+      print('API URL: $apiUrl');
 
-    final requestBody = {
-      "DETAIL": jsonEncode(appTypeDataDetail),
-    };
+      final requestBody = {
+        "DETAIL": jsonEncode(appTypeDataDetail),
+      };
 
-    print('Request Body: $requestBody');
+      print('Request Body: $requestBody');
 
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode(requestBody),
-    );
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(requestBody),
+      );
 
-    print('Response status code: ${response.statusCode}');
-    print('Response body: ${response.body}');
+      print('Response status code2: ${response.statusCode}');
+      print('Response body2: ${response.body}');
 
-    if (response.statusCode == 200) {
-      final List<dynamic>? responseData =
-          jsonDecode(response.body) as List<dynamic>?;
+      if (response.statusCode == 200) {
+        final List<dynamic>? responseData =
+            jsonDecode(response.body) as List<dynamic>?;
 
-      if (responseData == null || responseData.isEmpty) {
-        print('Empty or invalid response data received.');
-        throw Exception('Invalid response format.');
-      }
-
-      print('API Response of platform: $responseData');
-
-      await database.execute('DELETE FROM M_PLATFORM');
-      print('M_PLATFORM table cleared.');
-
-      for (final platform in responseData) {
-        if (platform['code'] == null || platform['detail'] == null) {
-          print('Invalid platform data skipped: $platform');
-          continue;
+        if (responseData == null || responseData.isEmpty) {
+          print('Empty or invalid response data received.');
+          throw Exception('Invalid response format.');
         }
 
-        await database.insert(
-          'M_PLATFORM',
-          {
-            'CODE': platform['code'],
-            'DETAIL': platform['detail'],
-          },
-          conflictAlgorithm: ConflictAlgorithm.replace,
-        );
-      }
-      print('Data successfully inserted into M_PLATFORM.');
-    } else {
-      throw Exception(
-        'Failed to fetch platform master data. HTTP Status: ${response.statusCode}. Response body: ${response.body}',
-      );
-    }
-  } catch (e) {
-    print('Error in getPlatformMaster: $e');
-    rethrow;
-  }
-}
+        print('API Response of platform 2: $responseData');
 
-List<Map<String, dynamic>> _wagTypeData = [];
-String? _error;
+        await database.execute('DELETE FROM M_PLATFORM');
+        print('M_PLATFORM table cleared.');
 
-List<Map<String, dynamic>> get wagTypeData => _wagTypeData;
-String? get error => _error;
+        for (final platform in responseData) {
+          if (platform['code'] == null || platform['detail'] == null) {
+            print('Invalid platform data skipped: $platform');
+            continue;
+          }
 
-Future<void> getWagTypeAL(credentials) async {
-  try {
-    _error = null;
-
-    final requestBody = {
-      "DETAIL": jsonEncode(credentials),
-    };
-
-print("requestBody=${requestBody}");
-    final response = await http
-        .post(
-          Uri.parse(AppURLs.wagtypeALUrl),
-          headers: {"Content-Type": "application/json"},
-          body: jsonEncode(requestBody),
-        );
-    print('Response status code: ${response.statusCode}');
-
-
-    if (response.statusCode == 200) {
-      final decodedBody = jsonDecode(response.body);
-      if (decodedBody is List) {
-        _wagTypeData = List<Map<String, dynamic>>.from(decodedBody);
-        print("object=${response.body}");
+          await database.insert(
+            'M_PLATFORM',
+            {
+              'CODE': platform['code'],
+              'DETAIL': platform['detail'],
+            },
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
+        }
+        print('Data successfully inserted into M_PLATFORM.');
       } else {
-        _error = "Unexpected response format";
+        throw Exception(
+          'Failed to fetch platform master data. HTTP Status: ${response.statusCode}. Response body: ${response.body}',
+        );
       }
-    } else {
-      _error = "Failed: Error in connection getWagTypeAL. Status code: ${response.statusCode}";
+    } catch (e) {
+      print('Error in getPlatformMaster: $e');
+      rethrow;
     }
-  } catch (e) {
-    if (e is FormatException) {
-      _error = "Failed: Malformed response from the server";
-    } else if (e is SocketException) {
-      _error = "Failed: Unable to connect to the server";
-    } else if (e is TimeoutException) {
-      _error = "Failed: Connection timeout";
-    } else {
-      _error = "Failed: Unexpected error occurred";
-    }
-  } finally {
-    notifyListeners();
   }
-}
 
+  List<WagonTypeAl> _wagTypeData = [];
+  String? _error;
+
+  List<WagonTypeAl> get wagTypeData => _wagTypeData;
+  String? get error => _error;
+
+  Future<void> getWagTypeAL(credentials) async {
+    try {
+      _error = null;
+
+      final requestBody = {
+        "DETAIL": jsonEncode(credentials),
+      };
+
+      debugPrint("requestBody=$requestBody");
+      final response = await http.post(
+        Uri.parse(AppURLs.wagtypeALUrl),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(requestBody),
+      );
+      debugPrint('Response status code ANU: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+                final List<dynamic> responseData = jsonDecode(response.body);
+
+              debugPrint('Response status code ANU: $responseData');
+
+        final decodedBody = jsonDecode(response.body);
+        if (decodedBody is List) {
+          _wagTypeData =
+              decodedBody.map((data) => WagonTypeAl.fromJson(data)).toList();
+          debugPrint("object=${response.body}");
+        } else {
+          _error = "Unexpected response format";
+        }
+      } else {
+        _error =
+            "Failed: Error in connection getWagTypeAL. Status code: ${response.statusCode}";
+      }
+    } catch (e) {
+      if (e is FormatException) {
+        _error = "Failed: Malformed response from the server";
+      } else if (e is SocketException) {
+        _error = "Failed: Unable to connect to the server";
+      } else if (e is TimeoutException) {
+        _error = "Failed: Connection timeout";
+      } else {
+        _error = "Failed: Unexpected error occurred";
+      }
+    } finally {
+      notifyListeners();
+    }
+  }
 
 
 

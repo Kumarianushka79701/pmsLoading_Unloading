@@ -10,9 +10,16 @@ class PlatformMaster {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['code'] = this.code;
-    data['detail'] = this.detail;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['code'] = code;
+    data['detail'] = detail;
     return data;
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'code': code,
+      'detail': detail,
+    };
   }
 }
