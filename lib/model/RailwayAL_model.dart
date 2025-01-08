@@ -1,7 +1,7 @@
 
 ////for get railway Rl zone details
 
-class ZoneDetail {
+class RailwayAL {
   final int? zone;
   final String? code;
   final String? detail;
@@ -12,7 +12,7 @@ class ZoneDetail {
   final String? pin;
   final String? serviceTaxRegNo;
 
-  ZoneDetail({
+  RailwayAL({
     this.zone,
     this.code,
     this.detail,
@@ -25,9 +25,9 @@ class ZoneDetail {
   });
 
   // Factory method for JSON deserialization
-  factory ZoneDetail.fromJson(Map<String, dynamic>? json) {
-    if (json == null) return ZoneDetail();
-    return ZoneDetail(
+  factory RailwayAL.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return RailwayAL();
+    return RailwayAL(
       zone: json['zone'] as int?,
       code: json['code'] as String?,
       detail: json['detail'] as String?,
