@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 import 'package:project/auth_services/authServices.dart';
 import 'package:project/modules/auth/provider/auth_provider.dart';
-import 'package:project/modules/auth/views/auth.dart';
 import 'package:project/modules/forgot_account_page/provider/forgot_account_provider.dart';
 import 'package:project/modules/home/provider/homeProvider.dart';
 import 'package:project/modules/lodingScreen/provider/collapsible_form.dart';
@@ -28,7 +26,6 @@ void main() async {
   // Print all table names
   await databaseProvider.verifyTables();
 
-  // Print data from tables
   await databaseProvider.printTableData('parcels');
   await databaseProvider.printTableData('ACTUALLOAD');
   await databaseProvider.printTableData('userlogins');

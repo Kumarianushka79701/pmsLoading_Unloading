@@ -209,7 +209,7 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-Future<String> runMasterMethod(BuildContext context) async {
+  Future<String> runMasterMethod(BuildContext context) async {
     try {
       final Database db = await openDatabase(
         'platform_master.db',
@@ -228,11 +228,11 @@ Future<String> runMasterMethod(BuildContext context) async {
       final appTypeDataDetail = {"APPTYPE": "Online"};
       await getPlatformMaster(db, apiUrl, appTypeDataDetail);
 
-      // await getUserMasterRest(
-      //   {"username": "AT", "password": "AT"},
-      //   "requiredString",
-      //   context,
-      // );
+      await getUserMasterRest(
+        {"username": "AT", "password": "AT"},
+        "requiredString",
+        context,
+      );
 
       // Uncomment additional calls as needed and ensure their dependencies are handled
       // await fetchTrainDetails({"username": "AT", "password": "AT"});
@@ -314,8 +314,7 @@ Future<String> runMasterMethod(BuildContext context) async {
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
-        print('getUserMasterRest Response: $responseData');
-
+        debugPrint('getUserMasterRest Response: $responseData');
 
         final timestamp = DateTime.now().toIso8601String();
         await DatabaseHelper.instance.insertUserLogin({
@@ -325,9 +324,10 @@ Future<String> runMasterMethod(BuildContext context) async {
           'timestamp': timestamp,
         });
 
+        if (!context.mounted) return;
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => TabsScreen()),
+          MaterialPageRoute(builder: (context) => const TabsScreen()),
         );
       } else {
         throw Exception(
@@ -411,10 +411,8 @@ Future<String> runMasterMethod(BuildContext context) async {
       _error = null;
 
       final requestBody = {
-        "DETAIL": jsonEncode(credentials),
+        "DETAIL": jsonEncode({"APPTYPE": "Online"}),
       };
-
-      debugPrint("requestBody=$requestBody");
       final response = await http.post(
         Uri.parse(AppURLs.wagtypeALUrl),
         headers: {"Content-Type": "application/json"},
@@ -423,14 +421,13 @@ Future<String> runMasterMethod(BuildContext context) async {
       debugPrint('Response status code ANU: ${response.statusCode}');
 
       if (response.statusCode == 200) {
-                final List<dynamic> responseData = jsonDecode(response.body);
+        final List<dynamic> responseData = jsonDecode(response.body);
 
-              debugPrint('Response status code ANU: $responseData');
+        debugPrint('Response status code ANUuuuu: ${responseData.length}');
 
-        final decodedBody = jsonDecode(response.body);
-        if (decodedBody is List) {
+        if (responseData is List) {
           _wagTypeData =
-              decodedBody.map((data) => WagonTypeAl.fromJson(data)).toList();
+              responseData.map((data) => WagonTypeAl.fromJson(data)).toList();
           debugPrint("object=${response.body}");
         } else {
           _error = "Unexpected response format";
@@ -453,9 +450,6 @@ Future<String> runMasterMethod(BuildContext context) async {
       notifyListeners();
     }
   }
-
-
-
 }
 //   Future<dynamic> makePostRequest(String url, Map<String, dynamic> body) async {
 //   final headers = {'Content-Type': 'application/json'};
