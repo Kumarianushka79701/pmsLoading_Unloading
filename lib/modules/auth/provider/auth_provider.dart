@@ -237,9 +237,9 @@ class AuthProvider with ChangeNotifier {
       // Uncomment additional calls as needed and ensure their dependencies are handled
       // await fetchTrainDetails({"username": "AT", "password": "AT"});
       await getWagTypeAL({"username": "AT", "password": "AT"});
-      // await getRailwayAL();
-      // await getPkgCondnMaster();
-      // await getStationDetailRest();
+      await getRailwayAL();
+      await getPkgCondnMaster();
+      await getStationDetailRest();
       // await getMPkgDesc();
 
       return "success";
@@ -450,6 +450,83 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> getRailwayAL() async {
+    try {
+      final response = await http.post(
+        Uri.parse(AppURLs.railwayALUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          "DETAIL": "{\"APPTYPE\": \"Online\"}",
+        }),
+      );
+ print('Response railway al1: ${response.body}');
+      if (response.statusCode == 200) {
+        print('Response railway al2: ${response.body}');
+      } else {
+        print('Failed: ${response.statusCode} - ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  Future<void> getPkgCondnMaster() async {
+   
+
+    try {
+      final response = await http.post(
+        Uri.parse(AppURLs.m_pkg_condnUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+      "DETAIL": "{\"APPTYPE\": \"Online\"}",
+    }),
+      );
+        print('Response pkg 1: ${response.body}');
+
+      if (response.statusCode == 200) {
+        // Handle successful response
+        print('Response pkg 2: ${response.body}');
+      } else {
+        // Handle error responses
+        print('Failed: ${response.statusCode} - ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      // Handle exceptions
+      print('Error: $e');
+    }
+  }
+ Future<void> getStationDetailRest() async {
+   
+
+    try {
+      final response = await http.post(
+        Uri.parse(AppURLs.stationdetailUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({ "strWhereCondn": "\tWHERE\tCODE IS NOT NULL AND CRIS_STNNO IS NOT NULL","strOrderBy": "\tORDER BY CRIS_STNNO" }),
+      );
+
+      if (response.statusCode == 200) {
+        // Handle successful response
+        print('Response station detail 2: ${response.body}');
+      } else {
+        // Handle error responses
+        print('Failed: ${response.statusCode} - ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      // Handle exceptions
+      print('Error: $e');
+    }
+  }
+
+
+
 }
 //   Future<dynamic> makePostRequest(String url, Map<String, dynamic> body) async {
 //   final headers = {'Content-Type': 'application/json'};
