@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:project/auth_services/authServices.dart';
 import 'package:project/modules/auth/provider/auth_provider.dart';
 import 'package:project/modules/forgot_account_page/provider/forgot_account_provider.dart';
 import 'package:project/modules/home/provider/homeProvider.dart';
@@ -58,7 +57,6 @@ void main() async {
         ChangeNotifierProvider(create: (_) => ForgotAccountProvider()),
         ChangeNotifierProvider(create: (_) => LoadingProvider()),
         ChangeNotifierProvider(create: (_) => CollapsibleFormProvider()),
-        ChangeNotifierProvider(create: (_) => Authservices())
       ],
       child: MyApp(),
     ),
