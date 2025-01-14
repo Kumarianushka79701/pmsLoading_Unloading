@@ -99,7 +99,7 @@ class TableDetailsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Details for Table: $tableName'),
+        title: Text('Details for Table: $tableName',style: TextStyle(color: ParcelColors.white,fontSize: 18,fontWeight: FontWeight.w700),),
         backgroundColor: Colors.blueAccent, // Enhanced color
       ),
       body: Padding(

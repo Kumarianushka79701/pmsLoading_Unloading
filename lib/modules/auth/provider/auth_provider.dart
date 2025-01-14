@@ -377,14 +377,15 @@ class AuthProvider with ChangeNotifier {
             continue;
           }
 
-          await database.insert(
+          final data = await database.insert(
             'M_PLATFORM',
             {
-              'CODE': platform['code'],
-              'DETAIL': platform['detail'],
+              'CODE': int.tryParse(platform['code']),
+              'DETAIL': platform['detail'].toString(),
             },
             conflictAlgorithm: ConflictAlgorithm.replace,
           );
+          print('Data successfully inserted into M_PLATFORM.${data}');
         }
         print('Data successfully inserted into M_PLATFORM.');
       } else {
@@ -485,10 +486,8 @@ class AuthProvider with ChangeNotifier {
       print('Response pkg 1: ${response.body}');
 
       if (response.statusCode == 200) {
-        // Handle successful response
         print('Response pkg 2: ${response.body}');
       } else {
-        // Handle error responses
         print('Failed: ${response.statusCode} - ${response.reasonPhrase}');
       }
     } catch (e) {

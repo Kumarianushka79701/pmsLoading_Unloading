@@ -237,9 +237,9 @@ class AuthScreen extends StatelessWidget {
   }
 
   // Add predefined credentials
-  String predefinedUserID = "AT";
-  String predefinedPassword = "AT";
-  String predefinedStationCode = "NDLS";
+  final String predefinedUserID = "AT";
+  final String predefinedPassword = "AT";
+  final String predefinedStationCode = "NDLS";
 
   Future<void> handleLogin(BuildContext context, AuthProvider authProvider,
       LocalDatabaseProvider localDatabaseProvider) async {

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:project/api/urls.dart';
-import 'package:project/modules/auth/provider/auth_provider.dart';
-import 'package:project/modules/tabScreen/views/tabs.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:project/model/parcel.dart';
+// ignore: depend_on_referenced_packages
 import 'package:crypto/crypto.dart';
 import 'dart:convert';
 
@@ -98,7 +96,7 @@ class LocalDatabaseProvider with ChangeNotifier {
         rajdhaniFlag TEXT,
         estimatedUnloadingTime TEXT,
         transhipmentStation TEXT
-      )
+    );
     ''');
 
     await db.execute('''
@@ -108,7 +106,7 @@ class LocalDatabaseProvider with ChangeNotifier {
         guardDetails TEXT,
         loadDetails TEXT,
         PRIMARY KEY (trainNumber, vehicleType)
-    );
+  );
   ''');
 
     await db.execute('''
@@ -118,6 +116,7 @@ class LocalDatabaseProvider with ChangeNotifier {
         stationCode TEXT
       );
     ''');
+    debugPrint("userlogins table created successfully.");
 
     await db.execute('''
       CREATE TABLE scanData (
@@ -368,20 +367,20 @@ class LocalDatabaseProvider with ChangeNotifier {
       PASSWORD TEXT,
       INVALID NUMERIC,
       STNCODE TEXT
-    )
+    );
     ''');
 
     await db.execute('''
           CREATE TABLE IF NOT EXISTS M_RLY (
             ZONE TEXT NOT NULL,
             CODE TEXT NOT NULL
-          )
+          );
         ''');
     await db.execute('''
        CREATE TABLE IF NOT EXISTS M_PLATFORM (
       CODE NUMERIC NOT NULL,
       DETAIL TEXT NOT NULL
-    )
+    );
     ''');
     await db.execute('''
      CREATE TABLE IF NOT EXISTS M_WAGTYPE (
@@ -389,7 +388,7 @@ class LocalDatabaseProvider with ChangeNotifier {
       GUAGE TEXT NOT NULL,
       DETAIL TEXT NOT NULL,
       SHORTDET TEXT NOT NULL
-    )
+    );
     ''');
     await db.execute('''
           CREATE TABLE IF NOT EXISTS M_PKG_DESC (
@@ -397,13 +396,13 @@ class LocalDatabaseProvider with ChangeNotifier {
             PKG_DESC TEXT NOT NULL,
             USERID TEXT NOT NULL,
             STNCODE TEXT NOT NULL
-          )
+          );
         ''');
     await db.execute('''
           CREATE TABLE IF NOT EXISTS M_PKGCONDN (
             CODE TEXT NOT NULL,
             DETAIL TEXT NOT NULL
-          )
+          );
         ''');
     await db.execute('''
           CREATE TABLE IF NOT EXISTS M_WAGON (
@@ -411,7 +410,7 @@ class LocalDatabaseProvider with ChangeNotifier {
             WAGON_TYPE TEXT NOT NULL,
             CODENAME TEXT NOT NULL,
             CAPACITY TEXT NOT NULL
-          )
+          );
         ''');
   }
 
@@ -497,7 +496,7 @@ class LocalDatabaseProvider with ChangeNotifier {
     if (db == null) return;
 
     try {
-      final tables = await db.rawQuery(
+      await db.rawQuery(
           "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'");
     } catch (e) {
       // Handle error
@@ -523,7 +522,7 @@ class LocalDatabaseProvider with ChangeNotifier {
     if (db == null) return;
 
     try {
-      final data = await db.query(tableName);
+      await db.query(tableName);
     } catch (e) {
       // Handle error
     }
@@ -541,26 +540,27 @@ class LocalDatabaseProvider with ChangeNotifier {
   }
 
   Future<void> insertLoginInfo(
-      String userId, String password, String stationCode) async {
-    final db = await initDatabase();
-    if (db == null) throw Exception("Database is not initialized.");
-
-    try {
-      final hashedPassword = hashPassword(password);
-
-      await db.insert(
-        'userlogins',
-        {
-          'userId': userId,
-          'password': hashedPassword,
-          'stationCode': stationCode
-        },
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-    } catch (e) {
-      // Handle error
+        String userId, String password, String stationCode) async {
+      final db = await initDatabase();
+      if (db == null) throw Exception("Database is not initialized.");
+  
+      try {
+        final hashedPassword = hashPassword(password);
+  
+        await db.insert(
+          'userlogins',
+          {
+            'userId': userId,
+            'password': hashedPassword,
+            'stationCode': stationCode
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+        debugPrint("Login info inserted for userId: $userId");
+      } catch (e) {
+        debugPrint("Error inserting login info: $e");
+      }
     }
-  }
 
   Future<void> onLoginButtonClick(String userId, String password) async {
     await initDatabase();
@@ -632,12 +632,12 @@ class LocalDatabaseProvider with ChangeNotifier {
   }
  Future<void> insertUserLogin(Map<String, dynamic> data, dynamic instance) async {
   final db = await instance.database;
-  print("Inserting data: $data");
+  debugPrint("Inserting data: $data");
   try {
     await db.insert('userlogins', data);
-    print("Data inserted successfully.");
+    debugPrint("Data inserted successfully.");
   } catch (e) {
-    print("Error inserting data: $e");
+    debugPrint("Error inserting data: $e");
   }
 }
 
