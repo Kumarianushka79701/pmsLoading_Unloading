@@ -235,7 +235,7 @@ class AuthProvider with ChangeNotifier {
       await getPkgCondnMaster();
       await getStationDetailRest();
       await getMPkgDesc();
-
+     
       return "success";
     } catch (e) {
       debugPrint("Error in runMasterMethod: $e");
