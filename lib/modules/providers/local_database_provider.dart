@@ -630,15 +630,6 @@ class LocalDatabaseProvider with ChangeNotifier {
       debugPrint("Database is not initialized.");
     }
   }
- Future<void> insertUserLogin(Map<String, dynamic> data, dynamic instance) async {
-  final db = await instance.database;
-  debugPrint("Inserting data: $data");
-  try {
-    await db.insert('userlogins', data);
-    debugPrint("Data inserted successfully.");
-  } catch (e) {
-    debugPrint("Error inserting data: $e");
-  }
-}
+ 
 
 }

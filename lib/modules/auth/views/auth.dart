@@ -142,48 +142,33 @@ class AuthScreen extends StatelessWidget {
                                     // Login Button
                                     RoundButton(
                                       title: Text(
-                                        authProvider.isLoading
-                                            ? 'Logging In...'
-                                            : 'Login',
-                                        style: const TextStyle(
-                                            color: Colors.white, fontSize: 20),
+                                      authProvider.isLoading
+                                        ? 'Logging In...'
+                                        : 'Login',
+                                      style: const TextStyle(
+                                        color: Colors.white, fontSize: 20),
                                       ),
                                       isLoading: authProvider.isLoading,
                                       onPressed: authProvider.isLoading
-                                          ? () {}
-                                          : () async {
-                                              authProvider.setLoading(true);
-                                              try {
-                                                final result = await authProvider
-                                                    .runMasterMethod(context);
-                                                if (result == "success") {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    SnackBar(
-                                                        content: Text(
-                                                            "Login successful!")),
-                                                  );
-                                                  Navigator.pushNamed(
-                                                      context, '/home');
-                                                } else {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    SnackBar(
-                                                        content: Text(
-                                                            "Login failed: $result")),
-                                                  );
-                                                }
-                                              } catch (e) {
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
-                                                  SnackBar(
-                                                      content: Text(
-                                                          "Unexpected error: $e")),
-                                                );
-                                              } finally {
-                                                authProvider.setLoading(false);
-                                              }
-                                            },
+                                        ? () {}
+                                        : () async {
+                                          authProvider.setLoading(true);
+                                          try {
+                                          await handleLogin(
+                                            context,
+                                            authProvider,
+                                            localDatabaseProvider);
+                                          } catch (e) {
+                                          ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                "Unexpected error: $e")),
+                                          );
+                                          } finally {
+                                          authProvider.setLoading(false);
+                                          }
+                                        },
                                     ),
                                     const SizedBox(height: 20),
                                     // Navigation Buttons
