@@ -14,9 +14,48 @@ import 'package:sqflite/sqflite.dart';
 // Ensure that DatabaseHelper is defined and imported correctly
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
+  static Database? _database;
   DatabaseHelper._init();
 
- 
+  Future<Database> get database async {
+    if (_database != null) return _database!;
+    _database = await _initDatabase();
+    return _database!;
+  }
+
+  Future<Database> _initDatabase() async {
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, 'app_database.db');
+
+    return await openDatabase(
+      path,
+      version: 1,
+      onCreate: (db, version) {
+        // db.execute(
+        //   'CREATE TABLE M_WAGON(CODE TEXT PRIMARY KEY, WAGON_TYPE TEXT, CODENAME TEXT, CAPACITY INTEGER)',
+        // );
+        // db.execute(
+        //   'CREATE TABLE M_PLATFORM(CODE INTEGER PRIMARY KEY, DETAIL TEXT)',
+        // );
+      },
+    );
+  }
+
+  Future<void> insert(String table, Map<String, dynamic> values) async {
+    final db = await database;
+    await db.insert(table, values,
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<void> deleteTable(String table) async {
+    final db = await database;
+    await db.execute('DELETE FROM $table');
+  }
+
+  Future<List<Map<String, dynamic>>> fetchAll(String table) async {
+    final db = await database;
+    return await db.query(table);
+  }
 }
 
 class AuthProvider with ChangeNotifier {
@@ -211,9 +250,18 @@ class AuthProvider with ChangeNotifier {
         'platform_master.db',
         version: 1,
         onCreate: (Database db, int version) async {
-          await db.execute(
+          await db.execute('''
             'CREATE TABLE M_PLATFORM (CODE TEXT PRIMARY KEY, DETAIL TEXT)',
-          );
+        ''');
+                    await db.execute('''
+            CREATE TABLE M_WAGON (
+              CODE TEXT NOT NULL,
+              WAGON_TYPE TEXT NOT NULL,
+              CODENAME TEXT NOT NULL,
+              CAPACITY TEXT NOT NULL,
+              PRIMARY KEY (CODE, WAGON_TYPE, CODENAME, CAPACITY)
+            )
+            ''');
         },
       );
 
@@ -235,7 +283,7 @@ class AuthProvider with ChangeNotifier {
       await getPkgCondnMaster();
       await getStationDetailRest();
       await getMPkgDesc();
-     
+
       return "success";
     } catch (e) {
       debugPrint("Error in runMasterMethod: $e");
@@ -309,8 +357,6 @@ class AuthProvider with ChangeNotifier {
         final responseData = jsonDecode(response.body);
         debugPrint('getUserMasterRest Response: $responseData');
 
-        final timestamp = DateTime.now().toIso8601String();
-       
 
         if (!context.mounted) return;
         Navigator.pushReplacement(
@@ -326,8 +372,6 @@ class AuthProvider with ChangeNotifier {
     }
   }
 }
-
-
 
 Future<void> getPlatformMaster(Database database, String apiUrl,
     Map<String, dynamic> appTypeDataDetail) async {
@@ -347,7 +391,6 @@ Future<void> getPlatformMaster(Database database, String apiUrl,
       body: jsonEncode(requestBody),
     );
 
-    print('Response status code2: ${response.statusCode}');
     print('Response body2: ${response.body}');
 
     if (response.statusCode == 200) {
@@ -380,7 +423,6 @@ Future<void> getPlatformMaster(Database database, String apiUrl,
         );
         print('Data successfully inserted into M_PLATFORM.${data}');
       }
-      print('Data successfully inserted into M_PLATFORM.');
     } else {
       throw Exception(
         'Failed to fetch platform master data. HTTP Status: ${response.statusCode}. Response body: ${response.body}',
