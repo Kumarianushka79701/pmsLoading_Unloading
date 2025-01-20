@@ -1,36 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:project/modules/auth/views/auth.dart';
+import 'package:project/utils/app_icons.dart';
+import 'package:project/utils/colors.dart';
+import 'package:project/widgets/common_app_bar%20copy.dart';
+import 'package:project/widgets/text_widget.dart';
 
 class LoginOptionPage extends StatelessWidget {
+  const LoginOptionPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Login Options",style: TextStyle(color: Colors.black,fontSize: 16),),
-        backgroundColor: Colors.blueAccent, // Customize the background color
-        centerTitle: true, // Center the title
-        elevation: 0, // Remove the shadow
-        actions: [
-          IconButton(
-            icon: Icon(Icons.settings),
-            onPressed: () {
-              // Add your settings action here
-            },
-          ),
-        ],
-      ),
+      appBar: getAppBar(context,
+          title: getLoginOptionAppBarTitle(context), onTap: () {}),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                "Please choose a login option:",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
+              Image.asset(
+                AppIcons.cris,
+                fit: BoxFit.cover,
+                width: 88,
+                height: 91,
               ),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
@@ -39,16 +34,24 @@ class LoginOptionPage extends StatelessWidget {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: Colors.blueAccent, padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                  textStyle: TextStyle(fontSize: 16),
+                  foregroundColor: Colors.white,
+                  backgroundColor: ParcelColors.brandeisblue,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  textStyle: const TextStyle(fontSize: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30.0),
                   ),
                   elevation: 5,
                 ),
-                child: Text("Test Mode"),
+                child: const TextWidget(
+                  label: "Test Application",
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  textColor: Colors.white,
+                ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
@@ -57,14 +60,22 @@ class LoginOptionPage extends StatelessWidget {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: Colors.green, padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                  textStyle: TextStyle(fontSize: 16),
+                  foregroundColor: Colors.white,
+                  backgroundColor: ParcelColors.brandeisblue,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  textStyle: const TextStyle(fontSize: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30.0),
                   ),
                   elevation: 5,
                 ),
-                child: Text("Online Application"),
+                child: const TextWidget(
+                  label: "Online Application ",
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  textColor: Colors.white,
+                ),
               ),
             ],
           ),
@@ -72,4 +83,13 @@ class LoginOptionPage extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget getLoginOptionAppBarTitle(BuildContext context) {
+  return const TextWidget(
+    label: "Parcel management system ",
+    textColor: ParcelColors.white,
+    fontSize: 18,
+    fontWeight: FontWeight.w700,
+  );
 }

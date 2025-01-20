@@ -15,6 +15,9 @@ class AppIcons {
   static String loading = "${baseImagePath}loading.jpg";
   static String prr = "${baseImagePath}prr.jpg";
   static String logopms = "${baseImagePath}logoFinal.png";
+  static String cris = "${baseImagePath}cris.png";
+
+  
   
 
   
