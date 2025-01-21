@@ -11,38 +11,38 @@ class RoundButton extends StatelessWidget {
   final Widget? loadingIndicator;
 
   const RoundButton({
-    super.key,
+    Key? key,
     required this.title,
     this.type = RoundButtonType.primary,
     required this.onPressed,
     this.isLoading = false,
     this.loadingIndicator,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(51), // Set radius to 51
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
             spreadRadius: 2,
             blurRadius: 5,
-            offset: Offset(0, 3), // changes position of shadow
+            offset: const Offset(0, 3), // Position of shadow
           ),
         ],
       ),
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          minimumSize: Size(double.infinity, 60),
+          minimumSize: const Size(double.infinity, 60), // Full-width button
           elevation: 0,
           backgroundColor: type == RoundButtonType.primary
               ? AppColors.primary
               : AppColors.secondary,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(51), // Set radius to 51
           ),
         ),
         child: isLoading

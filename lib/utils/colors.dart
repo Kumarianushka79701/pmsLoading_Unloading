@@ -180,4 +180,5 @@ class ParcelColors {
   static const bubbles = Color(0xFFEBFFFA);
   static const sapphire = Color(0xFF0552B5);
   static const azureWebColor = Color(0xFFEFFFFB);
+  static const trueBlue = Color(0xFF047BD7);
 }
