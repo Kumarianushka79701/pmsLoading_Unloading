@@ -377,11 +377,12 @@ class LocalDatabaseProvider with ChangeNotifier {
           );
         ''');
     await db.execute('''
-       CREATE TABLE IF NOT EXISTS M_PLATFORM (
-      CODE NUMERIC NOT NULL,
-      DETAIL TEXT NOT NULL
-    );
-    ''');
+        CREATE TABLE M_PLATFORM (
+            CODE TEXT PRIMARY KEY,
+            DETAIL TEXT
+          )
+        ''');
+    
     await db.execute('''
      CREATE TABLE IF NOT EXISTS M_WAGTYPE (
       TYPE TEXT NOT NULL,
@@ -405,12 +406,12 @@ class LocalDatabaseProvider with ChangeNotifier {
           );
         ''');
     await db.execute('''
-          CREATE TABLE IF NOT EXISTS M_WAGON (
-            CODE TEXT NOT NULL,
-            WAGON_TYPE TEXT NOT NULL,
-            CODENAME TEXT NOT NULL,
-            CAPACITY TEXT NOT NULL
-          );
+          CREATE TABLE M_WAGON (
+            CODE TEXT PRIMARY KEY,
+            WAGON_TYPE TEXT,
+            CODENAME TEXT,
+            CAPACITY INTEGER
+          )
         ''');
   }
 

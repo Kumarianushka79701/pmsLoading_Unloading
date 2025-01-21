@@ -6,16 +6,19 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:project/api/urls.dart';
 import 'package:project/model/WagonTypeAl_model.dart';
-import 'package:project/model/wagon_master_model.dart';
 import 'package:project/modules/tabScreen/views/tabs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
-// Ensure that DatabaseHelper is defined and imported correctly
-class DatabaseHelper {
-  static final DatabaseHelper instance = DatabaseHelper._init();
+class LocalDatabaseHelper {
+  static final LocalDatabaseHelper _instance = LocalDatabaseHelper._internal();
   static Database? _database;
-  DatabaseHelper._init();
+
+  LocalDatabaseHelper._internal();
+
+  factory LocalDatabaseHelper() {
+    return _instance;
+  }
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -25,18 +28,32 @@ class DatabaseHelper {
 
   Future<Database> _initDatabase() async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'app_database.db');
+    final path = join(dbPath, 'local_app_database.db');
 
     return await openDatabase(
       path,
       version: 1,
-      onCreate: (db, version) {
-        // db.execute(
-        //   'CREATE TABLE M_WAGON(CODE TEXT PRIMARY KEY, WAGON_TYPE TEXT, CODENAME TEXT, CAPACITY INTEGER)',
-        // );
-        // db.execute(
-        //   'CREATE TABLE M_PLATFORM(CODE INTEGER PRIMARY KEY, DETAIL TEXT)',
-        // );
+      onCreate: (db, version) async {
+        await db.execute('''
+          CREATE TABLE M_PLATFORM (
+            CODE TEXT PRIMARY KEY,
+            DETAIL TEXT
+          )
+        ''');
+        await db.execute('''
+          CREATE TABLE M_WAGON (
+            CODE TEXT PRIMARY KEY,
+            WAGON_TYPE TEXT,
+            CODENAME TEXT,
+            CAPACITY INTEGER
+          )
+        ''');
+         await db.execute('''
+    CREATE TABLE IF NOT EXISTS M_PKG_DESC (
+      SL_NO TEXT PRIMARY KEY,
+      PKG_DESC TEXT NOT NULL
+    )
+  ''');
       },
     );
   }
@@ -49,12 +66,331 @@ class DatabaseHelper {
 
   Future<void> deleteTable(String table) async {
     final db = await database;
-    await db.execute('DELETE FROM $table');
+    await db.delete(table);
   }
 
   Future<List<Map<String, dynamic>>> fetchAll(String table) async {
     final db = await database;
     return await db.query(table);
+  }
+}
+
+class RunMasterService {
+  final LocalDatabaseHelper _dbHelper = LocalDatabaseHelper();
+
+  Future<String> runMasterMethod(BuildContext context) async {
+    try {
+      Database db = await _dbHelper.database;
+
+      await _dbHelper.deleteTable('M_WAGON');
+      await _dbHelper.deleteTable('M_PLATFORM');
+
+      await getWagonMaster(db);
+      // await getPlatformMaster(db);
+      // await getUserMasterRest({"username": "AT", "password": "AT"}, context);
+      // await getWagTypeAL({"username": "AT", "password": "AT"});
+      // await getRailwayAL();
+      // await getPkgCondnMaster();
+      // await getStationDetailRest();
+      await getMPkgDesc(db);
+      return "success";
+    } catch (e) {
+      debugPrint("Error in runMasterMethod: $e");
+      return "failed: Error in service";
+    }
+  }
+
+  Future<void> getWagonMaster(Database db) async {
+    const apiUrl = AppURLs.wagonMasterUrl;
+    final requestBody = {
+      "DETAIL": {"APPTYPE": "Online"}
+    };
+
+    final startTime = DateTime.now();
+    try {
+      debugPrint('Sending request to $apiUrl');
+      debugPrint('Request Body: ${jsonEncode(requestBody)}');
+
+      final response = await http
+          .post(
+            Uri.parse(apiUrl),
+            headers: {"Content-Type": "application/json"},
+            body: jsonEncode(requestBody),
+          )
+          .timeout(const Duration(seconds: 10));
+
+      debugPrint('Response Status Code: ${response.statusCode}');
+      debugPrint('Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final List<dynamic> responseData = jsonDecode(response.body);
+        debugPrint('Decoded Response Data: $responseData');
+
+        // Insert into the database
+        await db.transaction((txn) async {
+          Batch batch = txn.batch();
+          for (var wagon in responseData) {
+            batch.insert(
+              'M_WAGON',
+              {
+                'CODE': wagon['code'].toString(),
+                'WAGON_TYPE': wagon['wagon_type'].toString(),
+                'CODENAME': wagon['codename'].toString(),
+                'CAPACITY': wagon['capacity'],
+              },
+              conflictAlgorithm: ConflictAlgorithm.replace,
+            );
+          }
+          await batch.commit(noResult: true);
+        });
+      } else {
+        throw Exception(
+            'Failed to fetch wagon master data. Status Code: ${response.statusCode}');
+      }
+    } on TimeoutException {
+      debugPrint("Timeout occurred while fetching Wagon Master data");
+      throw Exception('Timeout occurred');
+    } on SocketException {
+      debugPrint("Network issue while fetching Wagon Master data");
+      throw Exception('Network issue');
+    } catch (e) {
+      debugPrint("Unexpected error: $e");
+      throw Exception('Unexpected error: $e');
+    }
+  }
+
+  Future<void> getPlatformMaster(Database db) async {
+    const apiUrl = AppURLs.plateformMasterUrl;
+    final requestBody = {
+      "DETAIL": {"APPTYPE": "Online"}
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(requestBody),
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> responseData = jsonDecode(response.body);
+        debugPrint('Platform Master Data: $responseData');
+
+        for (var platform in responseData) {
+          await db.insert(
+            'M_PLATFORM',
+            {
+              'CODE': platform['code'],
+              'DETAIL': platform['detail'],
+            },
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
+        }
+      } else {
+        throw Exception('Failed to fetch platform master data.');
+      }
+    } catch (e) {
+      throw Exception('Error in fetching platform master data: $e');
+    }
+  }
+
+  Future<void> getUserMasterRest(
+      Map<String, dynamic> credentials, BuildContext context) async {
+    const apiUrl = AppURLs.userMasterUrl;
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(credentials),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        debugPrint('User Master Data: $responseData');
+
+        if (!context.mounted) return;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const TabsScreen()),
+        );
+      } else {
+        throw Exception('Failed to fetch user master data.');
+      }
+    } catch (e) {
+      throw Exception('Error in fetching user master data: $e');
+    }
+  }
+
+  Future<void> getRailwayAL() async {
+    try {
+      final response = await http.post(
+        Uri.parse(AppURLs.railwayALUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          "DETAIL": "{\"APPTYPE\": \"Online\"}",
+        }),
+      );
+      if (response.statusCode == 200) {
+        print('Railway AL Data: $response');
+      } else {
+        print('Failed: ${response.statusCode} - ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  Future<void> getPkgCondnMaster() async {
+    try {
+      final response = await http.post(
+        Uri.parse(AppURLs.m_pkg_condnUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          "DETAIL": "{\"APPTYPE\": \"Online\"}",
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print('PkgCondnMaster data: ${response.body}');
+      } else {
+        throw Exception('Failed to fetch platform master data.');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  Future<void> getStationDetailRest(Database db) async {
+    try {
+      final response = await http.post(
+        Uri.parse(AppURLs.stationdetailUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          "strWhereCondn":
+              "\tWHERE\tCODE IS NOT NULL AND CRIS_STNNO IS NOT NULL",
+          "strOrderBy": "\tORDER BY CRIS_STNNO"
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> responseData = jsonDecode(response.body);
+        debugPrint('Decoded StationDetailRest Data: $responseData');
+
+        await db.transaction((txn) async {
+          Batch batch = txn.batch();
+          for (var station in responseData) {
+            batch.insert(
+              'M_STATION_DETAIL',
+              {
+                'CODE': station['CODE'], // Station code
+                'CRIS_STNNO': station['CRIS_STNNO'], // CRIS Station number
+                'STATION_NAME': station['STATION_NAME'] ??
+                    '', // Station name (if available)
+              },
+              conflictAlgorithm: ConflictAlgorithm.replace,
+            );
+          }
+          await batch.commit(noResult: true);
+        });
+        debugPrint('Data inserted into M_STATION_DETAIL: ${response.body}');
+      } else {
+        throw Exception('Failed to fetch platform master data.');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  Future<void> getMPkgDesc(Database db) async {
+    try {
+      final response = await http.post(
+        Uri.parse(AppURLs.m_pkg_descUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({"DETAIL": "{\"APPTYPE\": \"Online\"}"}),
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> responseData = jsonDecode(response.body);
+        debugPrint('Decoded Response Data: $responseData');
+
+        await db.transaction((txn) async {
+          Batch batch = txn.batch();
+          for (var pkgDesc in responseData) {
+           batch.insert(
+              'M_PKG_DESC',
+              {
+                'SL_NO': pkgDesc['slNumber'].toString(),
+                'PKG_DESC': pkgDesc['pkgDesc'],
+              },
+            );
+          }
+          await batch.commit(noResult: true);
+        });
+        debugPrint('Data inserted into M_PKG_DESC: ${response.body}');
+      } else {
+        throw Exception('Failed to fetch package description data.');
+      }
+    } catch (e) {
+      debugPrint('Error: $e');
+    }
+  }
+}
+
+List<WagonTypeAl> _wagTypeData = [];
+String? _error;
+
+List<WagonTypeAl> get wagTypeData => _wagTypeData;
+String? get error => _error;
+
+Future<void> getWagTypeAL(credentials) async {
+  try {
+    _error = null;
+
+    final requestBody = {
+      "DETAIL": jsonEncode({"APPTYPE": "Online"}),
+    };
+    final response = await http.post(
+      Uri.parse(AppURLs.wagtypeALUrl),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(requestBody),
+    );
+    debugPrint('Response status code ANU: ${response.statusCode}');
+
+    if (response.statusCode == 200) {
+      final List<dynamic> responseData = jsonDecode(response.body);
+
+      debugPrint('Response status code ANUuuuu: ${responseData.length}');
+
+      if (responseData is List) {
+        _wagTypeData =
+            responseData.map((data) => WagonTypeAl.fromJson(data)).toList();
+        debugPrint("object=${response.body}");
+      } else {
+        _error = "Unexpected response format";
+      }
+    } else {
+      _error =
+          "Failed: Error in connection getWagTypeAL. Status code: ${response.statusCode}";
+    }
+  } catch (e) {
+    if (e is FormatException) {
+      _error = "Failed: Malformed response from the server";
+    } else if (e is SocketException) {
+      _error = "Failed: Unable to connect to the server";
+    } else if (e is TimeoutException) {
+      _error = "Failed: Connection timeout";
+    } else {
+      _error = "Failed: Unexpected error occurred";
+    }
+  } finally {
+    // notifyListeners();
   }
 }
 
@@ -73,27 +409,9 @@ class AuthProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  late Database db;
-
-  Future<void> initializeDatabase() async {
-    db = await _initDatabase();
-  }
-
   void setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
-  }
-
-  Future<Database> _initDatabase() async {
-    return await openDatabase(
-      join(await getDatabasesPath(), 'app_database.db'),
-      onCreate: (db, version) {
-        return db.execute(
-          'CREATE TABLE M_WAGON(CODE TEXT PRIMARY KEY, WAGON_TYPE TEXT, CODENAME TEXT, CAPACITY INTEGER)',
-        );
-      },
-      version: 1,
-    );
   }
 
   Future<void> signUp(
@@ -197,380 +515,171 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<void> processWagonMasterData() async {
-    try {
-      Map<String, dynamic> requestData = {'APPTYPE': 'yourAppType'};
-      List<dynamic> responseData = await fetchWagonMasterData(requestData);
+  // Future<void> processWagonMasterData() async {
+  //   try {
+  //     Map<String, dynamic> requestData = {'APPTYPE': 'yourAppType'};
+  //     List<dynamic> responseData = await fetchWagonMasterData(requestData);
 
-      await db.execute('DELETE FROM M_WAGON');
-      for (var item in responseData) {
-        await db.insert('M_WAGON', {
-          'CODE': item['code'],
-          'WAGON_TYPE': item['wagon_type'],
-          'CODENAME': item['codename'],
-          'CAPACITY': item['capacity'],
-        });
-      }
-    } catch (e) {
-      throw Exception('Failed to process wagon master data: $e');
-    }
-  }
+  //     await db.execute('DELETE FROM M_WAGON');
+  //     for (var item in responseData) {
+  //       await db.insert('M_WAGON', {
+  //         'CODE': item['code'],
+  //         'WAGON_TYPE': item['wagon_type'],
+  //         'CODENAME': item['codename'],
+  //         'CAPACITY': item['capacity'],
+  //       });
+  //     }
+  //   } catch (e) {
+  //     throw Exception('Failed to process wagon master data: $e');
+  //   }
+  // }
 
-  Future<dynamic> fetchTrainDetails(Map<String, dynamic> credentials) async {
-    final response = await http.post(
-      Uri.parse('${AppURLs.trnDtlsUrl}'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(credentials),
-    );
+  // Future<dynamic> fetchTrainDetails(Map<String, dynamic> credentials) async {
+  //   final response = await http.post(
+  //     Uri.parse('${AppURLs.trnDtlsUrl}'),
+  //     headers: {'Content-Type': 'application/json'},
+  //     body: jsonEncode(credentials),
+  //   );
 
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to fetch train details.');
-    }
-  }
+  //   if (response.statusCode == 200) {
+  //     return jsonDecode(response.body);
+  //   } else {
+  //     throw Exception('Failed to fetch train details.');
+  //   }
+  // }
 
-  Future<dynamic> fetchUserMaster(Map<String, dynamic> credentials) async {
-    final response = await http.post(
-      Uri.parse('${AppURLs.userMasterUrl}'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(credentials),
-    );
+  // Future<dynamic> fetchUserMaster(Map<String, dynamic> credentials) async {
+  //   final response = await http.post(
+  //     Uri.parse('${AppURLs.userMasterUrl}'),
+  //     headers: {'Content-Type': 'application/json'},
+  //     body: jsonEncode(credentials),
+  //   );
 
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to fetch user master data.');
-    }
-  }
+  //   if (response.statusCode == 200) {
+  //     return jsonDecode(response.body);
+  //   } else {
+  //     throw Exception('Failed to fetch user master data.');
+  //   }
+  // }
 
-  Future<String> runMasterMethod(BuildContext context) async {
-    try {
-      final Database db = await openDatabase(
-        'platform_master.db',
-        version: 1,
-        onCreate: (Database db, int version) async {
-          await db.execute('''
-            'CREATE TABLE M_PLATFORM (CODE TEXT PRIMARY KEY, DETAIL TEXT)',
-        ''');
-                    await db.execute('''
-            CREATE TABLE M_WAGON (
-              CODE TEXT NOT NULL,
-              WAGON_TYPE TEXT NOT NULL,
-              CODENAME TEXT NOT NULL,
-              CAPACITY TEXT NOT NULL,
-              PRIMARY KEY (CODE, WAGON_TYPE, CODENAME, CAPACITY)
-            )
-            ''');
-        },
-      );
+  // Future<String> runMasterMethod(BuildContext context) async {
+  //   try {
+  //     final Database db = await openDatabase(
+  //       'platform_master.db',
+  //       version: 1,
+  //       onCreate: (Database db, int version) async {
+  //         await db.execute('''
+  //           'CREATE TABLE M_PLATFORM (CODE TEXT PRIMARY KEY, DETAIL TEXT)',
+  //       ''');
+  //                   await db.execute('''
+  //           CREATE TABLE M_WAGON (
+  //             CODE TEXT NOT NULL,
+  //             WAGON_TYPE TEXT NOT NULL,
+  //             CODENAME TEXT NOT NULL,
+  //             CAPACITY TEXT NOT NULL,
+  //             PRIMARY KEY (CODE, WAGON_TYPE, CODENAME, CAPACITY)
+  //           )
+  //           ''');
+  //       },
+  //     );
 
-      String strapptype = 'Test';
-      await getWagonMaster(strapptype);
+  // String strapptype = 'Test';
+  // await getWagonMaster(strapptype);
 
-      final apiUrl = AppURLs.plateformMasterUrl;
-      final appTypeDataDetail = {"APPTYPE": "Online"};
-      await getPlatformMaster(db, apiUrl, appTypeDataDetail);
+  // final apiUrl = AppURLs.plateformMasterUrl;
+  // final appTypeDataDetail = {"APPTYPE": "Online"};
 
-      await getUserMasterRest(
-        {"username": "AT", "password": "AT"},
-        "requiredString",
-        context,
-      );
-
-      await getWagTypeAL({"username": "AT", "password": "AT"});
-      await getRailwayAL();
-      await getPkgCondnMaster();
-      await getStationDetailRest();
-      await getMPkgDesc();
-
-      return "success";
-    } catch (e) {
-      debugPrint("Error in runMasterMethod: $e");
-      return "failed: Error in service";
-    }
-  }
-
-  Future<void> getWagonMaster(String strapptype) async {
-    const String apiUrl = AppURLs.wagonMasterUrl;
-    final Map<String, dynamic> requestBody = {
-      "DETAIL": {"APPTYPE": strapptype}
-    };
-
-    try {
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: jsonEncode(requestBody),
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> responseData = jsonDecode(response.body);
-        print('getWagonMaster API Responsesssss: $responseData');
-
-        await database?.execute('DELETE FROM M_WAGON');
-
-        for (var wagon in responseData) {
-          await database?.insert(
-            'M_WAGON',
-            WagonMaster(
-              code: wagon['code'],
-              wagonType: wagon['wagon_type'],
-              codename: wagon['codename'],
-              capacity: wagon['capacity'],
-            ).toMap(),
-            conflictAlgorithm: ConflictAlgorithm.replace,
-          );
-        }
-      } else {
-        throw Exception(
-            'Failed to fetch wagon master data. Status: ${response.statusCode}');
-      }
-    } catch (e) {
-      throw Exception('Error in fetching wagon master data: $e');
-    }
-  }
-
-  Future<void> getUserMasterRest(Map<String, dynamic> credentials,
-      String requiredString, BuildContext context) async {
-    final url = Uri.parse(AppURLs.userMasterUrl);
-
-    try {
-      final response = await http.post(
-        url,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: jsonEncode({
-          "credentials": credentials,
-          "requiredString": requiredString,
-          "detail": {
-            "stncode": "_NDLS",
-            "strapptype": "Online",
-          },
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        debugPrint('getUserMasterRest Response: $responseData');
-
-
-        if (!context.mounted) return;
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const TabsScreen()),
-        );
-      } else {
-        throw Exception(
-            'Failed to fetch user master data. Status Code: ${response.statusCode}');
-      }
-    } catch (e) {
-      throw Exception('Failed to fetch user master data: $e');
-    }
-  }
+  //     return "success";
+  //   } catch (e) {
+  //     debugPrint("Error in runMasterMethod: $e");
+  //     return "failed: Error in service";
+  //   }
 }
 
-Future<void> getPlatformMaster(Database database, String apiUrl,
-    Map<String, dynamic> appTypeDataDetail) async {
-  print('Starting getPlatformMaster...');
-  try {
-    print('API URL: $apiUrl');
+  // Future<void> getWagonMaster(String strapptype) async {
+  //   const String apiUrl = AppURLs.wagonMasterUrl;
+  //   final Map<String, dynamic> requestBody = {
+  //     "DETAIL": {"APPTYPE": strapptype}
+  //   };
 
-    final requestBody = {
-      "DETAIL": jsonEncode(appTypeDataDetail),
-    };
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse(apiUrl),
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: jsonEncode(requestBody),
+  //     );
 
-    print('Request Body: $requestBody');
+  //     if (response.statusCode == 200) {
+  //       final List<dynamic> responseData = jsonDecode(response.body);
+  //       print('getWagonMaster API Responsesssss: $responseData');
 
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode(requestBody),
-    );
+  //       await database?.execute('DELETE FROM M_WAGON');
 
-    print('Response body2: ${response.body}');
+  //       for (var wagon in responseData) {
+  //         await database?.insert(
+  //           'M_WAGON',
+  //           WagonMaster(
+  //             code: wagon['code'],
+  //             wagonType: wagon['wagon_type'],
+  //             codename: wagon['codename'],
+  //             capacity: wagon['capacity'],
+  //           ).toMap(),
+  //           conflictAlgorithm: ConflictAlgorithm.replace,
+  //         );
+  //       }
+  //     } else {
+  //       throw Exception(
+  //           'Failed to fetch wagon master data. Status: ${response.statusCode}');
+  //     }
+  //   } catch (e) {
+  //     throw Exception('Error in fetching wagon master data: $e');
+  //   }
+  // }}
 
-    if (response.statusCode == 200) {
-      final List<dynamic>? responseData =
-          jsonDecode(response.body) as List<dynamic>?;
+//   Future<void> getUserMasterRest(Map<String, dynamic> credentials,
+//       String requiredString, BuildContext context) async {
+//     final url = Uri.parse(AppURLs.userMasterUrl);
 
-      if (responseData == null || responseData.isEmpty) {
-        print('Empty or invalid response data received.');
-        throw Exception('Invalid response format.');
-      }
+//     try {
+//       final response = await http.post(
+//         url,
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: jsonEncode({
+//           "credentials": credentials,
+//           "requiredString": requiredString,
+//           "detail": {
+//             "stncode": "_NDLS",
+//             "strapptype": "Online",
+//           },
+//         }),
+//       );
 
-      print('API Response of platform 2: $responseData');
+//       if (response.statusCode == 200) {
+//         final responseData = jsonDecode(response.body);
+//         debugPrint('getUserMasterRest Response: $responseData');
 
-      await database.execute('DELETE FROM M_PLATFORM');
-      print('M_PLATFORM table cleared.');
 
-      for (final platform in responseData) {
-        if (platform['code'] == null || platform['detail'] == null) {
-          print('Invalid platform data skipped: $platform');
-          continue;
-        }
+//         if (!context.mounted) return;
+//         Navigator.pushReplacement(
+//           context,
+//           MaterialPageRoute(builder: (context) => const TabsScreen()),
+//         );
+//       } else {
+//         throw Exception(
+//             'Failed to fetch user master data. Status Code: ${response.statusCode}');
+//       }
+//     } catch (e) {
+//       throw Exception('Failed to fetch user master data: $e');
+//     }
+//   }
+// }
 
-        final data = await database.insert(
-          'M_PLATFORM',
-          {
-            'CODE': int.tryParse(platform['code']),
-            'DETAIL': platform['detail'].toString(),
-          },
-          conflictAlgorithm: ConflictAlgorithm.replace,
-        );
-        print('Data successfully inserted into M_PLATFORM.${data}');
-      }
-    } else {
-      throw Exception(
-        'Failed to fetch platform master data. HTTP Status: ${response.statusCode}. Response body: ${response.body}',
-      );
-    }
-  } catch (e) {
-    print('Error in getPlatformMaster: $e');
-    rethrow;
-  }
-}
 
-List<WagonTypeAl> _wagTypeData = [];
-String? _error;
 
-List<WagonTypeAl> get wagTypeData => _wagTypeData;
-String? get error => _error;
-
-Future<void> getWagTypeAL(credentials) async {
-  try {
-    _error = null;
-
-    final requestBody = {
-      "DETAIL": jsonEncode({"APPTYPE": "Online"}),
-    };
-    final response = await http.post(
-      Uri.parse(AppURLs.wagtypeALUrl),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode(requestBody),
-    );
-    debugPrint('Response status code ANU: ${response.statusCode}');
-
-    if (response.statusCode == 200) {
-      final List<dynamic> responseData = jsonDecode(response.body);
-
-      debugPrint('Response status code ANUuuuu: ${responseData.length}');
-
-      if (responseData is List) {
-        _wagTypeData =
-            responseData.map((data) => WagonTypeAl.fromJson(data)).toList();
-        debugPrint("object=${response.body}");
-      } else {
-        _error = "Unexpected response format";
-      }
-    } else {
-      _error =
-          "Failed: Error in connection getWagTypeAL. Status code: ${response.statusCode}";
-    }
-  } catch (e) {
-    if (e is FormatException) {
-      _error = "Failed: Malformed response from the server";
-    } else if (e is SocketException) {
-      _error = "Failed: Unable to connect to the server";
-    } else if (e is TimeoutException) {
-      _error = "Failed: Connection timeout";
-    } else {
-      _error = "Failed: Unexpected error occurred";
-    }
-  } finally {
-    // notifyListeners();
-  }
-}
-
-Future<void> getRailwayAL() async {
-  try {
-    final response = await http.post(
-      Uri.parse(AppURLs.railwayALUrl),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        "DETAIL": "{\"APPTYPE\": \"Online\"}",
-      }),
-    );
-    print('Response railway al1: ${response.body}');
-    if (response.statusCode == 200) {
-      print('Response railway al2: ${response.body}');
-    } else {
-      print('Failed: ${response.statusCode} - ${response.reasonPhrase}');
-    }
-  } catch (e) {
-    print('Error: $e');
-  }
-}
-
-Future<void> getPkgCondnMaster() async {
-  try {
-    final response = await http.post(
-      Uri.parse(AppURLs.m_pkg_condnUrl),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        "DETAIL": "{\"APPTYPE\": \"Online\"}",
-      }),
-    );
-    print('Response pkg 1: ${response.body}');
-
-    if (response.statusCode == 200) {
-      print('Response pkg 2: ${response.body}');
-    } else {
-      print('Failed: ${response.statusCode} - ${response.reasonPhrase}');
-    }
-  } catch (e) {
-    // Handle exceptions
-    print('Error: $e');
-  }
-}
-
-Future<void> getStationDetailRest() async {
-  try {
-    final response = await http.post(
-      Uri.parse(AppURLs.stationdetailUrl),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        "strWhereCondn": "\tWHERE\tCODE IS NOT NULL AND CRIS_STNNO IS NOT NULL",
-        "strOrderBy": "\tORDER BY CRIS_STNNO"
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      print('Response station detail 2: ${response.body}');
-    } else {
-      print('Failed: ${response.statusCode} - ${response.reasonPhrase}');
-    }
-  } catch (e) {
-    print('Error: $e');
-  }
-}
-
-Future<void> getMPkgDesc() async {
-  try {
-    final response = await http.post(Uri.parse(AppURLs.m_pkg_descUrl),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({"DETAIL": "{\"APPTYPE\": \"Online\"}"}));
-
-    if (response.statusCode == 200) {
-      print('Response mpkgdesc: ${response.body}');
-    } else {
-      print('Failed: ${response.statusCode} - ${response.reasonPhrase}');
-    }
-  } catch (e) {
-    print('Error: $e');
-  }
-}
 
 //   Future<dynamic> makePostRequest(String url, Map<String, dynamic> body) async {
 //   final headers = {'Content-Type': 'application/json'};
