@@ -569,11 +569,9 @@ class LocalDatabaseProvider with ChangeNotifier {
     try {
       await db.query(tableName);
     } catch (e) {
-      // Handle error
     }
   }
 
-  // Get all table names (utility)
   Future<List<String>> getAllTableNames() async {
     final db = await initDatabase();
     if (db != null) {
