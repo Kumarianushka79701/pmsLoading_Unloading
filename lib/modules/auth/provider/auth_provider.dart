@@ -316,7 +316,7 @@ class RunMasterService {
         }),
       );
       if (response.statusCode == 200) {
-         final List<dynamic> responseData = jsonDecode(response.body);
+        final List<dynamic> responseData = jsonDecode(response.body);
         print('Railway AL Data: $responseData');
       } else {
         print('Failed: ${response.statusCode} - ${response.reasonPhrase}');
@@ -372,10 +372,10 @@ class RunMasterService {
             batch.insert(
               'M_STATION_DETAIL',
               {
-                'CODE': station['CODE'], // Station code
-                'CRIS_STNNO': station['CRIS_STNNO'], // CRIS Station number
+                'CODE': station['CODE'], 
+                'CRIS_STNNO': station['CRIS_STNNO'], 
                 'STATION_NAME': station['STATION_NAME'] ??
-                    '', // Station name (if available)
+                    '', 
               },
               conflictAlgorithm: ConflictAlgorithm.replace,
             );
@@ -472,7 +472,6 @@ Future<void> getWagTypeAL(credentials) async {
       _error = "Failed: Unexpected error occurred";
     }
   } finally {
-    // notifyListeners();
   }
 }
 
