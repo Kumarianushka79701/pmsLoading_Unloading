@@ -54,7 +54,6 @@ class LocalDatabaseProvider with ChangeNotifier {
             await db.execute('DROP TABLE IF EXISTS M_WAGON');
             await db.execute('DROP TABLE IF EXISTS M_STATION_DETAIL');
 
-
             await createTables(db);
           }
         },
@@ -384,7 +383,7 @@ class LocalDatabaseProvider with ChangeNotifier {
             DETAIL TEXT
           )
         ''');
-    
+
     await db.execute('''
      CREATE TABLE IF NOT EXISTS M_WAGTYPE (
       TYPE TEXT NOT NULL,
@@ -415,7 +414,7 @@ class LocalDatabaseProvider with ChangeNotifier {
             CAPACITY INTEGER
           )
         ''');
-         await db.execute('''
+    await db.execute('''
       CREATE TABLE IF NOT EXISTS M_STATION_DETAIL (
         ID INTEGER PRIMARY KEY AUTOINCREMENT,
         STATE TEXT,
@@ -568,8 +567,7 @@ class LocalDatabaseProvider with ChangeNotifier {
 
     try {
       await db.query(tableName);
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   Future<List<String>> getAllTableNames() async {
@@ -583,27 +581,27 @@ class LocalDatabaseProvider with ChangeNotifier {
   }
 
   Future<void> insertLoginInfo(
-        String userId, String password, String stationCode) async {
-      final db = await initDatabase();
-      if (db == null) throw Exception("Database is not initialized.");
-  
-      try {
-        final hashedPassword = hashPassword(password);
-  
-        await db.insert(
-          'userlogins',
-          {
-            'userId': userId,
-            'password': hashedPassword,
-            'stationCode': stationCode
-          },
-          conflictAlgorithm: ConflictAlgorithm.replace,
-        );
-        debugPrint("Login info inserted for userId: $userId");
-      } catch (e) {
-        debugPrint("Error inserting login info: $e");
-      }
+      String userId, String password, String stationCode) async {
+    final db = await initDatabase();
+    if (db == null) throw Exception("Database is not initialized.");
+
+    try {
+      final hashedPassword = hashPassword(password);
+
+      await db.insert(
+        'userlogins',
+        {
+          'userId': userId,
+          'password': hashedPassword,
+          'stationCode': stationCode
+        },
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+      debugPrint("Login info inserted for userId: $userId");
+    } catch (e) {
+      debugPrint("Error inserting login info: $e");
     }
+  }
 
   Future<void> onLoginButtonClick(String userId, String password) async {
     await initDatabase();
@@ -673,6 +671,4 @@ class LocalDatabaseProvider with ChangeNotifier {
       debugPrint("Database is not initialized.");
     }
   }
- 
-
 }
