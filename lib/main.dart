@@ -14,15 +14,12 @@ import 'package:project/routes/app_routes.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
-  // Ensure all Flutter bindings are initialized before calling async methods.
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Ensure database is initialized before running the app
   WidgetsFlutterBinding.ensureInitialized();
   final databaseProvider = LocalDatabaseProvider();
   await databaseProvider.initDatabase();
 
-  // Print all table names
   await databaseProvider.verifyTables();
 
   await databaseProvider.printTableData('parcels');
