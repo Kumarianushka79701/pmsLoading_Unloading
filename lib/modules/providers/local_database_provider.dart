@@ -52,6 +52,8 @@ class LocalDatabaseProvider with ChangeNotifier {
             await db.execute('DROP TABLE IF EXISTS M_PKG_DESC');
             await db.execute('DROP TABLE IF EXISTS M_PKGCONDN');
             await db.execute('DROP TABLE IF EXISTS M_WAGON');
+            await db.execute('DROP TABLE IF EXISTS M_STATION_DETAIL');
+
 
             await createTables(db);
           }
@@ -413,6 +415,48 @@ class LocalDatabaseProvider with ChangeNotifier {
             CAPACITY INTEGER
           )
         ''');
+         await db.execute('''
+      CREATE TABLE IF NOT EXISTS M_STATION_DETAIL (
+        ID INTEGER PRIMARY KEY AUTOINCREMENT,
+        STATE TEXT,
+        TOT_PLTFRMS INTEGER,
+        PBOOKING INTEGER,
+        JUNCTION_STN_FLAG INTEGER,
+        RLY_CODE TEXT,
+        SCTN TEXT,
+        STN_CLASS TEXT,
+        WHARF_RATE_TYPE TEXT,
+        EXTRA_OUT_CHRG_REASON TEXT,
+        GAUGE TEXT,
+        DETAIL TEXT,
+        DIST_CODE TEXT,
+        EXTRA_OUT_CHRG REAL,
+        SRV TEXT,
+        PRICEOFINITIALWT REAL,
+        CODE TEXT,
+        CODENAME TEXT,
+        TRANSHMNT_STN INTEGER,
+        OUTAGENCY INTEGER,
+        AREA TEXT,
+        POLICE_VI TEXT,
+        OA_PRO_ADDR TEXT,
+        INITIALWT REAL,
+        DIV_NO TEXT,
+        PRICEOFADDLWT REAL,
+        WHARF_SLAB INTEGER,
+        ZONE INTEGER,
+        CRIS_STNNO INTEGER,
+        DIV_CODE TEXT,
+        RPF_I TEXT,
+        SQUARE TEXT,
+        OA_PROP_NAME TEXT,
+        STN_NUMBER TEXT,
+        ADDLWT REAL,
+        ADD3 TEXT,
+        ADD2 TEXT,
+        ADD1 TEXT
+      )
+    ''');
   }
 
   // Load parcel data

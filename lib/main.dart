@@ -44,6 +44,8 @@ void main() async {
   await databaseProvider.printTableData('M_PKG_DESC');
   await databaseProvider.printTableData('M_PKGCONDN');
   await databaseProvider.printTableData('M_WAGON');
+  await databaseProvider.printTableData('M_STATION_DETAIL');
+
 
   runApp(
     MultiProvider(

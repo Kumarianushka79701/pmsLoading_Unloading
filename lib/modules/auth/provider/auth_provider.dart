@@ -32,36 +32,95 @@ class LocalDatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2, // Incremented version for changes
       onCreate: (db, version) async {
-        await db.execute('''
-          CREATE TABLE M_PLATFORM (
-            CODE TEXT PRIMARY KEY,
-            DETAIL TEXT
-          )
-        ''');
-        await db.execute('''
-          CREATE TABLE M_WAGON (
-            CODE TEXT PRIMARY KEY,
-            WAGON_TYPE TEXT,
-            CODENAME TEXT,
-            CAPACITY INTEGER
-          )
-        ''');
-         await db.execute('''
-    CREATE TABLE IF NOT EXISTS M_PKG_DESC (
-      SL_NO TEXT PRIMARY KEY,
-      PKG_DESC TEXT NOT NULL
-    )
-  ''');
+        await _createTables(db);
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          await _createTables(db); // Add new tables if upgrading
+        }
       },
     );
   }
 
+  Future<void> _createTables(Database db) async {
+    // Existing Tables
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS M_PLATFORM (
+        CODE TEXT PRIMARY KEY,
+        DETAIL TEXT
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS M_WAGON (
+        CODE TEXT PRIMARY KEY,
+        WAGON_TYPE TEXT,
+        CODENAME TEXT,
+        CAPACITY INTEGER
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS M_PKG_DESC (
+        SL_NO TEXT PRIMARY KEY,
+        PKG_DESC TEXT NOT NULL
+      )
+    ''');
+
+    // New Table: StationDetails
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS M_STATION_DETAIL (
+        ID INTEGER PRIMARY KEY AUTOINCREMENT,
+        STATE TEXT,
+        TOT_PLTFRMS INTEGER,
+        PBOOKING INTEGER,
+        JUNCTION_STN_FLAG INTEGER,
+        RLY_CODE TEXT,
+        SCTN TEXT,
+        STN_CLASS TEXT,
+        WHARF_RATE_TYPE TEXT,
+        EXTRA_OUT_CHRG_REASON TEXT,
+        GAUGE TEXT,
+        DETAIL TEXT,
+        DIST_CODE TEXT,
+        EXTRA_OUT_CHRG REAL,
+        SRV TEXT,
+        PRICEOFINITIALWT REAL,
+        CODE TEXT,
+        CODENAME TEXT,
+        TRANSHMNT_STN INTEGER,
+        OUTAGENCY INTEGER,
+        AREA TEXT,
+        POLICE_VI TEXT,
+        OA_PRO_ADDR TEXT,
+        INITIALWT REAL,
+        DIV_NO TEXT,
+        PRICEOFADDLWT REAL,
+        WHARF_SLAB INTEGER,
+        ZONE INTEGER,
+        CRIS_STNNO INTEGER,
+        DIV_CODE TEXT,
+        RPF_I TEXT,
+        SQUARE TEXT,
+        OA_PROP_NAME TEXT,
+        STN_NUMBER TEXT,
+        ADDLWT REAL,
+        ADD3 TEXT,
+        ADD2 TEXT,
+        ADD1 TEXT
+      )
+    ''');
+  }
+
   Future<void> insert(String table, Map<String, dynamic> values) async {
     final db = await database;
-    await db.insert(table, values,
-        conflictAlgorithm: ConflictAlgorithm.replace);
+    await db.insert(
+      table,
+      values,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
   Future<void> deleteTable(String table) async {
@@ -72,6 +131,12 @@ class LocalDatabaseHelper {
   Future<List<Map<String, dynamic>>> fetchAll(String table) async {
     final db = await database;
     return await db.query(table);
+  }
+
+  Future<void> deleteDatabaseFile() async {
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, 'local_app_database.db');
+    await deleteDatabase(path);
   }
 }
 
@@ -86,12 +151,12 @@ class RunMasterService {
       await _dbHelper.deleteTable('M_PLATFORM');
 
       await getWagonMaster(db);
-      // await getPlatformMaster(db);
-      // await getUserMasterRest({"username": "AT", "password": "AT"}, context);
-      // await getWagTypeAL({"username": "AT", "password": "AT"});
-      // await getRailwayAL();
-      // await getPkgCondnMaster();
-      // await getStationDetailRest();
+      await getPlatformMaster(db);
+      await getUserMasterRest({"username": "AT", "password": "AT"}, context);
+      await getWagTypeAL({"username": "AT", "password": "AT"});
+      await getRailwayAL();
+      await getPkgCondnMaster();
+      await getStationDetailRest(db);
       await getMPkgDesc(db);
       return "success";
     } catch (e) {
@@ -106,7 +171,6 @@ class RunMasterService {
       "DETAIL": {"APPTYPE": "Online"}
     };
 
-    final startTime = DateTime.now();
     try {
       debugPrint('Sending request to $apiUrl');
       debugPrint('Request Body: ${jsonEncode(requestBody)}');
@@ -196,28 +260,46 @@ class RunMasterService {
 
   Future<void> getUserMasterRest(
       Map<String, dynamic> credentials, BuildContext context) async {
-    const apiUrl = AppURLs.userMasterUrl;
+    final requestBody = {
+      "detail": "{ \"stncode\": \"_NDLS\", \"strapptype\": \"Online\"}"
+    };
 
     try {
       final response = await http.post(
-        Uri.parse(apiUrl),
+        Uri.parse(AppURLs.userMasterUrl),
         headers: {"Content-Type": "application/json"},
-        body: jsonEncode(credentials),
+        body: jsonEncode(requestBody),
       );
-
+      debugPrint('Response Body: ${response.body}');
       if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        debugPrint('User Master Data: $responseData');
+        try {
+          final responseData = jsonDecode(response.body);
+          debugPrint('Parsed User Master Data: $responseData');
 
-        if (!context.mounted) return;
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const TabsScreen()),
-        );
+          if (context.mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const TabsScreen()),
+            );
+          }
+        } catch (jsonError) {
+          debugPrint('Error parsing JSON: $jsonError');
+          throw Exception('Failed to parse response data.');
+        }
+      } else if (response.statusCode == 500) {
+        debugPrint(
+            'Server Error 500: ${response.body}. Possible issue with server logic or missing fields.');
+
+        throw Exception(
+            'Server Error: ${response.body}. Please verify the backend API implementation.');
       } else {
-        throw Exception('Failed to fetch user master data.');
+        debugPrint(
+            'Error: Failed to fetch user master data. Status code: ${response.statusCode}, Body: ${response.body}');
+        throw Exception(
+            'Failed to fetch user master data. HTTP ${response.statusCode}');
       }
     } catch (e) {
+      debugPrint('Error in getUserMasterRest: $e');
       throw Exception('Error in fetching user master data: $e');
     }
   }
@@ -234,7 +316,8 @@ class RunMasterService {
         }),
       );
       if (response.statusCode == 200) {
-        print('Railway AL Data: $response');
+         final List<dynamic> responseData = jsonDecode(response.body);
+        print('Railway AL Data: $responseData');
       } else {
         print('Failed: ${response.statusCode} - ${response.reasonPhrase}');
       }
@@ -323,7 +406,7 @@ class RunMasterService {
         await db.transaction((txn) async {
           Batch batch = txn.batch();
           for (var pkgDesc in responseData) {
-           batch.insert(
+            batch.insert(
               'M_PKG_DESC',
               {
                 'SL_NO': pkgDesc['slNumber'].toString(),
@@ -361,7 +444,6 @@ Future<void> getWagTypeAL(credentials) async {
       headers: {"Content-Type": "application/json"},
       body: jsonEncode(requestBody),
     );
-    debugPrint('Response status code ANU: ${response.statusCode}');
 
     if (response.statusCode == 200) {
       final List<dynamic> responseData = jsonDecode(response.body);
