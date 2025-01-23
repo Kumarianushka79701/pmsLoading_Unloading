@@ -7,6 +7,8 @@ abstract class Routes {
   static const LOADING_SCREEN = _Paths.LOADING_SCREEN;
   static const DATABSE_TABLE_SCREEN=_Paths.DATABSE_TABLE_SCREEN;
   static const FORGOT_ACCOUNT_PAGE= _Paths.FORGOT_ACCOUNT_PAGE;
+    static const MIS_REPORT= _Paths.MIS_REPORT;
+
 }
 
 abstract class _Paths {
@@ -17,4 +19,5 @@ static const SPLASH="/splash";
   static const LOADING_SCREEN = "/loading-screen";
   static const DATABSE_TABLE_SCREEN="/table";
 static const String FORGOT_ACCOUNT_PAGE = '/forgot_account_page';
+static const String MIS_REPORT= "/mis";
 }

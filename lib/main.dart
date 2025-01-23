@@ -4,6 +4,7 @@ import 'package:project/modules/forgot_account_page/provider/forgot_account_prov
 import 'package:project/modules/home/provider/homeProvider.dart';
 import 'package:project/modules/lodingScreen/provider/collapsible_form.dart';
 import 'package:project/modules/lodingScreen/provider/loading_provider.dart';
+import 'package:project/modules/mis_report/provider/mis_report_provider.dart';
 import 'package:project/modules/providers/local_database_provider.dart';
 import 'package:project/modules/providers/parcel_provider.dart';
 import 'package:project/modules/providers/scan_activity_provider.dart';
@@ -58,6 +59,8 @@ void main() async {
         ChangeNotifierProvider(create: (_) => LoadingProvider()),
         ChangeNotifierProvider(create: (_) => CollapsibleFormProvider()),
         ChangeNotifierProvider(create: (_) => PrrStatusProvider()),
+        ChangeNotifierProvider(create: (_) => MisReportProvider()),
+
       ],
       child: MyApp(),
     ),

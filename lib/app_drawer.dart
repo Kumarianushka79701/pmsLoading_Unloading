@@ -23,7 +23,7 @@ class AppDrawer extends StatelessWidget {
             context,
             icon: Icons.report,
             title: 'Mis Report',
-            route: Routes.HOME,
+            route: Routes.MIS_REPORT,
           ),
           _buildDrawerItem(
             context,

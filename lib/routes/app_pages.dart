@@ -4,6 +4,7 @@ import 'package:project/modules/databseReport/views/table.dart';
 import 'package:project/modules/forgot_account_page/views/forgot_account_view.dart';
 import 'package:project/modules/home/views/home.dart';
 import 'package:project/modules/lodingScreen/loading_screen/loading.dart';
+import 'package:project/modules/mis_report/views/mis_report.dart';
 import 'package:project/modules/splash.dart';
 import 'package:project/routes/app_routes.dart';
 
@@ -47,6 +48,12 @@ class AppPages {
         return MaterialPageRoute(
           settings: setting,
           builder: (_) => const ForgotAccountView(),
+        );
+        case Routes.MIS_REPORT:
+        final arguments = setting.arguments as Map<String, dynamic>?; // Use nullable type
+        return MaterialPageRoute(
+          settings: setting,
+          builder: (_) =>  MisReportScreen(),
         );
       default:
         return MaterialPageRoute(

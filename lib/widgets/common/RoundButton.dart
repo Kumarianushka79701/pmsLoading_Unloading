@@ -9,6 +9,7 @@ class RoundButton extends StatelessWidget {
   final VoidCallback onPressed;
   final bool isLoading;
   final Widget? loadingIndicator;
+  final double width; // Added width parameter
 
   const RoundButton({
     Key? key,
@@ -17,6 +18,7 @@ class RoundButton extends StatelessWidget {
     required this.onPressed,
     this.isLoading = false,
     this.loadingIndicator,
+    this.width = double.infinity, // Default to full-width
   }) : super(key: key);
 
   @override
@@ -36,7 +38,7 @@ class RoundButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          minimumSize: const Size(double.infinity, 60), // Full-width button
+          minimumSize: Size(width, 50), // Set the custom width
           elevation: 0,
           backgroundColor: type == RoundButtonType.primary
               ? AppColors.primary
