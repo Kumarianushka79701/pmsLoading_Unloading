@@ -7,6 +7,7 @@ import 'package:project/modules/lodingScreen/provider/loading_provider.dart';
 import 'package:project/modules/providers/local_database_provider.dart';
 import 'package:project/modules/providers/parcel_provider.dart';
 import 'package:project/modules/providers/scan_activity_provider.dart';
+import 'package:project/modules/prrStatus/provider/prr_status_Provider.dart';
 import 'package:project/modules/splash.dart';
 import 'package:project/modules/tabScreen/prvider/tabs_provider.dart';
 import 'package:project/routes/app_pages.dart';
@@ -56,6 +57,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => ForgotAccountProvider()),
         ChangeNotifierProvider(create: (_) => LoadingProvider()),
         ChangeNotifierProvider(create: (_) => CollapsibleFormProvider()),
+        ChangeNotifierProvider(create: (_) => PrrStatusProvider()),
       ],
       child: MyApp(),
     ),
@@ -69,7 +71,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: Routes.SPLASH,
       onGenerateRoute: AppPages.generateRoutes,
-      title: 'Flutter Demo',
+      title: 'LoadingUloading',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),

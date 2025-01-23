@@ -8,87 +8,97 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Drawer( 
-  child: ListView(
-    padding: EdgeInsets.zero,
-    children: <Widget>[
-      DrawerHeader(
-        decoration: BoxDecoration(
-          color: AppColors.primaryLight,
-        ),
-        child: Column(
-          children: [
-            Text(
-              'Parcel Services',
-              style: TextStyle(
-                color: AppColors.white,
-                fontSize: 24,
-              ),
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          _buildDrawerHeader(),
+          _buildDrawerItem(
+            context,
+            icon: Icons.home,
+            title: 'Home',
+            route: Routes.HOME,
+          ),
+          _buildDrawerItem(
+            context,
+            icon: Icons.report,
+            title: 'Mis Report',
+            route: Routes.HOME,
+          ),
+          _buildDrawerItem(
+            context,
+            icon: Icons.check_circle,
+            title: 'RR Status',
+            route: Routes.DATABSE_TABLE_SCREEN,
+          ),
+          _buildDrawerItem(
+            context,
+            icon: Icons.print,
+            title: 'Print Barcode',
+            route: Routes.HOME,
+          ),
+          _buildDrawerItem(
+            context,
+            icon: Icons.delete,
+            title: 'Delete Old Data',
+            route: Routes.HOME,
+          ),
+          _buildDrawerItem(
+            context,
+            icon: Icons.refresh,
+            title: 'Reload Masters',
+            route: Routes.HOME,
+          ),
+          _buildDrawerItem(
+            context,
+            icon: Icons.exit_to_app,
+            title: 'Logout',
+            route: null, // Add logout functionality if needed
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDrawerHeader() {
+    return DrawerHeader(
+      decoration: BoxDecoration(
+        color: AppColors.primaryLight,
+      ),
+      child: Column(
+        children: [
+          Text(
+            'Parcel Services',
+            style: TextStyle(
+              color: AppColors.white,
+              fontSize: 24,
             ),
+          ),
+          Image.asset(
+            AppIcons.logopms,
+            height: 90,
+          ),
+        ],
+      ),
+    );
+  }
 
-             Image.asset(
-                AppIcons.logopms,
-                height: 90,
-              ),
-          ],
-
-        ),
-      ),
-      ListTile(
-        leading: Icon(Icons.home),  
-        title: Text('Home'),
-        onTap: () {
-          Navigator.pushNamed(context, Routes.HOME);
-        },
-      ),
-      ListTile(
-        leading: Icon(Icons.report),  // Add the report icon here
-        title: Text('Mis Report'),
-        onTap: () {
-                    Navigator.pushNamed(context, Routes.HOME);
-
-        },
-      ),
-      ListTile(
-        leading: Icon(Icons.check_circle),  // Add the RR status icon here
-        title: Text('RR Status'),
-        onTap: () {
-                    Navigator.pushNamed(context, Routes.DATABSE_TABLE_SCREEN);
-
-        },
-      ),
-      ListTile(
-        leading: Icon(Icons.print),  // Add the print barcode icon here
-        title: Text('Print barcode'),
-        onTap: () {
-                    Navigator.pushNamed(context, Routes.HOME);
-
-        },
-      ),
-      ListTile(
-        leading: Icon(Icons.delete),  // Add the delete icon here
-        title: Text('Delete old data'),
-        onTap: () {
-                    Navigator.pushNamed(context, Routes.HOME);
-
-        },
-      ),
-      ListTile(
-        leading: Icon(Icons.refresh),  // Add the reload icon here
-        title: Text('Reload Masters'),
-        onTap: () {
-                    Navigator.pushNamed(context, Routes.HOME);
-
-        },
-      ),
-      ListTile(
-        leading: Icon(Icons.exit_to_app),  // Add the logout icon here
-        title: Text('Logout'),
-        onTap: () {
-          
-        },
-      ),
-    ],
-  ),
-);}
+  Widget _buildDrawerItem(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    String? route,
+  }) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(title),
+      onTap: route != null
+          ? () {
+              Navigator.pushNamed(context, route);
+            }
+          : () {
+              // Add logout logic or other functionality if needed
+            },
+    );
+  }
 }

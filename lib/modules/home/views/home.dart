@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:project/app_drawer.dart';
 import 'package:project/modules/lodingScreen/loading_screen/loading.dart';
 import 'package:project/modules/databseReport/views/table.dart';
+import 'package:project/modules/prrStatus/views/prr_status.dart';
 import 'package:project/modules/reports/views/report_view.dart';
 import 'package:project/utils/app_icons.dart';
 import 'package:project/utils/colors.dart';
@@ -9,31 +10,38 @@ import 'package:project/widgets/common_app_bar%20copy.dart';
 import 'package:project/widgets/text_widget.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  // Create a GlobalKey for the Scaffold
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: getAppBar(context,
-          title: getParcelHomeAppBarTitle(context),
-          actions: [
-            Align(
-              alignment: Alignment.topLeft,
-              child: IconButton(
-                icon: Icon(Icons.menu),
-                color: ParcelColors.white,
-                onPressed: () {
-                  Scaffold.of(context).openDrawer();
-                },
-              ),
+      key: _scaffoldKey, // Assign the GlobalKey to the Scaffold
+      appBar: getAppBar(
+        context,
+        title: getParcelHomeAppBarTitle(context),
+        actions: [
+          Align(
+            alignment: Alignment.topLeft,
+            child: IconButton(
+              icon: Icon(Icons.menu),
+              color: ParcelColors.white,
+              onPressed: () {
+                // Use the GlobalKey to open the drawer
+                _scaffoldKey.currentState?.openDrawer();
+              },
             ),
-          ], onTap: () {
-      }),
+          ),
+        ],
+        onTap: () {},
+      ),
       drawer: Drawer(child: AppDrawer()),
       body: Stack(
         children: [
@@ -46,175 +54,61 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          // Content
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Loading/Unloading Clerk Id: AT',
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black),
-                  ),
-                  Text(
-                    'Station Code: NDLS',
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black),
-                  ),
-                  Text(
-                    'Loading Sync Pending: 0',
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black),
-                  ),
-                  Text(
-                    'UnLoading Sync Pending: 0',
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black),
-                  ),
-                  SizedBox(height: 40),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Column(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
+                  _buildInfoText('Loading/Unloading Clerk Id: AT'),
+                  _buildInfoText('Station Code: NDLS'),
+                  _buildInfoText('Loading Sync Pending: 0'),
+                  _buildInfoText('UnLoading Sync Pending: 0'),
+                  const SizedBox(height: 40),
+                 
+                   _buildImageRow(
+                    context,
+                    'Loading',
+                    AppIcons.loading,
+                    () {
+                       Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => LoadigScreen()),
                               );
-                            },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(
-                                  16.0), // Adjust the radius for smooth corners
-                              child: Image.asset(
-                                AppIcons.loading,
-                                height: 120,
-                                width: 120, // Ensure this path is correct
-                                fit: BoxFit
-                                    .cover, // Optional: to make the image fill the box
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 10),
-                          Text(
-                            'Loading',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              // Action for Unloading
-                            },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(
-                                  16.0), // Adjust the radius for smooth corners
-                              child: Image.asset(
-                                AppIcons.unloading,
-                                height: 120,
-                                width: 120, // Ensure this path is correct
-                                fit: BoxFit
-                                    .cover, // Optional: to make the image fill the box
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 10),
-                          Text(
-                            'Unloading',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black),
-                          ),
-                        ],
-                      ),
-                    ],
+                    },
+                    secondTitle: 'UnLoading',
+                    secondIcon: AppIcons.unloading,
+                    secondOnTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PRRStatusPage(),
+                        ),
+                      );
+                    },
                   ),
-                  SizedBox(height: 24),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Column(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ReportView(),
-                                ),
-                              );
-                              
-                              // Action for Reports
-                            },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(
-                                  16.0), // Adjust the radius for smooth corners
-                              child: Image.asset(
-                                AppIcons.database,
-                                height: 120,
-                                width: 120, // Ensure this path is correct
-                                fit: BoxFit
-                                    .cover, // Optional: to make the image fill the box
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 10),
-                          Text(
-                            'Reports',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              // Action for PRR Status
-                            },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(
-                                  16.0), // Adjust the radius for smooth corners
-                              child: Image.asset(
-                                AppIcons.prr,
-                                height: 120,
-                                width: 120, // Ensure this path is correct
-                                fit: BoxFit
-                                    .cover, // Optional: to make the image fill the box
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 10),
-                          Text(
-                            'PRR Status',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black),
-                          ),
-                        ],
-                      ),
-                    ],
+                  const SizedBox(height: 24),
+                  _buildImageRow(
+                    context,
+                    'Reports',
+                    AppIcons.database,
+                    () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ReportView()),
+                      );
+                    },
+                    secondTitle: 'PRR Status',
+                    secondIcon: AppIcons.prr,
+                    secondOnTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PRRStatusPage(),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -222,6 +116,69 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildInfoText(String text) {
+    return Text(
+      text,
+      style: const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+        color: Colors.black,
+      ),
+    );
+  }
+
+  Widget _buildImageRow(
+    BuildContext context,
+    String title,
+    String icon,
+    VoidCallback onTap, {
+    String? secondTitle,
+    String? secondIcon,
+    VoidCallback? secondOnTap,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _buildImageColumn(context, title, icon, onTap),
+        if (secondTitle != null && secondIcon != null && secondOnTap != null)
+          _buildImageColumn(context, secondTitle, secondIcon, secondOnTap),
+      ],
+    );
+  }
+
+  Widget _buildImageColumn(
+    BuildContext context,
+    String title,
+    String icon,
+    VoidCallback onTap,
+  ) {
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: onTap,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16.0),
+            child: Image.asset(
+              icon,
+              height: 120,
+              width: 120,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+      ],
     );
   }
 }
