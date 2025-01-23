@@ -1,64 +1,54 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:project/utils/color_extensions.dart';
-import 'package:project/utils/colors.dart';
-import 'package:flutter/material.dart';
-import 'package:project/utils/color_extensions.dart';
 import 'package:project/utils/colors.dart';
 
 class RoundTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
-  final Widget? prefixIcon;
+  final Widget prefixIcon;
+  final Widget? suffixIcon;
   final bool obscureText;
   final bool isUpperCase;
-  final String? Function(String?)? validator;
+  final String? Function(String?) validator;
 
   const RoundTextField({
-    Key? key,
     required this.controller,
     required this.hintText,
-    this.prefixIcon,
+    required this.prefixIcon,
+    this.suffixIcon,
     this.obscureText = false,
     this.isUpperCase = false,
-    this.validator,
-  }) : super(key: key);
+    required this.validator,
+  });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
       obscureText: obscureText,
-      textCapitalization: isUpperCase
-          ? TextCapitalization.characters
-          : TextCapitalization.none,
       validator: validator,
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: const TextStyle(color: Colors.grey), // Added hint text color
         prefixIcon: prefixIcon,
-        filled: true,
-        fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+        suffixIcon: suffixIcon,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30), // Increased for more roundness
-          borderSide: const BorderSide(color: Colors.grey),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30), // Match the same radius
-          borderSide: const BorderSide(color: ParcelColors.brandeisblue),
+          borderRadius: BorderRadius.circular(32.0), // Increased border radius
+          borderSide: const BorderSide(
+            color: ParcelColors.catalinaBlue, // Default border color
+          ),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30), // Match the same radius
-          borderSide: const BorderSide(color: ParcelColors.paleCyan),
+          borderRadius: BorderRadius.circular(32.0), // Same border radius
+          borderSide: const BorderSide(
+            color: ParcelColors.brandeisblue, // Catalina Blue for enabled state
+            width: 1.0,
+          ),
         ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30), // Match the same radius
-          borderSide: const BorderSide(color: Colors.red),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30), // Match the same radius
-          borderSide: const BorderSide(color: Colors.red),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(32.0), // Same border radius
+          borderSide: const BorderSide(
+            color: ParcelColors.catalinaBlue, // Catalina Blue for focused state
+            width: 1.0,
+          ),
         ),
       ),
     );

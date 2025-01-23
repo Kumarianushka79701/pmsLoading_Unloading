@@ -372,10 +372,9 @@ class RunMasterService {
             batch.insert(
               'M_STATION_DETAIL',
               {
-                'CODE': station['CODE'], 
-                'CRIS_STNNO': station['CRIS_STNNO'], 
-                'STATION_NAME': station['STATION_NAME'] ??
-                    '', 
+                'CODE': station['CODE'],
+                'CRIS_STNNO': station['CRIS_STNNO'],
+                'STATION_NAME': station['STATION_NAME'] ?? '',
               },
               conflictAlgorithm: ConflictAlgorithm.replace,
             );
@@ -471,8 +470,7 @@ Future<void> getWagTypeAL(credentials) async {
     } else {
       _error = "Failed: Unexpected error occurred";
     }
-  } finally {
-  }
+  } finally {}
 }
 
 class AuthProvider with ChangeNotifier {
@@ -489,6 +487,13 @@ class AuthProvider with ChangeNotifier {
   bool get isAuthenticated => _isAuthenticated;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
+  bool _isPasswordVisible = false;
+  bool get isPasswordVisible => _isPasswordVisible;
+
+  void togglePasswordVisibility() {
+    _isPasswordVisible = !_isPasswordVisible;
+    notifyListeners();
+  }
 
   void setLoading(bool value) {
     _isLoading = value;
