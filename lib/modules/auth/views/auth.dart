@@ -19,7 +19,7 @@ class AuthScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: ParcelColors.white,
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -82,7 +82,6 @@ class AuthScreen extends StatelessWidget {
                             fontWeight: FontWeight.w500,
                             fontSize: 12,
                           ),
-
                         ),
                       ),
                       obscureText: !authProvider.isPasswordVisible,
@@ -125,21 +124,14 @@ class AuthScreen extends StatelessWidget {
                           : () async {
                               authProvider.setLoading(true);
                               try {
-                                print("Login started: ${DateTime.now()}");
-
                                 final result = await runMasterService
                                     .runMasterMethod(context);
-
-                                print("API call completed: ${DateTime.now()}");
-
                                 if (result == "success") {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                         content: Text("Login successful!")),
                                   );
-
                                   Navigator.pushNamed(context, '/home');
-
                                   await handleLogin(context, authProvider,
                                       localDatabaseProvider);
                                 } else {
@@ -149,14 +141,11 @@ class AuthScreen extends StatelessWidget {
                                   );
                                 }
                               } catch (e) {
-                                print("Error occurred: $e");
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                       content: Text("Unexpected error: $e")),
                                 );
                               } finally {
-                                print(
-                                    "Login process finished: ${DateTime.now()}");
                                 authProvider.setLoading(false);
                               }
                             },
