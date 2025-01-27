@@ -19,7 +19,7 @@ class ParcelColors {
   static const trueBlue = Color(0xFF047BD7);
   static const babyBlueEyes = Color(0xFF9ED2EC);
   static const paleCerulean = Color(0xFF95C8D9);
- static const richElectricBlue = Color(0xFF008DCB);
+ static const richElectricBlue = Color(0xFF008DD2);
  static const paleCornflowerBlue = Color(0xFF6295F9);
  static const areo = Color(0xFF7DC3E2);
  static const colambiaBlue = Color(0xFFC7E1E9);

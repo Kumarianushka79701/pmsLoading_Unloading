@@ -76,33 +76,66 @@ class _HomeScreenState extends State<HomeScreen> {
                     height: size.height * 0.12,
                     width: size.width * 0.43,
                     decoration: BoxDecoration(
-                        border: Border.all(
-                            color: ParcelColors.babyBlueEyes, width: 2),
+                        // border: Border.all(
+                        //     color: ParcelColors.babyBlueEyes, width: 2),
                         color: ParcelColors.babyBlueEyes,
                         borderRadius:
                             const BorderRadius.all(Radius.circular(16))),
-                    child: const Align(
+                    child: Align(
                         alignment: Alignment.center,
-                        child: TextWidget(label: "(Un)\Loading Clerk Id:")),
+                        child: RichText(
+                          text: const TextSpan(
+                            text: '(Un)\Loading Clerk Id: ',
+                            style: TextStyle(
+                                fontSize: 10.0,
+                                fontWeight: FontWeight.w600,
+                                color: ParcelColors.brandeisblue),
+                            children: [
+                              TextSpan(
+                                text: '\nAT ',
+                                style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w700,
+                                    color: ParcelColors.brandeisblue),
+                              ),
+                            ],
+                          ),
+                        )),
                   ),
                   Container(
-                    padding: const EdgeInsets.all(14),
-                    height: size.height * 0.12,
-                    width: size.width * 0.43,
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                            color:
-                                ParcelColors.cornFlowerblue.withOpacity(0.45),
-                            width: 2),
-                        color: ParcelColors.cornFlowerblue,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(16))),
-                    child: const Align(
+                      padding: const EdgeInsets.all(14),
+                      height: size.height * 0.12,
+                      width: size.width * 0.43,
+                      decoration: BoxDecoration(
+                          // border: Border.all(
+                          //     color:
+                          //         ParcelColors.cornFlowerblue.withOpacity(0.45),
+                          //     width: 1),
+                          color: ParcelColors.cornFlowerblue.withOpacity(0.45),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(16))),
+                      child: Align(
                         alignment: Alignment.center,
-                        child: TextWidget(
-                          label: "Station Code",
-                        )),
-                  )
+                        child: RichText(
+                          text: const TextSpan(
+                            text: 'Station Code ',
+                            style: TextStyle(
+                                fontSize: 10.0,
+                                fontWeight: FontWeight.w600,
+                                color: ParcelColors.brandeisblue),
+                            children: [
+                              TextSpan(
+                                text: '\nNDLS',
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w700,
+                                  color: ParcelColors.brandeisblue,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )),
                 ],
               ),
               SizedBox(
@@ -116,32 +149,65 @@ class _HomeScreenState extends State<HomeScreen> {
                     height: size.height * 0.12,
                     width: size.width * 0.43,
                     decoration: BoxDecoration(
-                        border: Border.all(
-                            color: ParcelColors.paleCornflowerBlue, width: 2),
-                        color: ParcelColors.paleCornflowerBlue,
+                        // border: Border.all(
+                        //     color: ParcelColors.paleCornflowerBlue, width: 1),
+                        color:
+                            ParcelColors.paleCornflowerBlue.withOpacity(0.45),
                         borderRadius:
                             const BorderRadius.all(Radius.circular(16))),
-                    child: const Align(
-                        alignment: Alignment.center,
-                        child: TextWidget(
-                          label: "Loading Sync Pending",
-                        )),
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: RichText(
+                        text: const TextSpan(
+                          text: 'Loading Sync Pending',
+                          style: TextStyle(
+                              fontSize: 10.0,
+                              fontWeight: FontWeight.w600,
+                              color: ParcelColors.brandeisblue),
+                          children: [
+                            TextSpan(
+                              text: '\n0',
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w700,
+                                color: ParcelColors.brandeisblue,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                   Container(
                     padding: const EdgeInsets.all(14),
                     height: size.height * 0.12,
                     width: size.width * 0.43,
                     decoration: BoxDecoration(
-                        border: Border.all(
-                            color:
-                                ParcelColors.richElectricBlue.withOpacity(0.3),
-                            width: 2),
-                        color: ParcelColors.richElectricBlue,
+                        color: ParcelColors.richElectricBlue.withOpacity(0.37),
                         borderRadius:
                             const BorderRadius.all(Radius.circular(16))),
-                    child: const Align(
-                        alignment: Alignment.center,
-                        child: TextWidget(label: "UnLoading Sync Pending")),
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: RichText(
+                        text: const TextSpan(
+                          text: 'UnLoading Sync Pending',
+                          style: TextStyle(
+                              fontSize: 10.0,
+                              fontWeight: FontWeight.w600,
+                              color: ParcelColors.brandeisblue),
+                          children: [
+                            TextSpan(
+                              text: '\n0',
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w700,
+                                color: ParcelColors.brandeisblue,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -161,39 +227,59 @@ class _HomeScreenState extends State<HomeScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(14),
-                    height: size.height * 0.12,
-                    width: size.width * 0.43,
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                            color: ParcelColors.paleCerulean.withOpacity(0.5),
-                            width: 2),
-                        color: ParcelColors.paleCerulean.withOpacity(0.5),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(16))),
-                    child: const Align(
-                        alignment: Alignment.center,
-                        child: TextWidget(label: "Loading")),
+                  InkWell(
+                    onTap: () {
+                       Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const LoadigScreen()),
+                  );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(14),
+                      height: size.height * 0.12,
+                      width: size.width * 0.43,
+                      decoration: BoxDecoration(
+                          color: ParcelColors.paleCerulean.withOpacity(0.5),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(16))),
+                      child: const Align(
+                          alignment: Alignment.center,
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.add_box,
+                                size: 29,
+                              ),
+                              TextWidget(label: "Loading"),
+                            ],
+                          )),
+                    ),
                   ),
                   Container(
                     padding: const EdgeInsets.all(14),
                     height: size.height * 0.12,
                     width: size.width * 0.43,
                     decoration: BoxDecoration(
-                      border: Border.all(
-                        color: ParcelColors.richElectricBlue
-                            .withOpacity(0.5),
-                        width: 2,
-                      ),
-                      color: ParcelColors.richElectricBlue
-                          .withOpacity(0.5), 
+                      // border: Border.all(
+                      //   color: ParcelColors.richElectricBlue.withOpacity(0.5),
+                      //   width: 2,
+                      // ),
+                      color: ParcelColors.richElectricBlue.withOpacity(0.50),
                       borderRadius: const BorderRadius.all(Radius.circular(16)),
                     ),
                     child: const Align(
                         alignment: Alignment.center,
-                        child: TextWidget(
-                          label: "Unloading",
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.inventory,
+                              size: 29,
+                            ),
+                            TextWidget(
+                              label: "Unloading",
+                            ),
+                          ],
                         )),
                   )
                 ],
@@ -204,34 +290,69 @@ class _HomeScreenState extends State<HomeScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(14),
-                    height: size.height * 0.12,
-                    width: size.width * 0.43,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: ParcelColors.areo, width: 1),
-                        color: ParcelColors.areo,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(16))),
-                    child: const Align(
-                        alignment: Alignment.center,
-                        child: TextWidget(
-                          label: "PRR Status",
-                        )),
+                  InkWell
+                  (
+                    onTap: () {
+                       Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const PRRStatusPage(),
+                    ),
+                  );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(14),
+                      height: size.height * 0.12,
+                      width: size.width * 0.43,
+                      decoration: BoxDecoration(
+                          // border: Border.all(color: ParcelColors.areo, width: 2),
+                          color: ParcelColors.areo,
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(16))),
+                      child: const Align(
+                          alignment: Alignment.center,
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.search,
+                                size: 29,
+                              ),
+                              TextWidget(
+                                label: "PRR Status",
+                              ),
+                            ],
+                          )),
+                    ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.all(14),
-                    height: size.height * 0.12,
-                    width: size.width * 0.43,
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                            color: ParcelColors.colambiaBlue, width: 2),
-                        color: ParcelColors.colambiaBlue,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(16))),
-                    child: const Align(
-                        alignment: Alignment.center,
-                        child: TextWidget(label: "Reports")),
+                  InkWell(
+                    onTap: () {
+                        Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const ReportView()),
+                  );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(14),
+                      height: size.height * 0.12,
+                      width: size.width * 0.43,
+                      decoration: BoxDecoration(
+                          // border: Border.all(
+                          //     color: ParcelColors.colambiaBlue, width: 2),
+                          color: ParcelColors.colambiaBlue,
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(16))),
+                      child: const Align(
+                          alignment: Alignment.center,
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.description,
+                                size: 29,
+                              ),
+                              TextWidget(label: "Reports"),
+                            ],
+                          )),
+                    ),
                   ),
                 ],
               ),
@@ -239,118 +360,10 @@ class _HomeScreenState extends State<HomeScreen> {
               // buildInfoText('Station Code: NDLS'),
               // buildInfoText('Loading Sync Pending: 0'),
               // buildInfoText('UnLoading Sync Pending: 0'),
-              const SizedBox(height: 40),
-              _buildImageRow(
-                context,
-                'Loading',
-                AppIcons.loading,
-                () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const LoadigScreen()),
-                  );
-                },
-                secondTitle: 'UnLoading',
-                secondIcon: AppIcons.unloading,
-                secondOnTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const PRRStatusPage(),
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 24),
-              _buildImageRow(
-                context,
-                'Reports',
-                AppIcons.database,
-                () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const ReportView()),
-                  );
-                },
-                secondTitle: 'PRR Status',
-                secondIcon: AppIcons.prr,
-                secondOnTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const PRRStatusPage(),
-                    ),
-                  );
-                },
-              ),
-            ],
+             ],
           ),
         ),
       ),
-    );
-  }
-
-  Widget buildInfoText(String text) {
-    return Text(
-      text,
-      style: const TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-        color: Colors.black,
-      ),
-    );
-  }
-
-  Widget _buildImageRow(
-    BuildContext context,
-    String title,
-    String icon,
-    VoidCallback onTap, {
-    String? secondTitle,
-    String? secondIcon,
-    VoidCallback? secondOnTap,
-  }) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        _buildImageColumn(context, title, icon, onTap),
-        if (secondTitle != null && secondIcon != null && secondOnTap != null)
-          _buildImageColumn(context, secondTitle, secondIcon, secondOnTap),
-      ],
-    );
-  }
-
-  Widget _buildImageColumn(
-    BuildContext context,
-    String title,
-    String icon,
-    VoidCallback onTap,
-  ) {
-    return Column(
-      children: [
-        GestureDetector(
-          onTap: onTap,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(16.0),
-            child: Image.asset(
-              icon,
-              height: 120,
-              width: 120,
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
-        const SizedBox(height: 10),
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-        ),
-      ],
     );
   }
 }
