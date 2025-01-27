@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:project/modules/databseReport/views/table.dart';
 import 'package:project/modules/providers/local_database_provider.dart';
 import 'package:project/utils/colors.dart';
-import 'package:project/widgets/common_app_bar%20copy.dart';
+import 'package:project/widgets/common_app_bar.dart';
 import 'package:project/widgets/text_widget.dart';
 import 'package:provider/provider.dart';
 

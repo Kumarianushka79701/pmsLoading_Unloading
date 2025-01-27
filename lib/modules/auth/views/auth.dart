@@ -55,7 +55,7 @@ class AuthScreen extends StatelessWidget {
                         Icons.supervised_user_circle,
                         color: ParcelColors.catalinaBlue,
                       ),
-                      isUpperCase: true,
+                      isUpperCase:true,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter User ID';
@@ -69,6 +69,7 @@ class AuthScreen extends StatelessWidget {
                     RoundTextField(
                       controller: authProvider.passwordController,
                       hintText: 'Password',
+                      isUpperCase:true,
                       prefixIcon: const Icon(
                         Icons.lock,
                         color: ParcelColors.catalinaBlue,
@@ -85,7 +86,6 @@ class AuthScreen extends StatelessWidget {
                         ),
                       ),
                       obscureText: !authProvider.isPasswordVisible,
-                      isUpperCase: true,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter Password';
@@ -97,11 +97,12 @@ class AuthScreen extends StatelessWidget {
                     RoundTextField(
                       controller: authProvider.stationCodeController,
                       hintText: 'Station Code',
+                      
                       prefixIcon: const Icon(
                         Icons.location_on,
                         color: ParcelColors.catalinaBlue,
                       ),
-                      isUpperCase: true,
+                      isUpperCase:true,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter Station Code';

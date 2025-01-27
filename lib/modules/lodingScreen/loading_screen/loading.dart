@@ -4,11 +4,9 @@ import 'package:project/modules/lodingScreen/loading_screen/collapsible_view.dar
 import 'package:project/modules/lodingScreen/loading_screen/scan_data.dart';
 import 'package:project/utils/app_icons.dart';
 import 'package:project/utils/colors.dart';
-import 'package:project/widgets/button.dart';
-import 'package:project/widgets/common_app_bar%20copy.dart';
+import 'package:project/widgets/common_app_bar.dart';
 import 'package:project/widgets/custom_button.dart';
 import 'package:project/widgets/text_widget.dart';
-import '../provider/collapsible_form.dart'; // Import your collapsible form here
 
 class LoadigScreen extends StatefulWidget {
   const LoadigScreen({super.key});
@@ -261,7 +259,7 @@ void _submitForm() {
                           Navigator.pop(context);
                         },
                         suffixIcon: Icons.cancel,
-                        color: ParcelColors.redPigment,
+                        color: ParcelColors.gray,
                       ),
                     ],
                   ),

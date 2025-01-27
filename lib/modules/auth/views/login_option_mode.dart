@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:project/modules/auth/views/auth.dart';
 import 'package:project/utils/app_icons.dart';
 import 'package:project/utils/colors.dart';
-import 'package:project/widgets/common_app_bar%20copy.dart';
+import 'package:project/widgets/common_app_bar.dart';
 import 'package:project/widgets/text_widget.dart';
 
 class LoginOptionPage extends StatelessWidget {

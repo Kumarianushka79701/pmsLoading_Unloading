@@ -6,7 +6,7 @@ import 'package:project/modules/prrStatus/views/prr_status.dart';
 import 'package:project/modules/reports/views/report_view.dart';
 import 'package:project/utils/app_icons.dart';
 import 'package:project/utils/colors.dart';
-import 'package:project/widgets/common_app_bar%20copy.dart';
+import 'package:project/widgets/common_app_bar.dart';
 import 'package:project/widgets/text_widget.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -22,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Scaffold(
       key: _scaffoldKey, // Assign the GlobalKey to the Scaffold
       appBar: getAppBar(
@@ -31,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Align(
             alignment: Alignment.topLeft,
             child: IconButton(
-              icon: Icon(Icons.menu),
+              icon: const Icon(Icons.menu),
               color: ParcelColors.white,
               onPressed: () {
                 // Use the GlobalKey to open the drawer
@@ -42,84 +43,255 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
         onTap: () {},
       ),
-      drawer: Drawer(child: AppDrawer()),
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Opacity(
-              opacity: 0.1, // Adjust opacity here
-              child: Image.asset(
-                AppIcons.pmsLogoTwo, // Ensure this path is correct
-                fit: BoxFit.cover,
+      drawer: const Drawer(child: AppDrawer()),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const TextWidget(
+                label: "Hi Aditi,\nGood Morning!",
+                textColor: ParcelColors.catalinaBlue,
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
               ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              const SizedBox(
+                height: 10,
+              ),
+              const TextWidget(
+                label: "Important Information",
+                textColor: ParcelColors.catalinaBlue,
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+              SizedBox(
+                height: size.height * 0.02,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildInfoText('Loading/Unloading Clerk Id: AT'),
-                  _buildInfoText('Station Code: NDLS'),
-                  _buildInfoText('Loading Sync Pending: 0'),
-                  _buildInfoText('UnLoading Sync Pending: 0'),
-                  const SizedBox(height: 40),
-                 
-                   _buildImageRow(
-                    context,
-                    'Loading',
-                    AppIcons.loading,
-                    () {
-                       Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => LoadigScreen()),
-                              );
-                    },
-                    secondTitle: 'UnLoading',
-                    secondIcon: AppIcons.unloading,
-                    secondOnTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const PRRStatusPage(),
-                        ),
-                      );
-                    },
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    height: size.height * 0.12,
+                    width: size.width * 0.43,
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            color: ParcelColors.babyBlueEyes, width: 2),
+                        color: ParcelColors.babyBlueEyes,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(16))),
+                    child: const Align(
+                        alignment: Alignment.center,
+                        child: TextWidget(label: "(Un)\Loading Clerk Id:")),
                   ),
-                  const SizedBox(height: 24),
-                  _buildImageRow(
-                    context,
-                    'Reports',
-                    AppIcons.database,
-                    () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ReportView()),
-                      );
-                    },
-                    secondTitle: 'PRR Status',
-                    secondIcon: AppIcons.prr,
-                    secondOnTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const PRRStatusPage(),
-                        ),
-                      );
-                    },
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    height: size.height * 0.12,
+                    width: size.width * 0.43,
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            color:
+                                ParcelColors.cornFlowerblue.withOpacity(0.45),
+                            width: 2),
+                        color: ParcelColors.cornFlowerblue,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(16))),
+                    child: const Align(
+                        alignment: Alignment.center,
+                        child: TextWidget(
+                          label: "Station Code",
+                        )),
+                  )
+                ],
+              ),
+              SizedBox(
+                height: size.height * 0.01,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    height: size.height * 0.12,
+                    width: size.width * 0.43,
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            color: ParcelColors.paleCornflowerBlue, width: 2),
+                        color: ParcelColors.paleCornflowerBlue,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(16))),
+                    child: const Align(
+                        alignment: Alignment.center,
+                        child: TextWidget(
+                          label: "Loading Sync Pending",
+                        )),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    height: size.height * 0.12,
+                    width: size.width * 0.43,
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            color:
+                                ParcelColors.richElectricBlue.withOpacity(0.3),
+                            width: 2),
+                        color: ParcelColors.richElectricBlue,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(16))),
+                    child: const Align(
+                        alignment: Alignment.center,
+                        child: TextWidget(label: "UnLoading Sync Pending")),
                   ),
                 ],
               ),
-            ),
+
+              SizedBox(
+                height: size.height * 0.03,
+              ),
+              const TextWidget(
+                label: "Services",
+                textColor: ParcelColors.catalinaBlue,
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+              SizedBox(
+                height: size.height * 0.01,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    height: size.height * 0.12,
+                    width: size.width * 0.43,
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            color: ParcelColors.paleCerulean.withOpacity(0.5),
+                            width: 2),
+                        color: ParcelColors.paleCerulean.withOpacity(0.5),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(16))),
+                    child: const Align(
+                        alignment: Alignment.center,
+                        child: TextWidget(label: "Loading")),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    height: size.height * 0.12,
+                    width: size.width * 0.43,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: ParcelColors.richElectricBlue
+                            .withOpacity(0.5),
+                        width: 2,
+                      ),
+                      color: ParcelColors.richElectricBlue
+                          .withOpacity(0.5), 
+                      borderRadius: const BorderRadius.all(Radius.circular(16)),
+                    ),
+                    child: const Align(
+                        alignment: Alignment.center,
+                        child: TextWidget(
+                          label: "Unloading",
+                        )),
+                  )
+                ],
+              ),
+              SizedBox(
+                height: size.height * 0.01,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    height: size.height * 0.12,
+                    width: size.width * 0.43,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: ParcelColors.areo, width: 1),
+                        color: ParcelColors.areo,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(16))),
+                    child: const Align(
+                        alignment: Alignment.center,
+                        child: TextWidget(
+                          label: "PRR Status",
+                        )),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    height: size.height * 0.12,
+                    width: size.width * 0.43,
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            color: ParcelColors.colambiaBlue, width: 2),
+                        color: ParcelColors.colambiaBlue,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(16))),
+                    child: const Align(
+                        alignment: Alignment.center,
+                        child: TextWidget(label: "Reports")),
+                  ),
+                ],
+              ),
+              // buildInfoText('Loading/Unloading Clerk Id: AT'),
+              // buildInfoText('Station Code: NDLS'),
+              // buildInfoText('Loading Sync Pending: 0'),
+              // buildInfoText('UnLoading Sync Pending: 0'),
+              const SizedBox(height: 40),
+              _buildImageRow(
+                context,
+                'Loading',
+                AppIcons.loading,
+                () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const LoadigScreen()),
+                  );
+                },
+                secondTitle: 'UnLoading',
+                secondIcon: AppIcons.unloading,
+                secondOnTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const PRRStatusPage(),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 24),
+              _buildImageRow(
+                context,
+                'Reports',
+                AppIcons.database,
+                () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const ReportView()),
+                  );
+                },
+                secondTitle: 'PRR Status',
+                secondIcon: AppIcons.prr,
+                secondOnTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const PRRStatusPage(),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildInfoText(String text) {
+  Widget buildInfoText(String text) {
     return Text(
       text,
       style: const TextStyle(

@@ -26,6 +26,14 @@ class RoundTextField extends StatelessWidget {
       controller: controller,
       obscureText: obscureText,
       validator: validator,
+      onChanged: isUpperCase
+          ? (value) {
+              controller.value = controller.value.copyWith(
+                text: value.toUpperCase(),
+                selection: TextSelection.collapsed(offset: value.length),
+              );
+            }
+          : null,
       decoration: InputDecoration(
         hintText: hintText,
         prefixIcon: prefixIcon,
