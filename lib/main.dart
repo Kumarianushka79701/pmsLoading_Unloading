@@ -11,6 +11,7 @@ import 'package:project/modules/providers/scan_activity_provider.dart';
 import 'package:project/modules/prrStatus/provider/prr_status_Provider.dart';
 import 'package:project/modules/splash.dart';
 import 'package:project/modules/tabScreen/prvider/tabs_provider.dart';
+import 'package:project/modules/unLoading/providers/unloading_provider.dart';
 import 'package:project/routes/app_pages.dart';
 import 'package:project/routes/app_routes.dart';
 import 'package:provider/provider.dart';
@@ -60,7 +61,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => CollapsibleFormProvider()),
         ChangeNotifierProvider(create: (_) => PrrStatusProvider()),
         ChangeNotifierProvider(create: (_) => MisReportProvider()),
-
+        ChangeNotifierProvider(create: (_) => UnloadingProvider()),
       ],
       child: MyApp(),
     ),

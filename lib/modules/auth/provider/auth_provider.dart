@@ -539,7 +539,10 @@ class AuthProvider with ChangeNotifier {
       setLoading(false);
     }
   }
+ Map<String, dynamic>? _apiResponse;
 
+  // Getter to access the API response
+  Map<String, dynamic>? get loginApiResponse => _apiResponse;
   Future<void> login(String userId, String password, String stationCode) async {
     setLoading(true);
     _errorMessage = null;

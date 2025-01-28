@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:project/app_drawer.dart';
+import 'package:project/modules/auth/provider/auth_provider.dart';
 import 'package:project/modules/lodingScreen/loading_screen/loading.dart';
 import 'package:project/modules/databseReport/views/table.dart';
+import 'package:project/modules/mis_report/views/mis_report.dart';
 import 'package:project/modules/prrStatus/views/prr_status.dart';
 import 'package:project/modules/reports/views/report_view.dart';
+import 'package:project/modules/unLoading/views/unloading_view.dart';
 import 'package:project/utils/app_icons.dart';
 import 'package:project/utils/colors.dart';
 import 'package:project/widgets/common_app_bar.dart';
 import 'package:project/widgets/text_widget.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,7 +26,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
     final size = MediaQuery.of(context).size;
+    final loginApiResponse =
+        Provider.of<AuthProvider>(context).loginApiResponse;
+
     return Scaffold(
       key: _scaffoldKey, // Assign the GlobalKey to the Scaffold
       appBar: getAppBar(
@@ -56,6 +64,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
               ),
+              // loginApiResponse == null
+              //     ? Text('No response available yet.')
+              //     : Text(
+              //         'Response: ${loginApiResponse == null.toString()}',
+              //         style: TextStyle(fontSize: 16),
+              //       ),
+
               const SizedBox(
                 height: 10,
               ),
@@ -229,11 +244,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   InkWell(
                     onTap: () {
-                       Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const LoadigScreen()),
-                  );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LoadigScreen()),
+                      );
                     },
                     child: Container(
                       padding: const EdgeInsets.all(14),
@@ -256,31 +271,42 @@ class _HomeScreenState extends State<HomeScreen> {
                           )),
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.all(14),
-                    height: size.height * 0.12,
-                    width: size.width * 0.43,
-                    decoration: BoxDecoration(
-                      // border: Border.all(
-                      //   color: ParcelColors.richElectricBlue.withOpacity(0.5),
-                      //   width: 2,
-                      // ),
-                      color: ParcelColors.richElectricBlue.withOpacity(0.50),
-                      borderRadius: const BorderRadius.all(Radius.circular(16)),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UnloadingPage(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(14),
+                      height: size.height * 0.12,
+                      width: size.width * 0.43,
+                      decoration: BoxDecoration(
+                        // border: Border.all(
+                        //   color: ParcelColors.richElectricBlue.withOpacity(0.5),
+                        //   width: 2,
+                        // ),
+                        color: ParcelColors.richElectricBlue.withOpacity(0.50),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(16)),
+                      ),
+                      child: const Align(
+                          alignment: Alignment.center,
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.inventory,
+                                size: 29,
+                              ),
+                              TextWidget(
+                                label: "Unloading",
+                              ),
+                            ],
+                          )),
                     ),
-                    child: const Align(
-                        alignment: Alignment.center,
-                        child: Column(
-                          children: [
-                            Icon(
-                              Icons.inventory,
-                              size: 29,
-                            ),
-                            TextWidget(
-                              label: "Unloading",
-                            ),
-                          ],
-                        )),
                   )
                 ],
               ),
@@ -290,15 +316,14 @@ class _HomeScreenState extends State<HomeScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  InkWell
-                  (
+                  InkWell(
                     onTap: () {
-                       Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const PRRStatusPage(),
-                    ),
-                  );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PRRStatusPage(),
+                        ),
+                      );
                     },
                     child: Container(
                       padding: const EdgeInsets.all(14),
@@ -326,10 +351,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   InkWell(
                     onTap: () {
-                        Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const ReportView()),
-                  );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MisReportScreen()),
+                      );
                     },
                     child: Container(
                       padding: const EdgeInsets.all(14),
@@ -360,7 +386,7 @@ class _HomeScreenState extends State<HomeScreen> {
               // buildInfoText('Station Code: NDLS'),
               // buildInfoText('Loading Sync Pending: 0'),
               // buildInfoText('UnLoading Sync Pending: 0'),
-             ],
+            ],
           ),
         ),
       ),

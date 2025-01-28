@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project/modules/mis_report/provider/mis_report_provider.dart';
+import 'package:project/modules/reports/provider/report_provider.dart';
+import 'package:project/modules/reports/views/report_view.dart';
 import 'package:project/utils/colors.dart';
 import 'package:project/widgets/common/RoundButton.dart';
 import 'package:project/widgets/custom_outLined_buttom.dart';
@@ -63,7 +65,7 @@ class MisReportScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 40),
-           const SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextField(
               controller: misReportProvider.sourceController,
               decoration: InputDecoration(
@@ -125,16 +127,19 @@ class MisReportScreen extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Submitted')),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ReportView()),
                     );
+                    // ScaffoldMessenger.of(context).showSnackBar(
+                    //   const SnackBar(content: Text('Submitted')),
+                    // );
                   },
                 ),
                 CustomOutlinedButton(
                   title: 'Exit',
                   textColor: ParcelColors.brandeisblue,
-                  
-                  
                   onPressed: () {
                     Navigator.pop(context);
                   },
