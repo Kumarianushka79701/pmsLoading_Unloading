@@ -9,38 +9,34 @@ import 'package:provider/provider.dart';
 class ReportView extends StatelessWidget {
   const ReportView({Key? key}) : super(key: key);
 
- 
- 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: getAppBar(context,
-          title:  getTableListAppBarTitle(context),
-          actions: [
-            IconButton(
-            icon: const Icon(Icons.refresh,color: ParcelColors.white,size: 30,),
-            onPressed: () {
-              Provider.of<LocalDatabaseProvider>(context, listen: false)
-                  .getAllTableNames()
-                  .then((_) {
-                (context as Element).reassemble();
-              });
-            },
+      appBar:
+          getAppBar(context, title: getTableListAppBarTitle(context), actions: [
+        IconButton(
+          icon: const Icon(
+            Icons.refresh,
+            color: ParcelColors.white,
+            size: 30,
           ),
-          IconButton(
-            icon: const Icon(Icons.settings,color: ParcelColors.white,size: 30),
-            onPressed: () {
-                // Add your settings logic here
-               
-            },
-          ),
-          ], onTap: () {
-            Navigator.pop(context);
+          onPressed: () {
+            Provider.of<LocalDatabaseProvider>(context, listen: false)
+                .getAllTableNames()
+                .then((_) {
+              (context as Element).reassemble();
+            });
+          },
+        ),
+        IconButton(
+          icon: const Icon(Icons.settings, color: ParcelColors.white, size: 30),
+          onPressed: () {
+            // Add your settings logic here
+          },
+        ),
+      ], onTap: () {
+        Navigator.pop(context);
       }),
-     
-       
-   
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: FutureBuilder<List<String>>(
@@ -86,7 +82,7 @@ class ReportView extends StatelessWidget {
           },
         ),
       ),
-     );
+    );
   }
 }
 
@@ -99,7 +95,13 @@ class TableDetailsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Details for Table: $tableName',style: TextStyle(color: ParcelColors.white,fontSize: 18,fontWeight: FontWeight.w700),),
+        title: Text(
+          'Details for Table: $tableName',
+          style: TextStyle(
+              color: ParcelColors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w700),
+        ),
         backgroundColor: Colors.blueAccent, // Enhanced color
       ),
       body: Padding(
@@ -146,6 +148,7 @@ class TableDetailsView extends StatelessWidget {
     );
   }
 }
+
 Widget getTableListAppBarTitle(BuildContext context) {
   return const TextWidget(
     label: "Table List",

@@ -61,7 +61,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => CollapsibleFormProvider()),
         ChangeNotifierProvider(create: (_) => PrrStatusProvider()),
         ChangeNotifierProvider(create: (_) => MisReportProvider()),
-        ChangeNotifierProvider(create: (_) => UnloadingProvider()),
+        ChangeNotifierProvider(create: (_) => UnloadingSummaryProvider()),
       ],
       child: MyApp(),
     ),
