@@ -7,7 +7,7 @@ class AuthenticationSuccessful extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.green[100],
-      body: Center(
+      body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -16,8 +16,8 @@ class AuthenticationSuccessful extends StatelessWidget {
               color: Colors.green,
               size: 100,
             ),
-            const SizedBox(height: 20),
-            const Text(
+            SizedBox(height: 20),
+            Text(
               'Authentication Successful!',
               style: TextStyle(
                 fontSize: 24,
@@ -25,8 +25,8 @@ class AuthenticationSuccessful extends StatelessWidget {
                 color: Colors.black,
               ),
             ),
-            const SizedBox(height: 10),
-            const Text(
+            SizedBox(height: 10),
+            Text(
               'Redirecting to the Home Page...',
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),

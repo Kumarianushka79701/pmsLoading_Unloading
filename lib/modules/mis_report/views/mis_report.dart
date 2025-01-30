@@ -65,7 +65,6 @@ class MisReportScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 40),
-            const SizedBox(height: 20),
             TextField(
               controller: misReportProvider.sourceController,
               decoration: InputDecoration(
@@ -154,7 +153,7 @@ class MisReportScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  width: 150,
+                  width: 140,
                   height: 50,
                 ),
               ],

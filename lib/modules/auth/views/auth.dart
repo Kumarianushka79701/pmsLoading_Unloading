@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project/modules/providers/local_database_provider.dart';
+import 'package:project/routes/app_routes.dart';
 import 'package:project/widgets/text_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:project/modules/auth/provider/auth_provider.dart';
@@ -55,7 +56,7 @@ class AuthScreen extends StatelessWidget {
                         Icons.supervised_user_circle,
                         color: ParcelColors.catalinaBlue,
                       ),
-                      isUpperCase:true,
+                      isUpperCase: true,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter User ID';
@@ -69,7 +70,7 @@ class AuthScreen extends StatelessWidget {
                     RoundTextField(
                       controller: authProvider.passwordController,
                       hintText: 'Password',
-                      isUpperCase:true,
+                      isUpperCase: true,
                       prefixIcon: const Icon(
                         Icons.lock,
                         color: ParcelColors.catalinaBlue,
@@ -97,12 +98,11 @@ class AuthScreen extends StatelessWidget {
                     RoundTextField(
                       controller: authProvider.stationCodeController,
                       hintText: 'Station Code',
-                      
                       prefixIcon: const Icon(
                         Icons.location_on,
                         color: ParcelColors.catalinaBlue,
                       ),
-                      isUpperCase:true,
+                      isUpperCase: true,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter Station Code';
@@ -111,9 +111,9 @@ class AuthScreen extends StatelessWidget {
                       },
                     ),
                     const SizedBox(height: 20),
-                 
-                 CustomButton(
-  //  isLoading: authProvider.isLoading,
+
+                    CustomButton(
+                      //  isLoading: authProvider.isLoading,
                       onPressed: authProvider.isLoading
                           ? () {}
                           : () async {
@@ -126,7 +126,8 @@ class AuthScreen extends StatelessWidget {
                                     const SnackBar(
                                         content: Text("Login successful!")),
                                   );
-                                  Navigator.pushNamed(context, '/home');
+                                  Navigator.pushNamed(context, Routes.HOME);
+                                  // Navigator.pushNamed(context, '/home');
                                   await handleLogin(context, authProvider,
                                       localDatabaseProvider);
                                 } else {
@@ -144,18 +145,18 @@ class AuthScreen extends StatelessWidget {
                                 authProvider.setLoading(false);
                               }
                             },
-                   
-  label:  authProvider.isLoading
-                            ? 'Logging In...'
-                            : 'Get Started',
-),
+
+                      label: authProvider.isLoading
+                          ? 'Logging In...'
+                          : 'Get Started',
+                    ),
 
                     // RoundButton(
                     //   title: Text(
                     //     authProvider.isLoading
                     //         ? 'Logging In...'
                     //         : 'Get Started',
-                       
+
                     //     style:
                     //         const TextStyle(color: Colors.white, fontSize: 20),
                     //   ),

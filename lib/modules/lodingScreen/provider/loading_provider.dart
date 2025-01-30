@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:project/routes/app_routes.dart';
 
 class LoadingProvider extends ChangeNotifier {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -21,8 +22,7 @@ class LoadingProvider extends ChangeNotifier {
   bool get isCollapsibleFormValid => _isCollapsibleFormValid;
   Map<String, dynamic> get collapsibleFormData => _collapsibleFormData;
   GlobalKey<FormState> get getFormKey => formKey;
-    String? selectedVehicleType;
-
+  String? selectedVehicleType;
 
   // Date Formatting
   String formatDate(DateTime? date) {
@@ -61,8 +61,6 @@ class LoadingProvider extends ChangeNotifier {
     }
   }
 
-
-
   void setTrainNo(String? trainNo) {
     _trainNo = trainNo;
     notifyListeners();
@@ -97,6 +95,7 @@ class LoadingProvider extends ChangeNotifier {
     _actualLoadDate = date;
     notifyListeners();
   }
+
   // Form Submission
   void submitForm(BuildContext context) {
     if (formKey.currentState!.validate()) {
@@ -122,10 +121,11 @@ class LoadingProvider extends ChangeNotifier {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Form submitted successfully!')),
       );
-
-      Navigator.pushNamed(context, '/scanDataScreen');
+      Navigator.pushNamed(context, Routes.SCAN_DATA_SCREEN);
+      // Navigator.pushNamed(context, '/scanDataScreen');
     }
   }
+
   void setVehicleType(String? type) {
     if (selectedVehicleType != type) {
       selectedVehicleType = type;

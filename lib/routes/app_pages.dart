@@ -4,6 +4,7 @@ import 'package:project/modules/databseReport/views/table.dart';
 import 'package:project/modules/forgot_account_page/views/forgot_account_view.dart';
 import 'package:project/modules/home/views/home.dart';
 import 'package:project/modules/lodingScreen/loading_screen/loading.dart';
+import 'package:project/modules/lodingScreen/loading_screen/scan_data.dart';
 import 'package:project/modules/mis_report/views/mis_report.dart';
 import 'package:project/modules/splash.dart';
 import 'package:project/routes/app_routes.dart';
@@ -23,42 +24,51 @@ class AppPages {
       case Routes.LOGIN:
         return MaterialPageRoute(
           settings: setting,
-          builder: (_) =>  AuthScreen(),
+          builder: (_) => AuthScreen(),
         );
       case Routes.HOME:
-        final arguments = setting.arguments as Map<String, dynamic>?; // Use nullable type
+        final arguments =
+            setting.arguments as Map<String, dynamic>?; // Use nullable type
         return MaterialPageRoute(
           settings: setting,
           builder: (_) => const HomeScreen(),
         );
       case Routes.DATABSE_TABLE_SCREEN:
-        final arguments = setting.arguments as Map<String, dynamic>?; // Use nullable type
+        final arguments =
+            setting.arguments as Map<String, dynamic>?; // Use nullable type
         return MaterialPageRoute(
           settings: setting,
           builder: (_) => const TableScreen(),
         );
       case Routes.LOADING_SCREEN:
-        final arguments = setting.arguments as Map<String, dynamic>?; // Use nullable type
+        final arguments =
+            setting.arguments as Map<String, dynamic>?; // Use nullable type
         return MaterialPageRoute(
           settings: setting,
           builder: (_) => const LoadigScreen(),
         );
       case Routes.FORGOT_ACCOUNT_PAGE:
-        final arguments = setting.arguments as Map<String, dynamic>?; // Use nullable type
+        final arguments =
+            setting.arguments as Map<String, dynamic>?; // Use nullable type
         return MaterialPageRoute(
           settings: setting,
           builder: (_) => const ForgotAccountView(),
         );
-        case Routes.MIS_REPORT:
-        final arguments = setting.arguments as Map<String, dynamic>?; // Use nullable type
+      case Routes.MIS_REPORT:
         return MaterialPageRoute(
           settings: setting,
-          builder: (_) =>  MisReportScreen(),
+          builder: (_) => MisReportScreen(),
+        );
+
+      case Routes.SCAN_DATA_SCREEN:
+        return MaterialPageRoute(
+          settings: setting,
+          builder: (_) => ScanDataScreen(),
         );
       default:
         return MaterialPageRoute(
           settings: setting,
-          builder: (_) =>  AuthScreen(),
+          builder: (_) => AuthScreen(),
         );
     }
   }

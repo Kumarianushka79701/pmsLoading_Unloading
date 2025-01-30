@@ -77,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               GridView.builder(
                 shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 10,
@@ -91,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
                       color: item['color'],
-                      borderRadius: BorderRadius.all(Radius.circular(16)),
+                      borderRadius: const BorderRadius.all(Radius.circular(16)),
                     ),
                     child: Align(
                       alignment: Alignment.center,
@@ -99,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         textAlign: TextAlign.center,
                         text: TextSpan(
                           text: item['title'],
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 10.0,
                             fontWeight: FontWeight.w600,
                             color: ParcelColors.brandeisblue,
@@ -165,7 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(service["icon"], size: 29),
+                            Icon(service["icon"], size: 40),
                             TextWidget(label: service["label"]),
                           ],
                         ),
@@ -175,10 +175,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
 
-              // buildInfoText('Loading/Unloading Clerk Id: AT'),
-              // buildInfoText('Station Code: NDLS'),
-              // buildInfoText('Loading Sync Pending: 0'),
-              // buildInfoText('UnLoading Sync Pending: 0'),
             ],
           ),
         ),
