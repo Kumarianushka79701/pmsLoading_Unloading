@@ -21,7 +21,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // Create a GlobalKey for the Scaffold
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -32,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Provider.of<AuthProvider>(context).loginApiResponse;
 
     return Scaffold(
-      key: _scaffoldKey, // Assign the GlobalKey to the Scaffold
+      key: _scaffoldKey,
       appBar: getAppBar(
         context,
         title: getParcelHomeAppBarTitle(context),
@@ -43,7 +42,6 @@ class _HomeScreenState extends State<HomeScreen> {
               icon: const Icon(Icons.menu),
               color: ParcelColors.white,
               onPressed: () {
-                // Use the GlobalKey to open the drawer
                 _scaffoldKey.currentState?.openDrawer();
               },
             ),
@@ -64,12 +62,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
               ),
-              // loginApiResponse == null
-              //     ? Text('No response available yet.')
-              //     : Text(
-              //         'Response: ${loginApiResponse == null.toString()}',
-              //         style: TextStyle(fontSize: 16),
-              //       ),
 
               const SizedBox(
                 height: 10,
@@ -83,105 +75,38 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(
                 height: size.height * 0.02,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
+              GridView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: (size.width * 0.43) / (size.height * 0.12),
+                ),
+                itemCount: authProvider.gridItems.length,
+                itemBuilder: (context, index) {
+                  final item = authProvider.gridItems[index];
+                  return Container(
                     padding: const EdgeInsets.all(14),
-                    height: size.height * 0.12,
-                    width: size.width * 0.43,
                     decoration: BoxDecoration(
-                        // border: Border.all(
-                        //     color: ParcelColors.babyBlueEyes, width: 2),
-                        color: ParcelColors.babyBlueEyes,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(16))),
-                    child: Align(
-                        alignment: Alignment.center,
-                        child: RichText(
-                          text: const TextSpan(
-                            text: '(Un)\Loading Clerk Id: ',
-                            style: TextStyle(
-                                fontSize: 10.0,
-                                fontWeight: FontWeight.w600,
-                                color: ParcelColors.brandeisblue),
-                            children: [
-                              TextSpan(
-                                text: '\nAT ',
-                                style: TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w700,
-                                    color: ParcelColors.brandeisblue),
-                              ),
-                            ],
-                          ),
-                        )),
-                  ),
-                  Container(
-                      padding: const EdgeInsets.all(14),
-                      height: size.height * 0.12,
-                      width: size.width * 0.43,
-                      decoration: BoxDecoration(
-                          // border: Border.all(
-                          //     color:
-                          //         ParcelColors.cornFlowerblue.withOpacity(0.45),
-                          //     width: 1),
-                          color: ParcelColors.cornFlowerblue.withOpacity(0.45),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(16))),
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: RichText(
-                          text: const TextSpan(
-                            text: 'Station Code ',
-                            style: TextStyle(
-                                fontSize: 10.0,
-                                fontWeight: FontWeight.w600,
-                                color: ParcelColors.brandeisblue),
-                            children: [
-                              TextSpan(
-                                text: '\nNDLS',
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w700,
-                                  color: ParcelColors.brandeisblue,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )),
-                ],
-              ),
-              SizedBox(
-                height: size.height * 0.01,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(14),
-                    height: size.height * 0.12,
-                    width: size.width * 0.43,
-                    decoration: BoxDecoration(
-                        // border: Border.all(
-                        //     color: ParcelColors.paleCornflowerBlue, width: 1),
-                        color:
-                            ParcelColors.paleCornflowerBlue.withOpacity(0.45),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(16))),
+                      color: item['color'],
+                      borderRadius: BorderRadius.all(Radius.circular(16)),
+                    ),
                     child: Align(
                       alignment: Alignment.center,
                       child: RichText(
-                        text: const TextSpan(
-                          text: 'Loading Sync Pending',
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          text: item['title'],
                           style: TextStyle(
-                              fontSize: 10.0,
-                              fontWeight: FontWeight.w600,
-                              color: ParcelColors.brandeisblue),
+                            fontSize: 10.0,
+                            fontWeight: FontWeight.w600,
+                            color: ParcelColors.brandeisblue,
+                          ),
                           children: [
                             TextSpan(
-                              text: '\n0',
+                              text: '\n${item['subtitle']}',
                               style: TextStyle(
                                 fontSize: 22,
                                 fontWeight: FontWeight.w700,
@@ -192,41 +117,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(14),
-                    height: size.height * 0.12,
-                    width: size.width * 0.43,
-                    decoration: BoxDecoration(
-                        color: ParcelColors.richElectricBlue.withOpacity(0.37),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(16))),
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: RichText(
-                        text: const TextSpan(
-                          text: 'UnLoading Sync Pending',
-                          style: TextStyle(
-                              fontSize: 10.0,
-                              fontWeight: FontWeight.w600,
-                              color: ParcelColors.brandeisblue),
-                          children: [
-                            TextSpan(
-                              text: '\n0',
-                              style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.w700,
-                                color: ParcelColors.brandeisblue,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+                  );
+                },
               ),
-
               SizedBox(
                 height: size.height * 0.03,
               ),
@@ -239,149 +132,49 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(
                 height: size.height * 0.01,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  InkWell(
+
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: authProvider.services.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: 1.8,
+                ),
+                itemBuilder: (context, index) {
+                  final service = authProvider.services[index];
+                  return InkWell(
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const LoadigScreen()),
+                            builder: (context) => service["screen"]),
                       );
                     },
                     child: Container(
                       padding: const EdgeInsets.all(14),
-                      height: size.height * 0.12,
-                      width: size.width * 0.43,
                       decoration: BoxDecoration(
-                          color: ParcelColors.paleCerulean.withOpacity(0.5),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(16))),
-                      child: const Align(
-                          alignment: Alignment.center,
-                          child: Column(
-                            children: [
-                              Icon(
-                                Icons.add_box,
-                                size: 29,
-                              ),
-                              TextWidget(label: "Loading"),
-                            ],
-                          )),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => UnloadingSummaryScreen(),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(14),
-                      height: size.height * 0.12,
-                      width: size.width * 0.43,
-                      decoration: BoxDecoration(
-                        // border: Border.all(
-                        //   color: ParcelColors.richElectricBlue.withOpacity(0.5),
-                        //   width: 2,
-                        // ),
-                        color: ParcelColors.richElectricBlue.withOpacity(0.50),
+                        color: service["color"],
                         borderRadius:
                             const BorderRadius.all(Radius.circular(16)),
                       ),
-                      child: const Align(
-                          alignment: Alignment.center,
-                          child: Column(
-                            children: [
-                              Icon(
-                                Icons.inventory,
-                                size: 29,
-                              ),
-                              TextWidget(
-                                label: "Unloading",
-                              ),
-                            ],
-                          )),
-                    ),
-                  )
-                ],
-              ),
-              SizedBox(
-                height: size.height * 0.01,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const PRRStatusPage(),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(service["icon"], size: 29),
+                            TextWidget(label: service["label"]),
+                          ],
                         ),
-                      );
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(14),
-                      height: size.height * 0.12,
-                      width: size.width * 0.43,
-                      decoration: BoxDecoration(
-                          // border: Border.all(color: ParcelColors.areo, width: 2),
-                          color: ParcelColors.areo,
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(16))),
-                      child: const Align(
-                          alignment: Alignment.center,
-                          child: Column(
-                            children: [
-                              Icon(
-                                Icons.search,
-                                size: 29,
-                              ),
-                              TextWidget(
-                                label: "PRR Status",
-                              ),
-                            ],
-                          )),
+                      ),
                     ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => MisReportScreen()),
-                      );
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(14),
-                      height: size.height * 0.12,
-                      width: size.width * 0.43,
-                      decoration: BoxDecoration(
-                          // border: Border.all(
-                          //     color: ParcelColors.colambiaBlue, width: 2),
-                          color: ParcelColors.colambiaBlue,
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(16))),
-                      child: const Align(
-                          alignment: Alignment.center,
-                          child: Column(
-                            children: [
-                              Icon(
-                                Icons.description,
-                                size: 29,
-                              ),
-                              TextWidget(label: "Reports"),
-                            ],
-                          )),
-                    ),
-                  ),
-                ],
+                  );
+                },
               ),
+
               // buildInfoText('Loading/Unloading Clerk Id: AT'),
               // buildInfoText('Station Code: NDLS'),
               // buildInfoText('Loading Sync Pending: 0'),

@@ -6,7 +6,12 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:project/api/urls.dart';
 import 'package:project/model/WagonTypeAl_model.dart';
+import 'package:project/modules/lodingScreen/loading_screen/loading.dart';
+import 'package:project/modules/mis_report/views/mis_report.dart';
+import 'package:project/modules/prrStatus/views/prr_status.dart';
 import 'package:project/modules/tabScreen/views/tabs.dart';
+import 'package:project/modules/unLoading/views/unloading_view.dart';
+import 'package:project/utils/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -603,6 +608,56 @@ class AuthProvider with ChangeNotifier {
       throw Exception('Failed to fetch wagon master data.');
     }
   }
+
+    final List<Map<String, dynamic>> gridItems = [
+    {
+      'title': '(Un)Loading Clerk Id:',
+      'subtitle': 'AT',
+      'color': ParcelColors.babyBlueEyes,
+    },
+    {
+      'title': 'Station Code',
+      'subtitle': 'NDLS',
+      'color': ParcelColors.cornFlowerblue.withOpacity(0.45),
+    },
+    {
+      'title': 'Loading Sync Pending',
+      'subtitle': '0',
+      'color': ParcelColors.paleCornflowerBlue.withOpacity(0.45),
+    },
+    {
+      'title': 'UnLoading Sync Pending',
+      'subtitle': '0',
+      'color': ParcelColors.richElectricBlue.withOpacity(0.37),
+    },
+  ];
+
+   final List<Map<String, dynamic>> services = [
+      {
+        "label": "Loading",
+        "icon": Icons.add_box,
+        "color": ParcelColors.paleCerulean.withOpacity(0.5),
+        "screen": const LoadigScreen(),
+      },
+      {
+        "label": "Unloading",
+        "icon": Icons.inventory,
+        "color": ParcelColors.richElectricBlue.withOpacity(0.50),
+        "screen": UnloadingSummaryScreen(),
+      },
+      {
+        "label": "PRR Status",
+        "icon": Icons.search,
+        "color": ParcelColors.areo,
+        "screen": const PRRStatusPage(),
+      },
+      {
+        "label": "Reports",
+        "icon": Icons.description,
+        "color": ParcelColors.colambiaBlue,
+        "screen": MisReportScreen(),
+      },
+    ];
 
   // Future<void> processWagonMasterData() async {
   //   try {
