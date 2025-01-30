@@ -65,16 +65,7 @@ class SignUpScreen extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 20),
-              RoundButton(
-                title: Text(
-                  authProvider.isLoading ? 'Signing Up...' : 'Sign Up',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                isLoading: authProvider.isLoading,
+                CustomButton(
                 onPressed: () {
                   if (authProvider.formKey.currentState?.validate() ?? false) {
                     final userId = authProvider.userIDController.text.trim();
@@ -102,7 +93,49 @@ class SignUpScreen extends StatelessWidget {
                     });
                   }
                 },
-              ),
+             
+  
+  label: authProvider.isLoading ? 'Signing Up...' : 'Sign Up',
+),
+              // RoundButton(
+              //   title: Text(
+              //     authProvider.isLoading ? 'Signing Up...' : 'Sign Up',
+              //     style: const TextStyle(
+              //       color: Colors.white,
+              //       fontSize: 20,
+              //       fontWeight: FontWeight.bold,
+              //     ),
+              //   ),
+              //   isLoading: authProvider.isLoading,
+              //   onPressed: () {
+              //     if (authProvider.formKey.currentState?.validate() ?? false) {
+              //       final userId = authProvider.userIDController.text.trim();
+              //       final password =
+              //           authProvider.passwordController.text.trim();
+              //       final stationCode =
+              //           authProvider.stationCodeController.text.trim();
+
+              //       authProvider
+              //           .signUp(userId, password, stationCode)
+              //           .then((_) {
+              //         if (authProvider.isAuthenticated) {
+              //           Navigator.pushReplacement(
+              //             context,
+              //             MaterialPageRoute(
+              //                 builder: (context) => const TabsScreen()),
+              //           );
+              //         } else {
+              //           ScaffoldMessenger.of(context).showSnackBar(
+              //             SnackBar(
+              //                 content: Text(authProvider.errorMessage ??
+              //                     'Unknown error')),
+              //           );
+              //         }
+              //       });
+              //     }
+              //   },
+              // ),
+           
             ],
           ),
         ),

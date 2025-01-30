@@ -1,62 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:project/utils/color_extensions.dart';
+import 'package:project/utils/colors.dart';
 
-enum RoundButtonType { primary, secondary }
-
-class RoundButton extends StatelessWidget {
-  final Widget title;
-  final RoundButtonType type;
+class CustomButton extends StatelessWidget {
   final VoidCallback onPressed;
-  final bool isLoading;
-  final Widget? loadingIndicator;
-  final double width; // Added width parameter
+  final String label;
+  final Color backgroundColor;
+  final Color textColor;
+  final double fontSize;
+  final double borderRadius;
+  final EdgeInsetsGeometry padding;
 
-  const RoundButton({
+  const CustomButton({
     Key? key,
-    required this.title,
-    this.type = RoundButtonType.primary,
     required this.onPressed,
-    this.isLoading = false,
-    this.loadingIndicator,
-    this.width = double.infinity, // Default to full-width
+    required this.label,
+    this.backgroundColor = ParcelColors.brandeisblue,
+    this.textColor = Colors.white,
+    this.fontSize = 16.0,
+    this.borderRadius = 30.0,
+    this.padding = const EdgeInsets.symmetric(vertical: 14, horizontal: 80),
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(51), // Set radius to 51
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, 3), // Position of shadow
-          ),
-        ],
-      ),
-      child: ElevatedButton(
-        onPressed: isLoading ? null : onPressed,
-        style: ElevatedButton.styleFrom(
-          minimumSize: Size(width, 50), // Set the custom width
-          elevation: 0,
-          backgroundColor: type == RoundButtonType.primary
-              ? AppColors.primary
-              : AppColors.secondary,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(51), // Set radius to 51
-          ),
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: backgroundColor,
+        foregroundColor: textColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(borderRadius),
         ),
-        child: isLoading
-            ? loadingIndicator ??
-                CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    type == RoundButtonType.primary
-                        ? Colors.white
-                        : AppColors.primaryText,
-                  ),
-                )
-            : title,
+        padding: padding,
+      ),
+      child: Text(
+        label,
+        style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.w500),
       ),
     );
   }

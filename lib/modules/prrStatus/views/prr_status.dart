@@ -92,19 +92,26 @@ class PRRStatusPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 30),
-            RoundButton(
-              title: Text(
-                'Submit',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              onPressed: () {
-                prrStatusProvider.submitForm();
-              },
-            ),
+
+            CustomButton(
+  onPressed: () {
+ prrStatusProvider.submitForm();  },
+  label: "Submit",
+),
+
+            // RoundButton(
+            //   title: Text(
+            //     'Submit',
+            //     style: const TextStyle(
+            //       color: Colors.white,
+            //       fontSize: 20,
+            //       fontWeight: FontWeight.bold,
+            //     ),
+            //   ),
+            //   onPressed: () {
+            //     prrStatusProvider.submitForm();
+            //   },
+            // ),
           ],
         ),
       ),

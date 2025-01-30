@@ -43,7 +43,7 @@ class AuthScreen extends StatelessWidget {
                       child: TextWidget(
                         label: 'User Login',
                         fontWeight: FontWeight.w700,
-                        textColor: ParcelColors.trueBlue,
+                        textColor: ParcelColors.brandeisblue,
                         fontSize: 20,
                       ),
                     ),
@@ -111,15 +111,9 @@ class AuthScreen extends StatelessWidget {
                       },
                     ),
                     const SizedBox(height: 20),
-                    RoundButton(
-                      title: Text(
-                        authProvider.isLoading
-                            ? 'Logging In...'
-                            : 'Get Started',
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 20),
-                      ),
-                      isLoading: authProvider.isLoading,
+                 
+                 CustomButton(
+  //  isLoading: authProvider.isLoading,
                       onPressed: authProvider.isLoading
                           ? () {}
                           : () async {
@@ -150,7 +144,53 @@ class AuthScreen extends StatelessWidget {
                                 authProvider.setLoading(false);
                               }
                             },
-                    ),
+                   
+  label:  authProvider.isLoading
+                            ? 'Logging In...'
+                            : 'Get Started',
+),
+
+                    // RoundButton(
+                    //   title: Text(
+                    //     authProvider.isLoading
+                    //         ? 'Logging In...'
+                    //         : 'Get Started',
+                       
+                    //     style:
+                    //         const TextStyle(color: Colors.white, fontSize: 20),
+                    //   ),
+                    //   isLoading: authProvider.isLoading,
+                    //   onPressed: authProvider.isLoading
+                    //       ? () {}
+                    //       : () async {
+                    //           authProvider.setLoading(true);
+                    //           try {
+                    //             final result = await runMasterService
+                    //                 .runMasterMethod(context);
+                    //             if (result == "success") {
+                    //               ScaffoldMessenger.of(context).showSnackBar(
+                    //                 const SnackBar(
+                    //                     content: Text("Login successful!")),
+                    //               );
+                    //               Navigator.pushNamed(context, '/home');
+                    //               await handleLogin(context, authProvider,
+                    //                   localDatabaseProvider);
+                    //             } else {
+                    //               ScaffoldMessenger.of(context).showSnackBar(
+                    //                 SnackBar(
+                    //                     content: Text("Login failed: $result")),
+                    //               );
+                    //             }
+                    //           } catch (e) {
+                    //             ScaffoldMessenger.of(context).showSnackBar(
+                    //               SnackBar(
+                    //                   content: Text("Unexpected error: $e")),
+                    //             );
+                    //           } finally {
+                    //             authProvider.setLoading(false);
+                    //           }
+                    //         },
+                    // ),
                   ],
                 ),
               ),

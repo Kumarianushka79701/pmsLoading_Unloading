@@ -29,23 +29,23 @@ class CustomToggleSwitch extends StatelessWidget {
         AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
           child: isOn
-              ? custom_text_widget.TextWidget(  // Use the prefixed class
+              ? custom_text_widget.TextWidget(  
                   label: labelOn,
-                  key: ValueKey('On'),  // This is not a constant value
+                  key: ValueKey('On'),  
                   fontSize: fontSize,
                   fontWeight: fontWeight,
                   textColor: textColor,
                 )
-              : custom_text_widget.TextWidget(  // Use the prefixed class
+              : custom_text_widget.TextWidget(  
                   label: labelOff,
-                  key: ValueKey('Off'),  // This is not a constant value
+                  key: ValueKey('Off'),  
                   fontSize: fontSize,
                   fontWeight: fontWeight,
                   textColor: textColor,
                 ),
         ),
         Transform.scale(
-          scale: 0.8, // Make the switch smaller
+          scale: 0.8, 
           child: Switch(
             value: isOn,
             onChanged: onToggle,
@@ -71,6 +71,7 @@ class TextWidget extends StatelessWidget {
     required this.fontSize,
     required this.fontWeight,
     required this.textColor,
+    
   }) : super(key: key);
 
   @override

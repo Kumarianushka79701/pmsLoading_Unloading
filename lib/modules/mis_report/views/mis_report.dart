@@ -116,27 +116,38 @@ class MisReportScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                RoundButton(
-                  width: 150,
-                  title: Text(
-                    'Submit',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                CustomButton(
                   onPressed: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => const ReportView()),
                     );
-                    // ScaffoldMessenger.of(context).showSnackBar(
-                    //   const SnackBar(content: Text('Submitted')),
-                    // );
                   },
+                  label: "Submit",
                 ),
+
+                // CustomButton(
+                //   width: 150,
+                //   title: Text(
+                //     'Submit',
+                //     style: const TextStyle(
+                //       color: Colors.white,
+                //       fontSize: 20,
+                //       fontWeight: FontWeight.bold,
+                //     ),
+                //   ),
+                //   onPressed: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //           builder: (context) => const ReportView()),
+                //     );
+                //     // ScaffoldMessenger.of(context).showSnackBar(
+                //     //   const SnackBar(content: Text('Submitted')),
+                //     // );
+                //   },
+                // ),
                 CustomOutlinedButton(
                   title: 'Exit',
                   textColor: ParcelColors.brandeisblue,
