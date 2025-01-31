@@ -61,35 +61,76 @@ class LoadigScreen extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 10),
-                Consumer<LoadingProvider>(
-                  builder: (context, provider, child) {
-                    return DropdownButtonFormField<String>(
-                      key: UniqueKey(),
-                      decoration: const InputDecoration(
-                        labelText: 'Vehicle Type',
-                        border: OutlineInputBorder(),
-                      ),
-                      value: provider.selectedVehicleType,
-                      items: ['Type A', 'Type B', 'Type C']
-                          .map((type) => DropdownMenuItem<String>(
-                                value: type,
-                                child: Text(type),
-                              ))
-                          .toList(),
-                      onChanged: (value) => provider.setVehicleType(value),
-                    );
-                  },
-                ),
-                const SizedBox(height: 5),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Train No.',
-                    border: OutlineInputBorder(),
+                DropdownButtonFormField<String>(
+                  value: provider.selectedVehicleType,
+                  hint: const TextWidget(
+                    label: 'Vehicle Type',
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    textColor: ParcelColors.catalinaBlue,
                   ),
-                  keyboardType: TextInputType.number,
-                  onSaved: provider.setTrainNo,
+                  onChanged: (value) => provider.setVehicleType(value),
+                  items: ['Truck', 'Van', 'Bike'].map((type) {
+                    return DropdownMenuItem<String>(
+                      value: type,
+                      child: TextWidget(
+                        label: type,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        textColor: ParcelColors.catalinaBlue,
+                      ),
+                    );
+                  }).toList(),
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30)),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 15, vertical: 10),
+                  ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 15),
+                Container(
+                  width: double.infinity,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 2, horizontal: 15),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const TextWidget(
+                        label: 'Train No.',
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        textColor: ParcelColors.catalinaBlue,
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.35,
+                      ),
+                      const Expanded(
+                        child: TextField(
+                          decoration: InputDecoration(
+                            hintText: 'Enter Train No.',
+                            hintStyle: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: ParcelColors.gray,
+                            ),
+                            border: InputBorder.none,
+                          ),
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 15),
                 Container(
                   width: double.infinity,
                   padding:
@@ -150,6 +191,33 @@ class LoadigScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 15),
+                DropdownButtonFormField<String>(
+                  value: provider.selectPlatform,
+                  hint: const TextWidget(
+                    label: 'Plateform Number',
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    textColor: ParcelColors.catalinaBlue,
+                  ),
+                  onChanged: (value) => provider.setPlateformType(value),
+                  items: ['Plateform1', 'Plateform2', 'Plateform3'].map((type) {
+                    return DropdownMenuItem<String>(
+                      value: type,
+                      child: TextWidget(
+                        label: type,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        textColor: ParcelColors.catalinaBlue,
+                      ),
+                    );
+                  }).toList(),
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30)),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 15, vertical: 10),
+                  ),
+                ),
                 if (provider.showGuidance)
                   CollapsibleForm(
                     onSaveData: provider.updateCollapsibleFormData,

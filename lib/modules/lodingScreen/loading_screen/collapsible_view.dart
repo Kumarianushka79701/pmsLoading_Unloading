@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:project/modules/lodingScreen/provider/collapsible_form.dart';
 import 'package:project/utils/colors.dart';
+import 'package:project/widgets/custon_dropDown_feild.dart';
+import 'package:project/widgets/label_text_form_feild.dart';
 import 'package:project/widgets/text_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -47,45 +49,37 @@ class _CollapsibleFormState extends State<CollapsibleForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          DropdownButtonFormField<String>(
-            decoration: const InputDecoration(
-              labelText: 'Platform No',
-              border: OutlineInputBorder(),
+          const SizedBox(height: 10),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(30),
             ),
-            items: ['Platform 1', 'Platform 2', 'Platform 3']
-                .map((platform) => DropdownMenuItem<String>(
-                      value: platform,
-                      child: _textWidget(platform),
-                    ))
-                .toList(),
-            value: provider.platformNo,
-            onChanged: (value) {
-              provider.platformNo = value;
-              _saveForm();
-            },
-            validator: (value) =>
-                value == null ? 'Please select a platform' : null,
+            child: CheckboxListTile(
+              value: provider.acceptIcsmWagon,
+              title: TextWidget(
+                label: 'Accept ICMS Wagon',
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                textColor: ParcelColors.catalinaBlue,
+              ),
+              onChanged: (value) {
+                provider.acceptIcsmWagon = value ?? false;
+                _saveForm();
+              },
+            ),
           ),
           const SizedBox(height: 10),
-          CheckboxListTile(
-            value: provider.acceptIcsmWagon,
-            title: TextWidget(
-              label: 'Accept ICMS Wagon',
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              textColor: ParcelColors.catalinaBlue,
-            ),
-            onChanged: (value) {
-              provider.acceptIcsmWagon = value ?? false;
-              _saveForm();
-            },
-          ),
-          const SizedBox(height: 10),
-          TextFormField(
-            decoration: const InputDecoration(
-              labelText: 'Wagon-Rly-No.',
-              border: OutlineInputBorder(),
-            ),
+          CustomTextField(
+            label: 'Wagon-Rly-No.',
+            labelColor: ParcelColors.catalinaBlue,
+            textColor: ParcelColors.catalinaBlue,
+            borderColor: ParcelColors.gray,
+            textSize: 15,
+            width: double.infinity,
+            fontWeight: FontWeight.w600,
             onSaved: (value) {
               provider.wagonRlyNo = value;
             },
@@ -93,21 +87,27 @@ class _CollapsibleFormState extends State<CollapsibleForm> {
                 value!.isEmpty ? 'Please enter the Wagon Rly No.' : null,
           ),
           const SizedBox(height: 10),
-          TextFormField(
-            decoration: const InputDecoration(
-              labelText: 'RPF',
-              border: OutlineInputBorder(),
-            ),
+          CustomTextField(
+            label: 'RPF',
+            labelColor: ParcelColors.catalinaBlue,
+            textColor: ParcelColors.catalinaBlue,
+            borderColor: ParcelColors.gray,
+            textSize: 15,
+            width: double.infinity,
+            fontWeight: FontWeight.w600,
             onSaved: (value) {
               provider.rpf = value;
             },
           ),
           const SizedBox(height: 10),
-          TextFormField(
-            decoration: const InputDecoration(
-              labelText: 'Guard Mobile No.',
-              border: OutlineInputBorder(),
-            ),
+          CustomTextField(
+            label: 'Guard Mobile No.',
+            labelColor: ParcelColors.catalinaBlue,
+            textColor: ParcelColors.catalinaBlue,
+            borderColor: ParcelColors.gray,
+            textSize: 15,
+            width: double.infinity,
+            fontWeight: FontWeight.w600,
             keyboardType: TextInputType.phone,
             onSaved: (value) {
               provider.guardMobileNo = value;
@@ -117,11 +117,14 @@ class _CollapsibleFormState extends State<CollapsibleForm> {
                 : null,
           ),
           const SizedBox(height: 10),
-          TextFormField(
-            decoration: const InputDecoration(
-              labelText: 'Remarks',
-              border: OutlineInputBorder(),
-            ),
+          CustomTextField(
+            label: 'Remarks',
+            labelColor: ParcelColors.catalinaBlue,
+            textColor: ParcelColors.catalinaBlue,
+            borderColor: ParcelColors.gray,
+            textSize: 15,
+            width: double.infinity,
+            fontWeight: FontWeight.w600,
             onSaved: (value) {
               provider.remarks = value;
             },
@@ -141,40 +144,40 @@ class _CollapsibleFormState extends State<CollapsibleForm> {
             },
           ),
           const SizedBox(height: 10),
-          DropdownButtonFormField<String>(
-            decoration: const InputDecoration(
-              labelText: 'Seal to Station',
-              border: OutlineInputBorder(),
-            ),
-            items: ['Station A', 'Station B', 'Station C']
-                .map((station) => DropdownMenuItem<String>(
-                      value: station,
-                      child: _textWidget(station),
-                    ))
-                .toList(),
+          CustomDropdown(
+            label: 'Seal to Station',
+            items: ['Station A', 'Station B', 'Station C'],
             value: provider.sealToStation,
             onChanged: (value) {
               provider.sealToStation = value;
               _saveForm();
             },
+            validator: (value) =>
+                value == null ? 'Please select a station' : null,
+            labelColor: Colors.blue, // Example label color
+            textColor: Colors.black, // Example text color
+            fontWeight: FontWeight.bold, // Example font weight
+            fontSize: 16, // Example font size
+            borderColor: Colors.blue, // Example border color
+            borderRadius: BorderRadius.circular(20), // Optional border radius
           ),
           const SizedBox(height: 10),
-          DropdownButtonFormField<String>(
-            decoration: const InputDecoration(
-              labelText: 'Nil Loading/Unloading Reason',
-              border: OutlineInputBorder(),
-            ),
-            items: ['Reason A', 'Reason B', 'Reason C']
-                .map((reason) => DropdownMenuItem<String>(
-                      value: reason,
-                      child: _textWidget(reason),
-                    ))
-                .toList(),
+          CustomDropdown(
+            label: 'Nil Loading/Unloading Reason',
+            items: ['Reason A', 'Reason B', 'Reason C'],
             value: provider.nilLoadingReason,
             onChanged: (value) {
               provider.nilLoadingReason = value;
               _saveForm();
             },
+            validator: (value) =>
+                value == null ? 'Please select a reason' : null,
+            labelColor: Colors.blue, // Example label color
+            textColor: Colors.black, // Example text color
+            fontWeight: FontWeight.bold, // Example font weight
+            fontSize: 16, // Example font size
+            borderColor: Colors.blue, // Example border color
+            borderRadius: BorderRadius.circular(20), // Optional border radius
           ),
           const SizedBox(height: 10),
         ],

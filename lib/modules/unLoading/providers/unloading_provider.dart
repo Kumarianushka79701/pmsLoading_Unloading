@@ -22,18 +22,15 @@ import 'package:flutter/material.dart';
 //   }
 // }
 class UnloadingSummaryProvider extends ChangeNotifier {
-  String? _selectedVehicleType;
   bool _showGuidance = false;
+  String? _trainNo;
+  String? selectedVehicleType;
+
   DateTime? _actualLoadDate;
 
-  String? get selectedVehicleType => _selectedVehicleType;
   bool get showGuidance => _showGuidance;
   DateTime? get actualLoadDate => _actualLoadDate;
-
-  void setVehicleType(String? type) {
-    _selectedVehicleType = type;
-    notifyListeners();
-  }
+  String? get trainNo => _trainNo;
 
   void toggleGuidance(bool value) {
     _showGuidance = value;
@@ -45,5 +42,15 @@ class UnloadingSummaryProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  
+  void setTrainNo(String? trainNo) {
+    _trainNo = trainNo;
+    notifyListeners();
+  }
+
+  void setVehicleType(String? type) {
+    if (selectedVehicleType != type) {
+      selectedVehicleType = type;
+      notifyListeners(); // Notify only when there's a change
+    }
+  }
 }

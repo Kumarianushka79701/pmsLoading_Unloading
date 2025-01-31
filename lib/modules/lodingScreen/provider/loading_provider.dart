@@ -23,6 +23,7 @@ class LoadingProvider extends ChangeNotifier {
   Map<String, dynamic> get collapsibleFormData => _collapsibleFormData;
   GlobalKey<FormState> get getFormKey => formKey;
   String? selectedVehicleType;
+  String? selectPlatform;
 
   // Date Formatting
   String formatDate(DateTime? date) {
@@ -129,6 +130,13 @@ class LoadingProvider extends ChangeNotifier {
   void setVehicleType(String? type) {
     if (selectedVehicleType != type) {
       selectedVehicleType = type;
+      notifyListeners(); // Notify only when there's a change
+    }
+  }
+
+  void setPlateformType(String? type) {
+    if (selectPlatform != type) {
+      selectPlatform = type;
       notifyListeners(); // Notify only when there's a change
     }
   }
