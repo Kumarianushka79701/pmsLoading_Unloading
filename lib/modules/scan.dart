@@ -26,7 +26,8 @@ class ScanScreen extends StatelessWidget {
               }
               return _buildScannedData(context, provider.scannedData!);
             case DataStatus.error:
-              return const Center(child: Text('Error occurred while scanning.'));
+              return const Center(
+                  child: Text('Error occurred while scanning.'));
             default:
               return const Center(child: Text('Unknown state.'));
           }
@@ -35,7 +36,8 @@ class ScanScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMobileScanner(BuildContext context, ScanActivityProvider provider) {
+  Widget _buildMobileScanner(
+      BuildContext context, ScanActivityProvider provider) {
     return MobileScanner(
       onDetect: (BarcodeCapture barcodeCapture) {
         final barcodes = barcodeCapture.barcodes;
@@ -47,7 +49,9 @@ class ScanScreen extends StatelessWidget {
             // Save the scanned data to the local database
             final parcelData = provider.scannedData;
             if (parcelData != null) {
-              context.read<LocalDatabaseProvider>().insertParcelData(parcelData);
+              context
+                  .read<LocalDatabaseProvider>()
+                  .insertParcelData(parcelData);
             }
           } else {
             provider.setErrorState("No valid QR code detected.");
@@ -73,29 +77,30 @@ class ScanScreen extends StatelessWidget {
               child: const Text('Scan Again'),
             ),
             const SizedBox(width: 16), // Space between buttons
-           ElevatedButton(
-  onPressed: () async {
-    final localDbProvider = context.read<LocalDatabaseProvider>();
+            ElevatedButton(
+              onPressed: () async {
+                final localDbProvider = context.read<LocalDatabaseProvider>();
 
-    // Check if the PRR number already exists
-    final  bool? isDuplicate = await localDbProvider.isParcelDuplicate(data.prrNumber);
+                // Check if the PRR number already exists
+                final bool? isDuplicate =
+                    await localDbProvider.isParcelDuplicate(data.prrNumber);
 
-    if (isDuplicate==true) {
-      // Show a message if it's a duplicate
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Duplicate parcel data. Cannot save!')),
-      );
-    } else {
-      // Save the data if it's not a duplicate
-      await localDbProvider.insertParcelData(data);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Parcel data saved successfully!')),
-      );
-    }
-  },
-  child: const Text('Save Data'),
-),
-
+                if (isDuplicate == true) {
+                  // Show a message if it's a duplicate
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: Text('Duplicate parcel data. Cannot save!')),
+                  );
+                } else {
+                  // Save the data if it's not a duplicate
+                  await localDbProvider.insertParcelData(data);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Parcel data saved successfully!')),
+                  );
+                }
+              },
+              child: const Text('Save Data'),
+            ),
           ],
         ),
       ],
@@ -113,7 +118,8 @@ class ScanScreen extends StatelessWidget {
       'Total Weight': data.totalWeight,
       'Commodity Type Code': data.commodityTypeCode,
       'Booking Date': data.bookingDate,
-      'Chargeable Weight for Current Package': data.chargeableWeightForCurrentPackage,
+      'Chargeable Weight for Current Package':
+          data.chargeableWeightForCurrentPackage,
       'Total Chargeable Weight': data.totalChargeableWeight,
       'Packaging Description Code': data.packagingDescriptionCode,
       'Train Scale Code': data.trainScaleCode,
