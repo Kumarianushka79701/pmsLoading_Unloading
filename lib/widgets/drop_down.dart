@@ -12,7 +12,7 @@ class DropdownRadioWidget extends StatelessWidget {
   final Color? textColor;
   final Color? radioColor;
   final TextEditingController controller;
-  final TextEditingController? titleController; // New title controller
+  final TextEditingController? titleController;
 
   const DropdownRadioWidget({
     super.key,
@@ -23,7 +23,7 @@ class DropdownRadioWidget extends StatelessWidget {
     this.textColor,
     this.radioColor,
     required this.controller,
-    this.titleController, // Added title controller
+    this.titleController, 
   });
 
   void _showSelectionDialog(BuildContext context) {
@@ -38,7 +38,7 @@ class DropdownRadioWidget extends StatelessWidget {
             children: [
               if (titleController != null)
                 Text(
-                  titleController!.text, // Use titleController value
+                  titleController!.text, 
                   style: TextStyle(
                     fontSize: fontSize ?? 18,
                     fontWeight: fontWeight ?? FontWeight.bold,
@@ -89,8 +89,8 @@ class DropdownRadioWidget extends StatelessWidget {
           groupValue: provider.selectedValue,
           onChanged: (val) {
             provider.selectValue(val!);
-            controller.text = val; // Update the text controller
-            Navigator.pop(context); // Close dialog on selection
+            controller.text = val; 
+            Navigator.pop(context); 
           },
           activeColor: radioColor ?? ParcelColors.catalinaBlue,
         );
