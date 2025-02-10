@@ -41,20 +41,20 @@ class RoundTextField extends StatelessWidget {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(32.0), // Increased border radius
           borderSide: const BorderSide(
-            color: ParcelColors.catalinaBlue, // Default border color
+            color: ParcelColors.gray, // Default border color
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(32.0), // Same border radius
           borderSide: const BorderSide(
-            color: ParcelColors.brandeisblue, // Catalina Blue for enabled state
+            color: ParcelColors.gray, // Catalina Blue for enabled state
             width: 1.0,
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(32.0), // Same border radius
           borderSide: const BorderSide(
-            color: ParcelColors.catalinaBlue, // Catalina Blue for focused state
+            color: ParcelColors.gray, // Catalina Blue for focused state
             width: 1.0,
           ),
         ),

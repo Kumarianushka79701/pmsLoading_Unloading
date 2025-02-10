@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:project/routes/app_routes.dart';
+import 'package:project/widgets/custom_toggle_button.dart';
 
 class LoadingProvider extends ChangeNotifier {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -12,8 +13,11 @@ class LoadingProvider extends ChangeNotifier {
   bool _showGuidance = false;
   bool _isCollapsibleFormValid = false;
   Map<String, dynamic> _collapsibleFormData = {};
+  TextEditingController vehicleTypeController = TextEditingController();
+  TextEditingController platformController = TextEditingController();
+  TextEditingController titleController =
+      TextEditingController(text: "Select Plateform"); // Added title controller
 
-  // Getters
   DateTime? get scheduledDepDate => _scheduledDepDate;
   DateTime? get actualLoadDate => _actualLoadDate;
   String? get vehicleType => _vehicleType;
@@ -29,6 +33,20 @@ class LoadingProvider extends ChangeNotifier {
   String formatDate(DateTime? date) {
     if (date == null) return "Select Date";
     return DateFormat('dd-MMM-yyyy HH:mm').format(date);
+  }
+
+  String? _selectedValue;
+
+  String? get selectedValue => _selectedValue;
+
+  void selectValue(String value) {
+    _selectedValue = value;
+    notifyListeners();
+  }
+
+  void resetValue() {
+    _selectedValue = null;
+    notifyListeners();
   }
 
   // Select Date Function
