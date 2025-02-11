@@ -1,13 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project/app_drawer.dart';
 import 'package:project/modules/auth/provider/auth_provider.dart';
-import 'package:project/modules/lodingScreen/loading_screen/loading.dart';
-import 'package:project/modules/databseReport/views/table.dart';
-import 'package:project/modules/mis_report/views/mis_report.dart';
-import 'package:project/modules/prrStatus/views/prr_status.dart';
-import 'package:project/modules/reports/views/report_view.dart';
-import 'package:project/modules/unLoading/views/unloading_view.dart';
-import 'package:project/utils/app_icons.dart';
 import 'package:project/utils/colors.dart';
 import 'package:project/widgets/common_app_bar.dart';
 import 'package:project/widgets/text_widget.dart';
@@ -32,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       key: _scaffoldKey,
+      backgroundColor: ParcelColors.white,
       appBar: getAppBar(
         context,
         title: getParcelHomeAppBarTitle(context),
@@ -62,7 +56,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
               ),
-
               const SizedBox(
                 height: 10,
               ),
@@ -132,7 +125,6 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(
                 height: size.height * 0.01,
               ),
-
               GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -174,7 +166,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 },
               ),
-
             ],
           ),
         ),
