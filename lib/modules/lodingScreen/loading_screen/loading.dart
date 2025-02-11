@@ -171,7 +171,7 @@ class LoadigScreen extends StatelessWidget {
                                     value: provider.showGuidance,
                                     onChanged: (value) =>
                                         provider.toggleGuidance(value),
-                                    activeColor: Colors.blue,
+                                    activeColor: ParcelColors.brandeisblue,
                                     inactiveThumbColor: Colors.grey,
                                     inactiveTrackColor:
                                         Colors.grey.withOpacity(0.5),

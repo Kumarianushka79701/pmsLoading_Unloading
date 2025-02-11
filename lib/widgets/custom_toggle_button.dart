@@ -31,14 +31,14 @@ class CustomToggleSwitch extends StatelessWidget {
           child: isOn
               ? custom_text_widget.TextWidget(  
                   label: labelOn,
-                  key: ValueKey('On'),  
+                  key: const ValueKey('On'),  
                   fontSize: fontSize,
                   fontWeight: fontWeight,
                   textColor: textColor,
                 )
               : custom_text_widget.TextWidget(  
                   label: labelOff,
-                  key: ValueKey('Off'),  
+                  key: const ValueKey('Off'),  
                   fontSize: fontSize,
                   fontWeight: fontWeight,
                   textColor: textColor,

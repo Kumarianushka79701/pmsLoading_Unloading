@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project/modules/lodingScreen/provider/loading_provider.dart';
 import 'package:project/utils/colors.dart';
-import 'package:project/widgets/custom_toggle_button.dart';
 import 'package:provider/provider.dart';
 
 class DropdownRadioWidget extends StatelessWidget {
@@ -107,7 +106,7 @@ class DropdownRadioWidget extends StatelessWidget {
           controller: controller,
           decoration: InputDecoration(
             hintText: titleController?.text ??
-                title, // Use titleController text if provided
+                title, 
             hintStyle: TextStyle(
               fontSize: fontSize ?? 14,
               fontWeight: fontWeight ?? FontWeight.w400,
@@ -123,11 +122,11 @@ class DropdownRadioWidget extends StatelessWidget {
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30),
-              borderSide: BorderSide(color: ParcelColors.gray),
+              borderSide: const BorderSide(color: ParcelColors.gray),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30),
-              borderSide: BorderSide(color: ParcelColors.gray, width: 1),
+              borderSide: const BorderSide(color: ParcelColors.gray, width: 1),
             ),
             contentPadding:
                 const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
