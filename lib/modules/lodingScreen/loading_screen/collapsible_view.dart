@@ -140,13 +140,15 @@ class CollapsibleForm extends StatelessWidget {
           const SizedBox(height: 10),
           DropdownRadioWidget(
             title: 'Nil Loading/Unloading Reason',
+            textColor: loadingProvider.nilLoadingReason != null
+                ? ParcelColors.catalinaBlue
+                : ParcelColors.gray,
             fontSize: 15,
             validator: (value) =>
                 value == null ? 'Please select a reason' : null,
             options: ['Reason A', 'Reason B', 'Reason C'],
-            controller: loadingProvider.nilLoadingReason, // Pass the controller
+            controller: loadingProvider.nilLoadingReason,
           ),
-          const SizedBox(height: 10),
           const SizedBox(height: 10),
         ],
       ),

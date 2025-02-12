@@ -64,7 +64,8 @@ class DropdownRadioWidget extends StatelessWidget {
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: options
-                    .map((option) => _buildRadioTile(context, option))
+                    .map((option) => _buildRadioTile(
+                        context, option, provider.selectedValue))
                     .toList(),
               );
             },
@@ -74,16 +75,22 @@ class DropdownRadioWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildRadioTile(BuildContext context, String value) {
+  Widget _buildRadioTile(
+      BuildContext context, String value, String? selectedValue) {
     return Consumer<LoadingProvider>(
       builder: (context, provider, child) {
+        final isSelected = value == selectedValue;
         return RadioListTile<String>(
           title: Text(
             value,
             style: TextStyle(
               fontSize: fontSize ?? 14,
-              fontWeight: fontWeight ?? FontWeight.w400,
-              color: textColor ?? ParcelColors.catalinaBlue,
+              fontWeight: isSelected
+                  ? FontWeight.bold
+                  : (fontWeight ?? FontWeight.w400),
+              color: isSelected
+                  ? ParcelColors.catalinaBlue
+                  : (textColor ?? Colors.black),
             ),
           ),
           value: value,
@@ -103,6 +110,7 @@ class DropdownRadioWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<LoadingProvider>(
       builder: (context, provider, child) {
+        final isSelected = controller.text.isNotEmpty;
         return TextFormField(
           readOnly: true,
           controller: controller,
@@ -114,7 +122,9 @@ class DropdownRadioWidget extends StatelessWidget {
               color: textColor ?? ParcelColors.catalinaBlue,
             ),
             filled: true,
-            fillColor: Colors.white,
+            fillColor: isSelected
+                ? Colors.white
+                : Colors.grey.shade300, // Change fill color
             suffixIcon: const Icon(Icons.arrow_drop_down,
                 color: ParcelColors.catalinaBlue),
             border: OutlineInputBorder(
@@ -131,6 +141,13 @@ class DropdownRadioWidget extends StatelessWidget {
             ),
             contentPadding:
                 const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+            labelStyle: TextStyle(
+              fontSize: fontSize ?? 14,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
+              color: isSelected
+                  ? ParcelColors.catalinaBlue
+                  : Colors.black, // Change text color
+            ),
           ),
           onTap: () => _showSelectionDialog(context),
           validator: validator,
