@@ -12,6 +12,7 @@ class DropdownRadioWidget extends StatelessWidget {
   final Color? radioColor;
   final TextEditingController controller;
   final TextEditingController? titleController;
+  final String? Function(String?)? validator;
 
   const DropdownRadioWidget({
     super.key,
@@ -22,7 +23,8 @@ class DropdownRadioWidget extends StatelessWidget {
     this.textColor,
     this.radioColor,
     required this.controller,
-    this.titleController, 
+    this.titleController,
+    this.validator,
   });
 
   void _showSelectionDialog(BuildContext context) {
@@ -37,7 +39,7 @@ class DropdownRadioWidget extends StatelessWidget {
             children: [
               if (titleController != null)
                 Text(
-                  titleController!.text, 
+                  titleController!.text,
                   style: TextStyle(
                     fontSize: fontSize ?? 18,
                     fontWeight: fontWeight ?? FontWeight.bold,
@@ -81,15 +83,15 @@ class DropdownRadioWidget extends StatelessWidget {
             style: TextStyle(
               fontSize: fontSize ?? 14,
               fontWeight: fontWeight ?? FontWeight.w400,
-              color: textColor ?? Colors.black,
+              color: textColor ?? ParcelColors.catalinaBlue,
             ),
           ),
           value: value,
           groupValue: provider.selectedValue,
           onChanged: (val) {
             provider.selectValue(val!);
-            controller.text = val; 
-            Navigator.pop(context); 
+            controller.text = val;
+            Navigator.pop(context);
           },
           activeColor: radioColor ?? ParcelColors.catalinaBlue,
         );
@@ -105,11 +107,10 @@ class DropdownRadioWidget extends StatelessWidget {
           readOnly: true,
           controller: controller,
           decoration: InputDecoration(
-            hintText: titleController?.text ??
-                title, 
+            hintText: titleController?.text ?? title,
             hintStyle: TextStyle(
-              fontSize: fontSize ?? 14,
-              fontWeight: fontWeight ?? FontWeight.w400,
+              fontSize: fontSize ?? 10,
+              fontWeight: fontWeight ?? FontWeight.w600,
               color: textColor ?? ParcelColors.catalinaBlue,
             ),
             filled: true,
@@ -129,9 +130,10 @@ class DropdownRadioWidget extends StatelessWidget {
               borderSide: const BorderSide(color: ParcelColors.gray, width: 1),
             ),
             contentPadding:
-                const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
           ),
           onTap: () => _showSelectionDialog(context),
+          validator: validator,
         );
       },
     );

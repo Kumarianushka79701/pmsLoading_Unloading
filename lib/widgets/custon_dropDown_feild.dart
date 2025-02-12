@@ -14,7 +14,7 @@ class CustomDropdown extends StatelessWidget {
   final BorderRadius? borderRadius;
 
   const CustomDropdown({
-    Key? key,
+    super.key,
     required this.label,
     required this.items,
     required this.value,
@@ -26,7 +26,7 @@ class CustomDropdown extends StatelessWidget {
     this.fontSize,
     this.borderColor,
     this.borderRadius,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -34,15 +34,15 @@ class CustomDropdown extends StatelessWidget {
       decoration: InputDecoration(
         labelText: label,
         labelStyle: TextStyle(
-          color: labelColor ?? Colors.black, // Default label color
-          fontSize: fontSize ?? 16, // Default font size
-          fontWeight: fontWeight ?? FontWeight.normal, // Default font weight
+          color: labelColor ?? Colors.black, 
+          fontSize: fontSize ?? 16, 
+          fontWeight: fontWeight ?? FontWeight.normal, 
         ),
         border: OutlineInputBorder(
           borderRadius: borderRadius ??
-              BorderRadius.circular(30), // Optional border radius
+              BorderRadius.circular(30), 
           borderSide: BorderSide(
-            color: borderColor ?? Colors.grey, // Default border color
+            color: borderColor ?? Colors.grey, 
           ),
         ),
       ),
@@ -52,10 +52,10 @@ class CustomDropdown extends StatelessWidget {
                 child: Text(
                   item,
                   style: TextStyle(
-                    color: textColor ?? Colors.black, // Default text color
-                    fontSize: fontSize ?? 16, // Default font size
+                    color: textColor ?? Colors.black, 
+                    fontSize: fontSize ?? 16, 
                     fontWeight:
-                        fontWeight ?? FontWeight.normal, // Default font weight
+                        fontWeight ?? FontWeight.normal, 
                   ),
                 ),
               ))

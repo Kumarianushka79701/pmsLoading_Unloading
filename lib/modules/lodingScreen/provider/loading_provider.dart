@@ -15,8 +15,11 @@ class LoadingProvider extends ChangeNotifier {
   Map<String, dynamic> _collapsibleFormData = {};
   TextEditingController vehicleTypeController = TextEditingController();
   TextEditingController platformController = TextEditingController();
+  TextEditingController sealToStation = TextEditingController();
+  TextEditingController nilLoadingReason = TextEditingController();
+
   TextEditingController titleController =
-      TextEditingController(text: "Select Plateform"); // Added title controller
+      TextEditingController(text: "Select Plateform");
 
   DateTime? get scheduledDepDate => _scheduledDepDate;
   DateTime? get actualLoadDate => _actualLoadDate;

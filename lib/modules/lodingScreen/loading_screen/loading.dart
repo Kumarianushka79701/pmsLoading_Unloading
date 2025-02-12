@@ -27,18 +27,8 @@ class LoadigScreen extends StatelessWidget {
         appBar: getAppBar(
           context,
           title: getLoadingSummaryAppBarTitle(context),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.menu),
-              color: ParcelColors.white,
-              onPressed: () {
-                print("Menu button pressed");
-                scaffoldKey.currentState?.openDrawer();
-              },
-            ),
-          ],
           onTap: () {
-            print("AppBar tapped");
+            Navigator.pop(context);
           },
         ),
         body: SingleChildScrollView(
@@ -254,7 +244,7 @@ class LoadigScreen extends StatelessWidget {
                     child: Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(
-                          vertical: 12, horizontal: 15),
+                          vertical: 15, horizontal: 15),
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.grey),
                         borderRadius: BorderRadius.circular(30),
@@ -273,7 +263,7 @@ class LoadigScreen extends StatelessWidget {
                                 ? '${provider.actualLoadDate!.day}-${provider.actualLoadDate!.month}-${provider.actualLoadDate!.year}'
                                 : 'Select Date',
                             style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
+                                fontSize: 14, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),

@@ -5,7 +5,7 @@ class CustomTextField extends StatelessWidget {
   final String label;
   final TextEditingController? controller;
   final FormFieldSetter<String>? onSaved;
-  final FormFieldValidator<String>? validator; // Added validator parameter
+  final FormFieldValidator<String>? validator;
   final TextInputType keyboardType;
   final bool obscureText;
   final Color? labelColor;
@@ -20,7 +20,7 @@ class CustomTextField extends StatelessWidget {
     required this.label,
     this.controller,
     this.onSaved,
-    this.validator, // Validator parameter
+    this.validator,
     this.keyboardType = TextInputType.text,
     this.obscureText = false,
     this.labelColor,
@@ -52,22 +52,24 @@ class CustomTextField extends StatelessWidget {
             fontWeight: fontWeight ?? FontWeight.w400,
           ),
           floatingLabelBehavior:
-              FloatingLabelBehavior.never, // Hide label after focus
+              FloatingLabelBehavior.never, 
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           border: OutlineInputBorder(
-            borderRadius: const BorderRadius.all(Radius.circular(30)),
+            borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide(color: borderColor ?? Colors.grey),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: const BorderRadius.all(Radius.circular(30)),
+            borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide(color: borderColor ?? Colors.grey),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: const BorderRadius.all(Radius.circular(30)),
+            borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide(color: borderColor ?? ParcelColors.gray),
           ),
         ),
         onSaved: onSaved,
-        validator: validator, // Use validator here
+        validator: validator,
       ),
     );
   }

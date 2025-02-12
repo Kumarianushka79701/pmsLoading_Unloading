@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:project/modules/lodingScreen/provider/loading_provider.dart';
+import 'package:project/widgets/label_text_form_feild.dart';
+import 'package:provider/provider.dart';
 import 'package:project/modules/lodingScreen/provider/collapsible_form.dart';
 import 'package:project/utils/colors.dart';
-import 'package:project/widgets/custon_dropDown_feild.dart';
-import 'package:project/widgets/label_text_form_feild.dart';
+import 'package:project/widgets/drop_down.dart';
 import 'package:project/widgets/text_widget.dart';
-import 'package:provider/provider.dart';
 
-class CollapsibleForm extends StatefulWidget {
+class CollapsibleForm extends StatelessWidget {
   final Function(Map<String, dynamic>) onSaveData;
   final Function(bool) onValidationChange;
 
@@ -16,34 +17,25 @@ class CollapsibleForm extends StatefulWidget {
     required this.onValidationChange,
   }) : super(key: key);
 
-  @override
-  _CollapsibleFormState createState() => _CollapsibleFormState();
-}
+  void _saveForm(BuildContext context) {
+    final provider =
+        Provider.of<CollapsibleFormProvider>(context, listen: false);
 
-class _CollapsibleFormState extends State<CollapsibleForm> {
-  late CollapsibleFormProvider provider;
-
-  @override
-  void initState() {
-    super.initState();
-    provider = Provider.of<CollapsibleFormProvider>(context, listen: false);
-  }
-
-  void _saveForm() {
     if (provider.validateForm()) {
       provider.saveForm();
-      widget.onSaveData(provider.getFormData());
-      widget.onValidationChange(true);
+      onSaveData(provider.getFormData());
+      onValidationChange(true);
     } else {
-      widget.onValidationChange(false);
+      onValidationChange(false);
     }
   }
 
-  Widget _textWidget(String text) =>
-      Text(text, style: const TextStyle(fontSize: 16));
-
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<CollapsibleFormProvider>(context);
+    final loadingProvider =
+        Provider.of<LoadingProvider>(context, listen: false);
+
     return Form(
       key: provider.formKey,
       child: Column(
@@ -59,7 +51,8 @@ class _CollapsibleFormState extends State<CollapsibleForm> {
             ),
             child: CheckboxListTile(
               value: provider.acceptIcsmWagon,
-              title: TextWidget(
+              activeColor: ParcelColors.catalinaBlue,
+              title: const TextWidget(
                 label: 'Accept ICMS Wagon',
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
@@ -67,7 +60,7 @@ class _CollapsibleFormState extends State<CollapsibleForm> {
               ),
               onChanged: (value) {
                 provider.acceptIcsmWagon = value ?? false;
-                _saveForm();
+                _saveForm(context);
               },
             ),
           ),
@@ -80,9 +73,7 @@ class _CollapsibleFormState extends State<CollapsibleForm> {
             textSize: 15,
             width: double.infinity,
             fontWeight: FontWeight.w600,
-            onSaved: (value) {
-              provider.wagonRlyNo = value;
-            },
+            onSaved: (value) => provider.wagonRlyNo = value,
             validator: (value) =>
                 value!.isEmpty ? 'Please enter the Wagon Rly No.' : null,
           ),
@@ -95,9 +86,7 @@ class _CollapsibleFormState extends State<CollapsibleForm> {
             textSize: 15,
             width: double.infinity,
             fontWeight: FontWeight.w600,
-            onSaved: (value) {
-              provider.rpf = value;
-            },
+            onSaved: (value) => provider.rpf = value,
           ),
           const SizedBox(height: 10),
           CustomTextField(
@@ -109,9 +98,7 @@ class _CollapsibleFormState extends State<CollapsibleForm> {
             width: double.infinity,
             fontWeight: FontWeight.w600,
             keyboardType: TextInputType.phone,
-            onSaved: (value) {
-              provider.guardMobileNo = value;
-            },
+            onSaved: (value) => provider.guardMobileNo = value,
             validator: (value) => value!.isEmpty
                 ? 'Please enter the Guard\'s mobile number'
                 : null,
@@ -125,9 +112,7 @@ class _CollapsibleFormState extends State<CollapsibleForm> {
             textSize: 15,
             width: double.infinity,
             fontWeight: FontWeight.w600,
-            onSaved: (value) {
-              provider.remarks = value;
-            },
+            onSaved: (value) => provider.remarks = value,
           ),
           const SizedBox(height: 10),
           CheckboxListTile(
@@ -140,45 +125,28 @@ class _CollapsibleFormState extends State<CollapsibleForm> {
             ),
             onChanged: (value) {
               provider.sealed = value ?? false;
-              _saveForm();
+              _saveForm(context);
             },
           ),
           const SizedBox(height: 10),
-          CustomDropdown(
-            label: 'Seal to Station',
-            items: ['Station A', 'Station B', 'Station C'],
-            value: provider.sealToStation,
-            onChanged: (value) {
-              provider.sealToStation = value;
-              _saveForm();
-            },
+          DropdownRadioWidget(
             validator: (value) =>
                 value == null ? 'Please select a station' : null,
-            labelColor: Colors.blue, // Example label color
-            textColor: Colors.black, // Example text color
-            fontWeight: FontWeight.bold, // Example font weight
-            fontSize: 16, // Example font size
-            borderColor: Colors.blue, // Example border color
-            borderRadius: BorderRadius.circular(20), // Optional border radius
+            title: 'Seal to Station',
+            fontSize: 15,
+            options: ['Station A', 'Station B', 'Station C'],
+            controller: loadingProvider.sealToStation, // Pass the controller
           ),
           const SizedBox(height: 10),
-          CustomDropdown(
-            label: 'Nil Loading/Unloading Reason',
-            items: ['Reason A', 'Reason B', 'Reason C'],
-            value: provider.nilLoadingReason,
-            onChanged: (value) {
-              provider.nilLoadingReason = value;
-              _saveForm();
-            },
+          DropdownRadioWidget(
+            title: 'Nil Loading/Unloading Reason',
+            fontSize: 15,
             validator: (value) =>
                 value == null ? 'Please select a reason' : null,
-            labelColor: Colors.blue, // Example label color
-            textColor: Colors.black, // Example text color
-            fontWeight: FontWeight.bold, // Example font weight
-            fontSize: 16, // Example font size
-            borderColor: Colors.blue, // Example border color
-            borderRadius: BorderRadius.circular(20), // Optional border radius
+            options: ['Reason A', 'Reason B', 'Reason C'],
+            controller: loadingProvider.nilLoadingReason, // Pass the controller
           ),
+          const SizedBox(height: 10),
           const SizedBox(height: 10),
         ],
       ),
