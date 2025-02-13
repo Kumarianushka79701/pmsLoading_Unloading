@@ -25,6 +25,7 @@ class DropdownRadioWidget extends StatelessWidget {
     required this.controller,
     this.titleController,
     this.validator,
+    required Color labelColor,
   });
 
   void _showSelectionDialog(BuildContext context) {
@@ -122,9 +123,7 @@ class DropdownRadioWidget extends StatelessWidget {
               color: textColor ?? ParcelColors.catalinaBlue,
             ),
             filled: true,
-            fillColor: isSelected
-                ? Colors.white
-                : Colors.grey.shade300, // Change fill color
+            fillColor: ParcelColors.white,
             suffixIcon: const Icon(Icons.arrow_drop_down,
                 color: ParcelColors.catalinaBlue),
             border: OutlineInputBorder(
@@ -142,12 +141,10 @@ class DropdownRadioWidget extends StatelessWidget {
             contentPadding:
                 const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
             labelStyle: TextStyle(
-              fontSize: fontSize ?? 14,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
-              color: isSelected
-                  ? ParcelColors.catalinaBlue
-                  : Colors.black, // Change text color
-            ),
+                fontSize: fontSize ?? 14,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                color:
+                    isSelected ? ParcelColors.catalinaBlue : ParcelColors.gray),
           ),
           onTap: () => _showSelectionDialog(context),
           validator: validator,

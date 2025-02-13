@@ -68,8 +68,9 @@ class LoadigScreen extends StatelessWidget {
                       "FCRSLR-4T",
                       "FCFSLR-4T"
                     ],
-                    controller:
-                        provider.vehicleTypeController, // Pass the controller
+                    controller: provider.vehicleTypeController,
+                    labelColor:
+                        ParcelColors.catalinaBlue, // Pass the controller
                   ),
 
                   const SizedBox(height: 15),
@@ -180,7 +181,7 @@ class LoadigScreen extends StatelessWidget {
                     fontSize: 15,
                     options: ['Plateform1', 'Plateform2', 'Plateform3'],
                     controller:
-                        provider.platformController, // Pass the controller
+                        provider.platformController, labelColor: ParcelColors.catalinaBlue, // Pass the controller
                   ),
 
                   // DropdownRadioWidget(

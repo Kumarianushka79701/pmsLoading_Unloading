@@ -12,10 +12,10 @@ class CollapsibleForm extends StatelessWidget {
   final Function(bool) onValidationChange;
 
   const CollapsibleForm({
-    Key? key,
+    super.key,
     required this.onSaveData,
     required this.onValidationChange,
-  }) : super(key: key);
+  });
 
   void _saveForm(BuildContext context) {
     final provider =
@@ -134,19 +134,20 @@ class CollapsibleForm extends StatelessWidget {
                 value == null ? 'Please select a station' : null,
             title: 'Seal to Station',
             fontSize: 15,
-            options: ['Station A', 'Station B', 'Station C'],
-            controller: loadingProvider.sealToStation, // Pass the controller
+            options: const ['Station A', 'Station B', 'Station C'],
+            controller: loadingProvider.sealToStation,
+            labelColor: ParcelColors.catalinaBlue,
           ),
           const SizedBox(height: 10),
           DropdownRadioWidget(
             title: 'Nil Loading/Unloading Reason',
-            textColor: loadingProvider.nilLoadingReason != null
-                ? ParcelColors.catalinaBlue
-                : ParcelColors.gray,
+            textColor: ParcelColors.catalinaBlue,
             fontSize: 15,
+            labelColor: ParcelColors.catalinaBlue,
+            fontWeight: FontWeight.w600,
             validator: (value) =>
                 value == null ? 'Please select a reason' : null,
-            options: ['Reason A', 'Reason B', 'Reason C'],
+            options: const ['Reason A', 'Reason B', 'Reason C'],
             controller: loadingProvider.nilLoadingReason,
           ),
           const SizedBox(height: 10),

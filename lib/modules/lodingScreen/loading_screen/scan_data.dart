@@ -7,14 +7,7 @@ class ScanDataScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Scan Data'),
-        backgroundColor: Colors.green[700],
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child:
-                Image.asset('assets/logo.png'), // Replace with your logo asset
-          ),
-        ],
+        backgroundColor: Colors.blue[700],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -62,7 +55,11 @@ class ScanDataScreen extends StatelessWidget {
                   // Start Scanning Button
                   ElevatedButton.icon(
                     onPressed: () {
-                      // Action for scanning
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ScanDataScreen()),
+                      );
                     },
                     icon: Icon(Icons.qr_code_scanner),
                     label: Text('START SCANNING'),
@@ -77,7 +74,11 @@ class ScanDataScreen extends StatelessWidget {
                   // Scan Barcode Button
                   ElevatedButton.icon(
                     onPressed: () {
-                      // Action for barcode scanning
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ScanDataScreen()),
+                      );
                     },
                     icon: Icon(Icons.camera_alt),
                     label: Text('SCAN BARCODE THROUGH CAMERA'),
